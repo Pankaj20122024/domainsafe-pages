@@ -3,41 +3,130 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DomainSafe — It’s Alive</title>
+  <title>DomainSafe — Add Domain</title>
   <style>
-    :root { --bg:#0f1221; --card:#151935; --text:#e8ebff; --muted:#b7c0ff; --accent:#7aa2ff; }
-    html,body { height:100%; margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif; background:linear-gradient(160deg,#0b0f26,#10163a);}
-    .wrap { min-height:100%; display:flex; align-items:center; justify-content:center; padding:32px; }
-    .card { max-width:720px; width:100%; background:linear-gradient(180deg,var(--card),#121735); border:1px solid #232a55; border-radius:16px; padding:32px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
-    h1 { color:var(--text); font-weight:700; margin:0 0 8px; letter-spacing:.2px; }
-    p { color:var(--muted); line-height:1.6; margin:0 0 16px; }
-    .chips { display:flex; gap:8px; flex-wrap:wrap; margin:16px 0 24px; }
-    .chip { padding:8px 12px; border-radius:999px; border:1px solid #2a3470; color:#c6d0ff; background:#0f1533; font-size:14px; }
-    .cta { display:inline-block; margin-top:8px; padding:12px 16px; color:#08122b; background:linear-gradient(180deg,#9dc0ff,#7aa2ff); border:none; border-radius:10px; text-decoration:none; font-weight:600; }
-    .cta:hover { filter:brightness(1.05); }
-    .muted { font-size:14px; color:#9da8ff; }
-    .row { display:flex; flex-wrap:wrap; gap:12px; }
-    .badge { padding:8px 12px; border-radius:8px; background:#0f1533; border:1px dashed #2a3470; color:#b7c0ff; font-size:13px; }
-    code { background:#0f1533; padding:2px 6px; border:1px solid #2a3470; border-radius:6px; }
+    :root { --bg:#0f1221; --card:#151935; --text:#e8ebff; --muted:#b7c0ff; --accent:#7aa2ff; --ok:#6be28e; --warn:#ffd277; --err:#ff8b8b; }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(160deg,#0b0f26,#10163a);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:32px}
+    .card{max-width:800px;width:100%;background:linear-gradient(180deg,var(--card),#121735);border:1px solid #232a55;border-radius:16px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+    h1{color:var(--text);margin:0 0 8px;font-weight:700;letter-spacing:.2px}
+    p{color:var(--muted);margin:0 0 16px;line-height:1.6}
+    label{color:var(--text);font-size:14px;display:block;margin-bottom:6px}
+    input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2a3470;background:#0f1533;color:#dbe1ff;outline:none}
+    input::placeholder{color:#8ea0ff}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row > div{flex:1;min-width:240px}
+    .btn{display:inline-block;margin-top:8px;padding:12px 16px;color:#08122b;background:linear-gradient(180deg,#9dc0ff,#7aa2ff);border:none;border-radius:10px;text-decoration:none;font-weight:600;cursor:pointer}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 8px}
+    .chip{padding:8px 12px;border-radius:999px;border:1px solid #2a3470;color:#c6d0ff;background:#0f1533;font-size:13px}
+    .log{margin-top:16px;padding:12px;border:1px dashed #2a3470;border-radius:10px;background:#0f1533;color:#cbd5ff;font-family:ui-monospace,Consolas,Monaco,monospace;font-size:13px;white-space:pre-wrap}
+    table{width:100%;margin-top:16px;border-collapse:collapse}
+    th,td{border-bottom:1px solid #2a3470;padding:10px 8px;color:#cbd5ff;font-size:14px;text-align:left}
+    th{color:#e8ebff}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <h1>DomainSafe is live ✅</h1>
-      <p>This is your calm front desk (Pages). Today we only prove the lights are on. The robot in back will say hello on <code>/health</code>.</p>
+      <p>Add a domain so the robot can start taking care of it. No DNS edits yet—this just saves it in the ledger.</p>
+
       <div class="chips">
-        <div class="chip">Elegant</div>
+        <div class="chip">Calm</div>
         <div class="chip">Minimal</div>
-        <div class="chip">One‑and‑done</div>
+        <div class="chip">One-and-done</div>
       </div>
-      <p class="muted">Next steps (coming days): connect a domain, hang the four signs (MX, SPF, DKIM, DMARC), drift watch, one‑click restore.</p>
-      <a class="cta" href="#" onclick="alert('This is Day 1. The big button will live here.'); return false;">Secure my domain’s email</a>
-      <div style="margin-top:16px" class="row">
-        <div class="badge">Pages ✓</div>
-        <div class="badge">Worker (robot) → <em>coming right below</em></div>
+
+      <div class="row">
+        <div>
+          <label for="email">Contact email</label>
+          <input id="email" type="email" placeholder="you@example.com" />
+        </div>
+        <div>
+          <label for="domain">Domain</label>
+          <input id="domain" type="text" placeholder="example.com" />
+        </div>
       </div>
+
+      <button class="btn" id="addBtn">Add domain</button>
+
+      <div class="log" id="log">Waiting…</div>
+
+      <h3 style="color:#e8ebff;margin-top:18px">Recent domains</h3>
+      <table id="table">
+        <thead><tr><th>Domain</th><th>Status</th><th>Owner</th><th>Created</th></tr></thead>
+        <tbody id="tbody"><tr><td colspan="4" class="warn">No rows yet</td></tr></tbody>
+      </table>
     </div>
   </div>
+
+  <script>
+    // Worker base URL (no trailing slash)
+    const API_BASE = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
+
+    const logEl = document.getElementById('log');
+    const tbody = document.getElementById('tbody');
+    const emailEl = document.getElementById('email');
+    const domainEl = document.getElementById('domain');
+    const addBtn = document.getElementById('addBtn');
+
+    function log(msg){ logEl.textContent = typeof msg === 'string' ? msg : JSON.stringify(msg,null,2); }
+
+    async function listDomains(){
+      try{
+        const r = await fetch(API_BASE + "/api/domains");
+        const j = await r.json();
+        if(!j.ok) throw new Error(j.error || 'Failed to fetch');
+        tbody.innerHTML = '';
+        if(!j.domains || j.domains.length === 0){
+          tbody.innerHTML = '<tr><td colspan="4" class="warn">No rows yet</td></tr>';
+          return;
+        }
+        for(const d of j.domains){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${escapeHtml(d.domain_name || '')}</td>
+            <td>${escapeHtml(d.status || '')}</td>
+            <td>${escapeHtml(d.email || '')}</td>
+            <td>${escapeHtml(d.created_at || '')}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      }catch(e){ log({error:e.message}); }
+    }
+
+    addBtn.addEventListener('click', async ()=>{
+      const email = emailEl.value.trim();
+      const domain = domainEl.value.trim().toLowerCase();
+      if(!email || !domain){ log('Please fill email and domain.'); return; }
+      addBtn.disabled = true;
+      log('Saving…');
+      try{
+        const r = await fetch(API_BASE + "/api/domains", {
+          method: "POST",
+          headers: { "content-type":"application/json" },
+          body: JSON.stringify({ email, domain })
+        });
+        const j = await r.json();
+        if(!j.ok){ throw new Error(j.error || 'Failed to save'); }
+        log(j.created ? "Added ✔" : "Already exists ✓");
+        domainEl.value = "";
+        await listDomains();
+      }catch(e){
+        log({error:e.message});
+      }finally{
+        addBtn.disabled = false;
+      }
+    });
+
+    function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+    // Load list on open
+    listDomains();
+  </script>
 </body>
 </html>
+
