@@ -3,63 +3,118 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DomainSafe — Add Domain</title>
+  <title>DomainSafe — Add · Quick‑Codes · Verify</title>
   <style>
-    :root { --bg:#0f1221; --card:#151935; --text:#e8ebff; --muted:#b7c0ff; --accent:#7aa2ff; --ok:#6be28e; --warn:#ffd277; --err:#ff8b8b; }
+    :root { --bg:#0f1221; --card:#151935; --text:#e8ebff; --muted:#b7c0ff; --accent:#7aa2ff; --ok:#6be28e; --warn:#ffd277; --err:#ff8b8b; --line:#2a3470; }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;background:linear-gradient(160deg,#0b0f26,#10163a);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif}
-    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:32px}
-    .card{max-width:800px;width:100%;background:linear-gradient(180deg,var(--card),#121735);border:1px solid #232a55;border-radius:16px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+    .wrap{min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:32px}
+    .card{max-width:1100px;width:100%;background:linear-gradient(180deg,var(--card),#121735);border:1px solid #232a55;border-radius:16px;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
     h1{color:var(--text);margin:0 0 8px;font-weight:700;letter-spacing:.2px}
     p{color:var(--muted);margin:0 0 16px;line-height:1.6}
+    h3,h4{color:var(--text);margin:12px 0 8px}
     label{color:var(--text);font-size:14px;display:block;margin-bottom:6px}
-    input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2a3470;background:#0f1533;color:#dbe1ff;outline:none}
+    input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0f1533;color:#dbe1ff;outline:none}
     input::placeholder{color:#8ea0ff}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .row > div{flex:1;min-width:240px}
     .btn{display:inline-block;margin-top:8px;padding:12px 16px;color:#08122b;background:linear-gradient(180deg,#9dc0ff,#7aa2ff);border:none;border-radius:10px;text-decoration:none;font-weight:600;cursor:pointer}
     .btn:disabled{opacity:.6;cursor:not-allowed}
     .chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 8px}
-    .chip{padding:8px 12px;border-radius:999px;border:1px solid #2a3470;color:#c6d0ff;background:#0f1533;font-size:13px}
-    .log{margin-top:16px;padding:12px;border:1px dashed #2a3470;border-radius:10px;background:#0f1533;color:#cbd5ff;font-family:ui-monospace,Consolas,Monaco,monospace;font-size:13px;white-space:pre-wrap}
-    table{width:100%;margin-top:16px;border-collapse:collapse}
-    th,td{border-bottom:1px solid #2a3470;padding:10px 8px;color:#cbd5ff;font-size:14px;text-align:left}
+    .chip{padding:8px 12px;border-radius:999px;border:1px solid var(--line);color:#c6d0ff;background:#0f1533;font-size:13px}
+    .log{margin-top:16px;padding:12px;border:1px dashed var(--line);border-radius:10px;background:#0f1533;color:#cbd5ff;font-family:ui-monospace,Consolas,Monaco,monospace;font-size:13px;white-space:pre-wrap}
+    table{width:100%;margin-top:12px;border-collapse:collapse}
+    th,td{border-bottom:1px solid var(--line);padding:10px 8px;color:#cbd5ff;font-size:14px;text-align:left;vertical-align:top}
     th{color:#e8ebff}
+    .grid{display:grid;grid-template-columns:1fr;gap:18px}
+    @media (min-width:980px){ .grid{grid-template-columns:1fr 1fr} }
+    .full{grid-column:1 / -1}
+    .copy{cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#0f1533;color:#c6d0ff;font-size:12px}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);margin-left:6px}
     .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+    .mono{font-family:ui-monospace,Consolas,Monaco,monospace}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <h1>DomainSafe is live ✅</h1>
-      <p>Add a domain so the robot can start taking care of it. No DNS edits yet—this just saves it in the ledger.</p>
-
+      <p>Add your domain, generate one‑time Quick‑Codes, and verify records. The robot does the rest.</p>
       <div class="chips">
         <div class="chip">Calm</div>
         <div class="chip">Minimal</div>
-        <div class="chip">One-and-done</div>
+        <div class="chip">One‑and‑done</div>
       </div>
 
-      <div class="row">
+      <div class="grid">
+        <!-- Add Domain -->
         <div>
-          <label for="email">Contact email</label>
-          <input id="email" type="email" placeholder="you@example.com" />
+          <h3>Add Domain</h3>
+          <div class="row">
+            <div>
+              <label for="email">Contact email</label>
+              <input id="email" type="email" placeholder="you@example.com" />
+            </div>
+            <div>
+              <label for="domain">Domain</label>
+              <input id="domain" type="text" placeholder="example.com" />
+            </div>
+          </div>
+          <button class="btn" id="addBtn">Add domain</button>
+          <div class="log" id="log">Waiting…</div>
+
+          <h4 style="color:#e8ebff;margin-top:18px">Recent domains</h4>
+          <table id="table">
+            <thead><tr><th>Domain</th><th>Status</th><th>Owner</th><th>Created</th></tr></thead>
+            <tbody id="tbody"><tr><td colspan="4" class="warn">No rows yet</td></tr></tbody>
+          </table>
         </div>
+
+        <!-- Quick-Codes -->
         <div>
-          <label for="domain">Domain</label>
-          <input id="domain" type="text" placeholder="example.com" />
+          <h3>Quick‑Codes (one‑time DNS)</h3>
+          <div class="row">
+            <div>
+              <label for="qc-domain">Domain to secure</label>
+              <input id="qc-domain" type="text" placeholder="example.com" />
+            </div>
+          </div>
+          <button class="btn" id="qcBtn">Generate Quick‑Codes</button>
+          <div class="log" id="qc-log">Enter a domain and click “Generate Quick‑Codes”.</div>
+
+          <div id="qc-table-wrap" style="display:none">
+            <h4>Required records</h4>
+            <table id="qc-table">
+              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
+              <tbody id="qc-body"></tbody>
+            </table>
+            <h4>Optional extras</h4>
+            <table id="qc-extras">
+              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
+              <tbody id="qc-body-extras"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Verify Records -->
+        <div class="full">
+          <h3>Verify Records</h3>
+          <div class="row">
+            <div>
+              <label for="vr-domain">Domain to check</label>
+              <input id="vr-domain" type="text" placeholder="example.com" />
+            </div>
+          </div>
+          <button class="btn" id="vrBtn">Check</button>
+          <div class="log" id="vr-log">Enter a domain and click “Check”.</div>
+
+          <table id="vr-table" style="display:none;margin-top:12px">
+            <thead><tr><th>Check</th><th>Status</th><th>Detail</th></tr></thead>
+            <tbody id="vr-body"></tbody>
+          </table>
         </div>
       </div>
 
-      <button class="btn" id="addBtn">Add domain</button>
-
-      <div class="log" id="log">Waiting…</div>
-
-      <h3 style="color:#e8ebff;margin-top:18px">Recent domains</h3>
-      <table id="table">
-        <thead><tr><th>Domain</th><th>Status</th><th>Owner</th><th>Created</th></tr></thead>
-        <tbody id="tbody"><tr><td colspan="4" class="warn">No rows yet</td></tr></tbody>
-      </table>
     </div>
   </div>
 
@@ -67,6 +122,7 @@
     // Worker base URL (no trailing slash)
     const API_BASE = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 
+    // ----- Add Domain section -----
     const logEl = document.getElementById('log');
     const tbody = document.getElementById('tbody');
     const emailEl = document.getElementById('email');
@@ -74,6 +130,7 @@
     const addBtn = document.getElementById('addBtn');
 
     function log(msg){ logEl.textContent = typeof msg === 'string' ? msg : JSON.stringify(msg,null,2); }
+    function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     async function listDomains(){
       try{
@@ -115,18 +172,104 @@
         log(j.created ? "Added ✔" : "Already exists ✓");
         domainEl.value = "";
         await listDomains();
+      }catch(e){ log({error:e.message}); }
+      finally{ addBtn.disabled = false; }
+    });
+
+    // Load initial list
+    listDomains();
+
+    // ----- Quick-Codes section -----
+    const qcBtn = document.getElementById('qcBtn');
+    const qcDomain = document.getElementById('qc-domain');
+    const qcLog = document.getElementById('qc-log');
+    const qcWrap = document.getElementById('qc-table-wrap');
+    const qcBody = document.getElementById('qc-body');
+    const qcBodyExtras = document.getElementById('qc-body-extras');
+
+    function rowHTML(r){
+      const value = escapeHtml(r.value);
+      const host = escapeHtml(r.name);
+      return `<tr>
+        <td>${escapeHtml(r.type)}</td>
+        <td>${host}</td>
+        <td style="max-width:520px;word-break:break-all" class="mono">${value}</td>
+        <td>${escapeHtml(String(r.ttl || '3600'))}</td>
+        <td>${escapeHtml(r.purpose || '')}</td>
+        <td><button class="copy" onclick='navigator.clipboard.writeText("${value}");'>Copy</button></td>
+      </tr>`;
+    }
+
+    qcBtn.addEventListener('click', async ()=>{
+      const d = qcDomain.value.trim().toLowerCase();
+      if(!d){ qcLog.textContent = 'Enter a domain first.'; return; }
+      qcBtn.disabled = true;
+      qcLog.textContent = 'Generating…';
+      try{
+        const res = await fetch(API_BASE + "/api/quick-codes?domain=" + encodeURIComponent(d));
+        const j = await res.json();
+        if(!j.ok){ throw new Error(j.error || 'Failed'); }
+        qcBody.innerHTML = ''; qcBodyExtras.innerHTML = '';
+        (j.records || []).forEach(r => qcBody.insertAdjacentHTML('beforeend', rowHTML(r)));
+        (j.extras || []).forEach(r => qcBodyExtras.insertAdjacentHTML('beforeend', rowHTML(r)));
+        qcWrap.style.display = 'block';
+        qcLog.textContent = `TTL ${j.ttl}s • Control domain: ${j.control_domain}`;
       }catch(e){
-        log({error:e.message});
+        qcLog.textContent = e.message;
       }finally{
-        addBtn.disabled = false;
+        qcBtn.disabled = false;
       }
     });
 
-    function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    // ----- Verify Records section -----
+    const vrBtn = document.getElementById('vrBtn');
+    const vrDomain = document.getElementById('vr-domain');
+    const vrLog = document.getElementById('vr-log');
+    const vrTable = document.getElementById('vr-table');
+    const vrBody = document.getElementById('vr-body');
 
-    // Load list on open
-    listDomains();
+    function pill(ok){ return `<span class="tag" style="border-color:${ok?'#2f7':'#d66'};color:${ok?'#6be28e':'#ff8b8b'}">${ok?'OK':'Needs fix'}</span>`; }
+
+    vrBtn.addEventListener('click', async ()=>{
+      const d = vrDomain.value.trim().toLowerCase();
+      if(!d){ vrLog.textContent = 'Enter a domain first.'; return; }
+      vrBtn.disabled = true;
+      vrLog.textContent = 'Checking…';
+      vrTable.style.display = 'none';
+      vrBody.innerHTML = '';
+      try{
+        const res = await fetch(API_BASE + "/api/check-quick-codes?domain=" + encodeURIComponent(d));
+        const j = await res.json();
+        if(!j.ok){ throw new Error(j.error || 'Failed'); }
+        const c = j.checks || {};
+        const spfOk = !!(c.spf && c.spf.present && c.spf.includesControl);
+        const dmarcOk = !!(c.dmarc && c.dmarc.present); // policy may still be 'none' by design
+        const s1Ok = !!(c.dkim && c.dkim.s1 && c.dkim.s1.ok);
+        const s2Ok = !!(c.dkim && c.dkim.s2 && c.dkim.s2.ok);
+
+        const rows = [
+          ['SPF include', spfOk, (c.spf?.record || '—')],
+          ['DMARC TXT', dmarcOk, (c.dmarc?.record || '—')],
+          ['DKIM s1 CNAME', s1Ok, (c.dkim?.s1?.target || '—')],
+          ['DKIM s2 CNAME', s2Ok, (c.dkim?.s2?.target || '—')]
+        ];
+        rows.forEach(([label, ok, detail])=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${label}</td>
+            <td>${pill(ok)}</td>
+            <td class="mono" style="max-width:620px;word-break:break-all">${escapeHtml(detail)}</td>`;
+          vrBody.appendChild(tr);
+        });
+
+        vrTable.style.display = 'table';
+        vrLog.textContent = spfOk && dmarcOk && s1Ok && s2Ok ? 'All good ✓' : 'Some items need attention';
+      }catch(e){
+        vrLog.textContent = e.message;
+      }finally{
+        vrBtn.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>
-
