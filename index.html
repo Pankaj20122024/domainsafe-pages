@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DomainSafe — Add · Quick‑Codes · Verify</title>
+  <title>DomainSafe — Add · Quick-Codes · Verify · Connect</title>
   <style>
     :root { --bg:#0f1221; --card:#151935; --text:#e8ebff; --muted:#b7c0ff; --accent:#7aa2ff; --ok:#6be28e; --warn:#ffd277; --err:#ff8b8b; --line:#2a3470; }
     *{box-sizing:border-box}
@@ -14,7 +14,7 @@
     p{color:var(--muted);margin:0 0 16px;line-height:1.6}
     h3,h4{color:var(--text);margin:12px 0 8px}
     label{color:var(--text);font-size:14px;display:block;margin-bottom:6px}
-    input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0f1533;color:#dbe1ff;outline:none}
+    input,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0f1533;color:#dbe1ff;outline:none}
     input::placeholder{color:#8ea0ff}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .row > div{flex:1;min-width:240px}
@@ -39,11 +39,11 @@
   <div class="wrap">
     <div class="card">
       <h1>DomainSafe is live ✅</h1>
-      <p>Add your domain, generate one‑time Quick‑Codes, and verify records. The robot does the rest.</p>
+      <p>Add your domain, generate one-time Quick-Codes, verify records, or connect Cloudflare for one-click Protect. The robot does the rest.</p>
       <div class="chips">
         <div class="chip">Calm</div>
         <div class="chip">Minimal</div>
-        <div class="chip">One‑and‑done</div>
+        <div class="chip">One-and-done</div>
       </div>
 
       <div class="grid">
@@ -72,15 +72,15 @@
 
         <!-- Quick-Codes -->
         <div>
-          <h3>Quick‑Codes (one‑time DNS)</h3>
+          <h3>Quick-Codes (one-time DNS)</h3>
           <div class="row">
             <div>
               <label for="qc-domain">Domain to secure</label>
               <input id="qc-domain" type="text" placeholder="example.com" />
             </div>
           </div>
-          <button class="btn" id="qcBtn">Generate Quick‑Codes</button>
-          <div class="log" id="qc-log">Enter a domain and click “Generate Quick‑Codes”.</div>
+          <button class="btn" id="qcBtn">Generate Quick-Codes</button>
+          <div class="log" id="qc-log">Enter a domain and click “Generate Quick-Codes”.</div>
 
           <div id="qc-table-wrap" style="display:none">
             <h4>Required records</h4>
@@ -113,6 +113,32 @@
             <tbody id="vr-body"></tbody>
           </table>
         </div>
+
+        <!-- Connect Cloudflare (one-click Protect) -->
+        <div class="full">
+          <h3>Connect Cloudflare (one-click Protect)</h3>
+          <p class="mono" style="color:#cbd5ff">
+            Paste a Cloudflare API Token (Permissions: <b>Zone:Read</b> and <b>DNS:Edit</b>, scoped to the zone you’ll test).
+            Nothing is stored—token is used only for this request.
+          </p>
+          <div class="row">
+            <div>
+              <label for="cf-token">Cloudflare API Token</label>
+              <input id="cf-token" type="password" placeholder="paste token here" />
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn" id="cfListBtn">List zones</button>
+            <div style="flex:1;min-width:240px">
+              <label for="cf-zone">Zone</label>
+              <select id="cf-zone">
+                <option value="">— choose a zone —</option>
+              </select>
+            </div>
+            <button class="btn" id="cfProtectBtn">Protect</button>
+          </div>
+          <div class="log" id="cf-log">Paste token → List zones → choose zone → Protect.</div>
+        </div>
       </div>
 
     </div>
@@ -122,15 +148,17 @@
     // Worker base URL (no trailing slash)
     const API_BASE = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 
-    // ----- Add Domain section -----
+    // ----- helpers -----
+    function log(msg){ logEl.textContent = typeof msg === 'string' ? msg : JSON.stringify(msg,null,2); }
+    function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function pill(ok){ return `<span class="tag" style="border-color:${ok?'#2f7':'#d66'};color:${ok?'#6be28e':'#ff8b8b'}">${ok?'OK':'Needs fix'}</span>`; }
+
+    // ----- Add Domain -----
     const logEl = document.getElementById('log');
     const tbody = document.getElementById('tbody');
     const emailEl = document.getElementById('email');
     const domainEl = document.getElementById('domain');
     const addBtn = document.getElementById('addBtn');
-
-    function log(msg){ logEl.textContent = typeof msg === 'string' ? msg : JSON.stringify(msg,null,2); }
-    function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
     async function listDomains(){
       try{
@@ -175,11 +203,9 @@
       }catch(e){ log({error:e.message}); }
       finally{ addBtn.disabled = false; }
     });
-
-    // Load initial list
     listDomains();
 
-    // ----- Quick-Codes section -----
+    // ----- Quick-Codes -----
     const qcBtn = document.getElementById('qcBtn');
     const qcDomain = document.getElementById('qc-domain');
     const qcLog = document.getElementById('qc-log');
@@ -203,8 +229,7 @@
     qcBtn.addEventListener('click', async ()=>{
       const d = qcDomain.value.trim().toLowerCase();
       if(!d){ qcLog.textContent = 'Enter a domain first.'; return; }
-      qcBtn.disabled = true;
-      qcLog.textContent = 'Generating…';
+      qcBtn.disabled = true; qcLog.textContent = 'Generating…';
       try{
         const res = await fetch(API_BASE + "/api/quick-codes?domain=" + encodeURIComponent(d));
         const j = await res.json();
@@ -214,36 +239,29 @@
         (j.extras || []).forEach(r => qcBodyExtras.insertAdjacentHTML('beforeend', rowHTML(r)));
         qcWrap.style.display = 'block';
         qcLog.textContent = `TTL ${j.ttl}s • Control domain: ${j.control_domain}`;
-      }catch(e){
-        qcLog.textContent = e.message;
-      }finally{
-        qcBtn.disabled = false;
-      }
+      }catch(e){ qcLog.textContent = e.message; }
+      finally{ qcBtn.disabled = false; }
     });
 
-    // ----- Verify Records section -----
+    // ----- Verify Records -----
     const vrBtn = document.getElementById('vrBtn');
     const vrDomain = document.getElementById('vr-domain');
     const vrLog = document.getElementById('vr-log');
     const vrTable = document.getElementById('vr-table');
     const vrBody = document.getElementById('vr-body');
 
-    function pill(ok){ return `<span class="tag" style="border-color:${ok?'#2f7':'#d66'};color:${ok?'#6be28e':'#ff8b8b'}">${ok?'OK':'Needs fix'}</span>`; }
-
     vrBtn.addEventListener('click', async ()=>{
       const d = vrDomain.value.trim().toLowerCase();
       if(!d){ vrLog.textContent = 'Enter a domain first.'; return; }
-      vrBtn.disabled = true;
-      vrLog.textContent = 'Checking…';
-      vrTable.style.display = 'none';
-      vrBody.innerHTML = '';
+      vrBtn.disabled = true; vrLog.textContent = 'Checking…';
+      vrTable.style.display = 'none'; vrBody.innerHTML = '';
       try{
         const res = await fetch(API_BASE + "/api/check-quick-codes?domain=" + encodeURIComponent(d));
         const j = await res.json();
         if(!j.ok){ throw new Error(j.error || 'Failed'); }
         const c = j.checks || {};
         const spfOk = !!(c.spf && c.spf.present && c.spf.includesControl);
-        const dmarcOk = !!(c.dmarc && c.dmarc.present); // policy may still be 'none' by design
+        const dmarcOk = !!(c.dmarc && c.dmarc.present);
         const s1Ok = !!(c.dkim && c.dkim.s1 && c.dkim.s1.ok);
         const s2Ok = !!(c.dkim && c.dkim.s2 && c.dkim.s2.ok);
 
@@ -255,20 +273,63 @@
         ];
         rows.forEach(([label, ok, detail])=>{
           const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${label}</td>
-            <td>${pill(ok)}</td>
-            <td class="mono" style="max-width:620px;word-break:break-all">${escapeHtml(detail)}</td>`;
+          tr.innerHTML = `<td>${label}</td><td>${pill(ok)}</td><td class="mono" style="max-width:620px;word-break:break-all">${escapeHtml(detail)}</td>`;
           vrBody.appendChild(tr);
         });
 
         vrTable.style.display = 'table';
         vrLog.textContent = spfOk && dmarcOk && s1Ok && s2Ok ? 'All good ✓' : 'Some items need attention';
-      }catch(e){
-        vrLog.textContent = e.message;
-      }finally{
-        vrBtn.disabled = false;
-      }
+      }catch(e){ vrLog.textContent = e.message; }
+      finally{ vrBtn.disabled = false; }
+    });
+
+    // ----- Connect Cloudflare (stateless) -----
+    const cfToken = document.getElementById('cf-token');
+    const cfListBtn = document.getElementById('cfListBtn');
+    const cfZoneSel = document.getElementById('cf-zone');
+    const cfProtectBtn = document.getElementById('cfProtectBtn');
+    const cfLog = document.getElementById('cf-log');
+
+    cfListBtn.addEventListener('click', async ()=>{
+      const token = cfToken.value.trim();
+      if(!token){ cfLog.textContent = 'Please paste your Cloudflare API token.'; return; }
+      cfListBtn.disabled = true; cfLog.textContent = 'Listing zones…';
+      try{
+        const r = await fetch(API_BASE + '/api/cf/list-zones', {
+          method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify({ token })
+        });
+        const j = await r.json();
+        if(!j.ok) throw new Error(j.error || 'Failed to list zones');
+        cfZoneSel.innerHTML = '<option value="">— choose a zone —</option>';
+        (j.zones || []).forEach(z=>{
+          const opt = document.createElement('option');
+          opt.value = z.id; opt.textContent = `${z.name} (${z.status})`;
+          cfZoneSel.appendChild(opt);
+        });
+        if((j.zones||[]).length === 0) cfLog.textContent = 'No zones returned. Check token scopes (need Zone:Read + DNS:Edit).';
+        else cfLog.textContent = `Found ${j.zones.length} zone(s). Choose one and click Protect.`;
+      }catch(e){ cfLog.textContent = e.message; }
+      finally{ cfListBtn.disabled = false; }
+    });
+
+    cfProtectBtn.addEventListener('click', async ()=>{
+      const token = cfToken.value.trim();
+      const zone_id = cfZoneSel.value;
+      if(!token){ cfLog.textContent = 'Please paste your token.'; return; }
+      if(!zone_id){ cfLog.textContent = 'Please choose a zone first.'; return; }
+      cfProtectBtn.disabled = true; cfLog.textContent = 'Protecting… (writing SPF, DKIM, DMARC)';
+      try{
+        const r = await fetch(API_BASE + '/api/cf/protect', {
+          method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify({ token, zone_id })
+        });
+        const j = await r.json();
+        if(!j.ok) throw new Error(j.error || 'Failed to protect');
+        const lines = (j.results||[]).map(x => `${x.type} ${x.name} → ${x.action}`);
+        cfLog.textContent = `Zone ${j.apex}: ${lines.join(' | ')}. Use Verify Records to confirm.`;
+      }catch(e){ cfLog.textContent = e.message; }
+      finally{ cfProtectBtn.disabled = false; }
     });
   </script>
 </body>
