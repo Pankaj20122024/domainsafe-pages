@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DomainSafe — Add · Quick-Codes · Verify · Connect</title>
+  <title>DomainSafe — Add · Quick-Codes · Verify · Connect (CF & Route 53)</title>
   <style>
     :root { --bg:#0f1221; --card:#151935; --text:#e8ebff; --muted:#b7c0ff; --accent:#7aa2ff; --ok:#6be28e; --warn:#ffd277; --err:#ff8b8b; --line:#2a3470; }
     *{box-sizing:border-box}
@@ -39,7 +39,7 @@
   <div class="wrap">
     <div class="card">
       <h1>DomainSafe is live ✅</h1>
-      <p>Add your domain, generate one-time Quick-Codes, verify records, or connect Cloudflare for one-click Protect. The robot does the rest.</p>
+      <p>Add your domain, generate one-time Quick-Codes, verify records, or connect providers for one-click Protect. The robot does the rest.</p>
       <div class="chips">
         <div class="chip">Calm</div>
         <div class="chip">Minimal</div>
@@ -139,6 +139,35 @@
           </div>
           <div class="log" id="cf-log">Paste token → List zones → choose zone → Protect.</div>
         </div>
+
+        <!-- Connect Route 53 (one-click Protect) -->
+        <div class="full">
+          <h3>Connect AWS Route 53 (one-click Protect)</h3>
+          <p class="mono" style="color:#cbd5ff">
+            Paste an AWS Access Key ID + Secret (IAM user limited to Route 53). Nothing is stored—keys are used only for this request.
+          </p>
+          <div class="row">
+            <div>
+              <label for="r53-akid">AWS Access Key ID</label>
+              <input id="r53-akid" type="text" placeholder="AKIA..." />
+            </div>
+            <div>
+              <label for="r53-secret">AWS Secret Access Key</label>
+              <input id="r53-secret" type="password" placeholder="********" />
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn" id="r53ListBtn">List hosted zones</button>
+            <div style="flex:1;min-width:240px">
+              <label for="r53-zone">Hosted zone</label>
+              <select id="r53-zone">
+                <option value="">— choose a hosted zone —</option>
+              </select>
+            </div>
+            <button class="btn" id="r53ProtectBtn">Protect</button>
+          </div>
+          <div class="log" id="r53-log">Paste keys → List hosted zones → choose one → Protect.</div>
+        </div>
       </div>
 
     </div>
@@ -149,7 +178,6 @@
     const API_BASE = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 
     // ----- helpers -----
-    function log(msg){ logEl.textContent = typeof msg === 'string' ? msg : JSON.stringify(msg,null,2); }
     function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
     function pill(ok){ return `<span class="tag" style="border-color:${ok?'#2f7':'#d66'};color:${ok?'#6be28e':'#ff8b8b'}">${ok?'OK':'Needs fix'}</span>`; }
 
@@ -159,6 +187,8 @@
     const emailEl = document.getElementById('email');
     const domainEl = document.getElementById('domain');
     const addBtn = document.getElementById('addBtn');
+
+    function log(msg){ logEl.textContent = typeof msg === 'string' ? msg : JSON.stringify(msg,null,2); }
 
     async function listDomains(){
       try{
@@ -182,7 +212,6 @@
         }
       }catch(e){ log({error:e.message}); }
     }
-
     addBtn.addEventListener('click', async ()=>{
       const email = emailEl.value.trim();
       const domain = domainEl.value.trim().toLowerCase();
@@ -198,8 +227,7 @@
         const j = await r.json();
         if(!j.ok){ throw new Error(j.error || 'Failed to save'); }
         log(j.created ? "Added ✔" : "Already exists ✓");
-        domainEl.value = "";
-        await listDomains();
+        domainEl.value = ""; await listDomains();
       }catch(e){ log({error:e.message}); }
       finally{ addBtn.disabled = false; }
     });
@@ -283,7 +311,7 @@
       finally{ vrBtn.disabled = false; }
     });
 
-    // ----- Connect Cloudflare (stateless) -----
+    // ----- Connect Cloudflare -----
     const cfToken = document.getElementById('cf-token');
     const cfListBtn = document.getElementById('cfListBtn');
     const cfZoneSel = document.getElementById('cf-zone');
@@ -330,6 +358,58 @@
         cfLog.textContent = `Zone ${j.apex}: ${lines.join(' | ')}. Use Verify Records to confirm.`;
       }catch(e){ cfLog.textContent = e.message; }
       finally{ cfProtectBtn.disabled = false; }
+    });
+
+    // ----- Connect Route 53 -----
+    const r53Akid = document.getElementById('r53-akid');
+    const r53Secret = document.getElementById('r53-secret');
+    const r53ListBtn = document.getElementById('r53ListBtn');
+    const r53ZoneSel = document.getElementById('r53-zone');
+    const r53ProtectBtn = document.getElementById('r53ProtectBtn');
+    const r53Log = document.getElementById('r53-log');
+
+    r53ListBtn.addEventListener('click', async ()=>{
+      const access_key_id = r53Akid.value.trim();
+      const secret_access_key = r53Secret.value.trim();
+      if(!access_key_id || !secret_access_key){ r53Log.textContent = 'Paste AWS Access Key ID and Secret first.'; return; }
+      r53ListBtn.disabled = true; r53Log.textContent = 'Listing hosted zones…';
+      try{
+        const r = await fetch(API_BASE + '/api/r53/list-zones', {
+          method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify({ access_key_id, secret_access_key })
+        });
+        const j = await r.json();
+        if(!j.ok) throw new Error(j.error || 'Failed to list hosted zones');
+        r53ZoneSel.innerHTML = '<option value="">— choose a hosted zone —</option>';
+        (j.zones || []).forEach(z=>{
+          const opt = document.createElement('option');
+          opt.value = z.id; opt.textContent = `${z.name} (${z.id})`;
+          r53ZoneSel.appendChild(opt);
+        });
+        if((j.zones||[]).length === 0) r53Log.textContent = 'No hosted zones found. Create one in AWS Route 53 or use Cloudflare Connect.';
+        else r53Log.textContent = `Found ${j.zones.length} hosted zone(s). Choose one and click Protect.`;
+      }catch(e){ r53Log.textContent = e.message; }
+      finally{ r53ListBtn.disabled = false; }
+    });
+
+    r53ProtectBtn.addEventListener('click', async ()=>{
+      const access_key_id = r53Akid.value.trim();
+      const secret_access_key = r53Secret.value.trim();
+      const hosted_zone_id = r53ZoneSel.value;
+      if(!access_key_id || !secret_access_key){ r53Log.textContent = 'Paste AWS keys first.'; return; }
+      if(!hosted_zone_id){ r53Log.textContent = 'Choose a hosted zone first.'; return; }
+      r53ProtectBtn.disabled = true; r53Log.textContent = 'Protecting… (writing SPF, DKIM, DMARC)';
+      try{
+        const r = await fetch(API_BASE + '/api/r53/protect', {
+          method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify({ access_key_id, secret_access_key, hosted_zone_id })
+        });
+        const j = await r.json();
+        if(!j.ok) throw new Error(j.error || 'Failed to protect');
+        const lines = (j.results||[]).map(x => `${x.type} ${x.name} → ${x.action}`);
+        r53Log.textContent = `Zone ${j.apex}: ${lines.join(' | ')}. Use Verify Records to confirm.`;
+      }catch(e){ r53Log.textContent = e.message; }
+      finally{ r53ProtectBtn.disabled = false; }
     });
   </script>
 </body>
