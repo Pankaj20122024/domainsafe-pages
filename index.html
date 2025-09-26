@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DomainSafe — Add · Quick-Codes · Verify · Connect (CF & Route 53)</title>
+  <title>DomainSafe — Status · Add · Quick‑Codes · Verify · Connect</title>
   <style>
     :root { --bg:#0f1221; --card:#151935; --text:#e8ebff; --muted:#b7c0ff; --accent:#7aa2ff; --ok:#6be28e; --warn:#ffd277; --err:#ff8b8b; --line:#2a3470; }
     *{box-sizing:border-box}
@@ -29,24 +29,40 @@
     .grid{display:grid;grid-template-columns:1fr;gap:18px}
     @media (min-width:980px){ .grid{grid-template-columns:1fr 1fr} }
     .full{grid-column:1 / -1}
-    .copy{cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#0f1533;color:#c6d0ff;font-size:12px}
     .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);margin-left:6px}
-    .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
     .mono{font-family:ui-monospace,Consolas,Monaco,monospace}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+    .mini{font-size:12px;color:#b7c0ff}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
       <h1>DomainSafe is live ✅</h1>
-      <p>Add your domain, generate one-time Quick-Codes, verify records, or connect providers for one-click Protect. The robot does the rest.</p>
+      <p>Status, Quick‑Codes, Verify, and one‑click Protect across providers. The robot keeps watch daily.</p>
       <div class="chips">
         <div class="chip">Calm</div>
         <div class="chip">Minimal</div>
-        <div class="chip">One-and-done</div>
+        <div class="chip">One‑and‑done</div>
       </div>
 
       <div class="grid">
+        <!-- Status -->
+        <div class="full">
+          <h3>Domain Status (daily robot checks)</h3>
+          <div class="row">
+            <button class="btn" id="stRefresh">Refresh status (load latest)</button>
+            <button class="btn" id="stRun">Run now (dev)</button>
+          </div>
+          <div class="log" id="st-log">This loads the latest recorded check per domain. "Run now" triggers a one‑time check.</div>
+          <table id="st-table" style="margin-top:8px">
+            <thead><tr>
+              <th>Domain</th><th>Owner</th><th>SPF</th><th>DMARC</th><th>DKIM s1</th><th>DKIM s2</th><th>Checked at</th>
+            </tr></thead>
+            <tbody id="st-body"><tr><td colspan="7" class="warn">No rows yet</td></tr></tbody>
+          </table>
+        </div>
+
         <!-- Add Domain -->
         <div>
           <h3>Add Domain</h3>
@@ -70,27 +86,27 @@
           </table>
         </div>
 
-        <!-- Quick-Codes -->
+        <!-- Quick‑Codes -->
         <div>
-          <h3>Quick-Codes (one-time DNS)</h3>
+          <h3>Quick‑Codes (one‑time DNS)</h3>
           <div class="row">
             <div>
               <label for="qc-domain">Domain to secure</label>
               <input id="qc-domain" type="text" placeholder="example.com" />
             </div>
           </div>
-          <button class="btn" id="qcBtn">Generate Quick-Codes</button>
-          <div class="log" id="qc-log">Enter a domain and click “Generate Quick-Codes”.</div>
+          <button class="btn" id="qcBtn">Generate Quick‑Codes</button>
+          <div class="log" id="qc-log">Enter a domain and click “Generate Quick‑Codes”.</div>
 
           <div id="qc-table-wrap" style="display:none">
             <h4>Required records</h4>
             <table id="qc-table">
-              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
+              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th></tr></thead>
               <tbody id="qc-body"></tbody>
             </table>
             <h4>Optional extras</h4>
             <table id="qc-extras">
-              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
+              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th></tr></thead>
               <tbody id="qc-body-extras"></tbody>
             </table>
           </div>
@@ -114,9 +130,9 @@
           </table>
         </div>
 
-        <!-- Connect Cloudflare (one-click Protect) -->
+        <!-- Connect Cloudflare -->
         <div class="full">
-          <h3>Connect Cloudflare (one-click Protect)</h3>
+          <h3>Connect Cloudflare (one‑click Protect)</h3>
           <p class="mono" style="color:#cbd5ff">
             Paste a Cloudflare API Token (Permissions: <b>Zone:Read</b> and <b>DNS:Edit</b>, scoped to the zone you’ll test).
             Nothing is stored—token is used only for this request.
@@ -131,18 +147,16 @@
             <button class="btn" id="cfListBtn">List zones</button>
             <div style="flex:1;min-width:240px">
               <label for="cf-zone">Zone</label>
-              <select id="cf-zone">
-                <option value="">— choose a zone —</option>
-              </select>
+              <select id="cf-zone"><option value="">— choose a zone —</option></select>
             </div>
             <button class="btn" id="cfProtectBtn">Protect</button>
           </div>
           <div class="log" id="cf-log">Paste token → List zones → choose zone → Protect.</div>
         </div>
 
-        <!-- Connect Route 53 (one-click Protect) -->
+        <!-- Connect Route 53 -->
         <div class="full">
-          <h3>Connect AWS Route 53 (one-click Protect)</h3>
+          <h3>Connect AWS Route 53 (one‑click Protect)</h3>
           <p class="mono" style="color:#cbd5ff">
             Paste an AWS Access Key ID + Secret (IAM user limited to Route 53). Nothing is stored—keys are used only for this request.
           </p>
@@ -160,9 +174,7 @@
             <button class="btn" id="r53ListBtn">List hosted zones</button>
             <div style="flex:1;min-width:240px">
               <label for="r53-zone">Hosted zone</label>
-              <select id="r53-zone">
-                <option value="">— choose a hosted zone —</option>
-              </select>
+              <select id="r53-zone"><option value="">— choose a hosted zone —</option></select>
             </div>
             <button class="btn" id="r53ProtectBtn">Protect</button>
           </div>
@@ -174,14 +186,65 @@
   </div>
 
   <script>
-    // Worker base URL (no trailing slash)
     const API_BASE = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 
-    // ----- helpers -----
-    function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-    function pill(ok){ return `<span class="tag" style="border-color:${ok?'#2f7':'#d66'};color:${ok?'#6be28e':'#ff8b8b'}">${ok?'OK':'Needs fix'}</span>`; }
+    // Helpers
+    const pill = (ok)=> `<span class="tag" style="border-color:${ok?'#2f7':'#d66'};color:${ok?'#6be28e':'#ff8b8b'}">${ok?'OK':'Needs fix'}</span>`;
+    const esc = (s)=> (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-    // ----- Add Domain -----
+    // ---------- Status ----------
+    const stBody = document.getElementById('st-body');
+    const stLog  = document.getElementById('st-log');
+    const stRefreshBtn = document.getElementById('stRefresh');
+    const stRunBtn = document.getElementById('stRun');
+
+    async function loadStatus(){
+      stLog.textContent = 'Loading status…';
+      try{
+        const r = await fetch(API_BASE + "/api/status");
+        const j = await r.json();
+        if(!j.ok) throw new Error(j.error || 'Failed to load status');
+        const rows = j.rows || [];
+        stBody.innerHTML = '';
+        if(rows.length === 0){
+          stBody.innerHTML = '<tr><td colspan="7" class="warn">No rows yet</td></tr>';
+          stLog.textContent = 'No recorded checks yet. Click “Run now (dev)” to seed status, or wait for cron.';
+          return;
+        }
+        for(const r of rows){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${esc(r.domain_name||'')}</td>
+            <td>${esc(r.email||'')}</td>
+            <td>${pill(r.spf_ok===1)}</td>
+            <td>${pill(r.dmarc_ok===1)}</td>
+            <td>${pill(r.dkim_s1_ok===1)}</td>
+            <td>${pill(r.dkim_s2_ok===1)}</td>
+            <td class="mini">${esc(r.checked_at||'')}</td>
+          `;
+          stBody.appendChild(tr);
+        }
+        stLog.textContent = `Loaded ${rows.length} row(s).`;
+      }catch(e){
+        stLog.textContent = e.message;
+      }
+    }
+    stRefreshBtn.addEventListener('click', loadStatus);
+
+    // One‑time dev run to seed checks
+    stRunBtn.addEventListener('click', async ()=>{
+      stRunBtn.disabled = true; stLog.textContent = 'Running checks…';
+      try{
+        const r = await fetch(API_BASE + "/api/monitor-run", { method:'POST' });
+        const j = await r.json();
+        if(!j.ok) throw new Error(j.error || 'Run failed');
+        stLog.textContent = `Ran ${j.count} domain(s). Reloading status…`;
+        setTimeout(loadStatus, 800);
+      }catch(e){ stLog.textContent = e.message; }
+      finally{ stRunBtn.disabled = false; }
+    });
+
+    // ---------- Add Domain ----------
     const logEl = document.getElementById('log');
     const tbody = document.getElementById('tbody');
     const emailEl = document.getElementById('email');
@@ -203,15 +266,16 @@
         for(const d of j.domains){
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>${escapeHtml(d.domain_name || '')}</td>
-            <td>${escapeHtml(d.status || '')}</td>
-            <td>${escapeHtml(d.email || '')}</td>
-            <td>${escapeHtml(d.created_at || '')}</td>
+            <td>${esc(d.domain_name || '')}</td>
+            <td>${esc(d.status || '')}</td>
+            <td>${esc(d.email || '')}</td>
+            <td>${esc(d.created_at || '')}</td>
           `;
           tbody.appendChild(tr);
         }
       }catch(e){ log({error:e.message}); }
     }
+
     addBtn.addEventListener('click', async ()=>{
       const email = emailEl.value.trim();
       const domain = domainEl.value.trim().toLowerCase();
@@ -227,13 +291,17 @@
         const j = await r.json();
         if(!j.ok){ throw new Error(j.error || 'Failed to save'); }
         log(j.created ? "Added ✔" : "Already exists ✓");
-        domainEl.value = ""; await listDomains();
-      }catch(e){ log({error:e.message}); }
-      finally{ addBtn.disabled = false; }
+        domainEl.value = "";
+        await listDomains();
+        await loadStatus();
+      }catch(e){
+        log({error:e.message});
+      }finally{
+        addBtn.disabled = false;
+      }
     });
-    listDomains();
 
-    // ----- Quick-Codes -----
+    // ---------- Quick‑Codes ----------
     const qcBtn = document.getElementById('qcBtn');
     const qcDomain = document.getElementById('qc-domain');
     const qcLog = document.getElementById('qc-log');
@@ -242,15 +310,14 @@
     const qcBodyExtras = document.getElementById('qc-body-extras');
 
     function rowHTML(r){
-      const value = escapeHtml(r.value);
-      const host = escapeHtml(r.name);
+      const value = esc(r.value);
+      const host = esc(r.name);
       return `<tr>
-        <td>${escapeHtml(r.type)}</td>
+        <td>${esc(r.type)}</td>
         <td>${host}</td>
         <td style="max-width:520px;word-break:break-all" class="mono">${value}</td>
-        <td>${escapeHtml(String(r.ttl || '3600'))}</td>
-        <td>${escapeHtml(r.purpose || '')}</td>
-        <td><button class="copy" onclick='navigator.clipboard.writeText("${value}");'>Copy</button></td>
+        <td>${esc(String(r.ttl || '3600'))}</td>
+        <td>${esc(r.purpose || '')}</td>
       </tr>`;
     }
 
@@ -271,7 +338,7 @@
       finally{ qcBtn.disabled = false; }
     });
 
-    // ----- Verify Records -----
+    // ---------- Verify ----------
     const vrBtn = document.getElementById('vrBtn');
     const vrDomain = document.getElementById('vr-domain');
     const vrLog = document.getElementById('vr-log');
@@ -301,7 +368,7 @@
         ];
         rows.forEach(([label, ok, detail])=>{
           const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${label}</td><td>${pill(ok)}</td><td class="mono" style="max-width:620px;word-break:break-all">${escapeHtml(detail)}</td>`;
+          tr.innerHTML = `<td>${label}</td><td>${pill(ok)}</td><td class="mono" style="max-width:620px;word-break:break-all">${esc(detail)}</td>`;
           vrBody.appendChild(tr);
         });
 
@@ -311,7 +378,7 @@
       finally{ vrBtn.disabled = false; }
     });
 
-    // ----- Connect Cloudflare -----
+    // ---------- Connect Cloudflare ----------
     const cfToken = document.getElementById('cf-token');
     const cfListBtn = document.getElementById('cfListBtn');
     const cfZoneSel = document.getElementById('cf-zone');
@@ -323,10 +390,7 @@
       if(!token){ cfLog.textContent = 'Please paste your Cloudflare API token.'; return; }
       cfListBtn.disabled = true; cfLog.textContent = 'Listing zones…';
       try{
-        const r = await fetch(API_BASE + '/api/cf/list-zones', {
-          method:'POST', headers:{'content-type':'application/json'},
-          body: JSON.stringify({ token })
-        });
+        const r = await fetch(API_BASE + '/api/cf/list-zones', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ token }) });
         const j = await r.json();
         if(!j.ok) throw new Error(j.error || 'Failed to list zones');
         cfZoneSel.innerHTML = '<option value="">— choose a zone —</option>';
@@ -335,8 +399,7 @@
           opt.value = z.id; opt.textContent = `${z.name} (${z.status})`;
           cfZoneSel.appendChild(opt);
         });
-        if((j.zones||[]).length === 0) cfLog.textContent = 'No zones returned. Check token scopes (need Zone:Read + DNS:Edit).';
-        else cfLog.textContent = `Found ${j.zones.length} zone(s). Choose one and click Protect.`;
+        cfLog.textContent = (j.zones||[]).length ? `Found ${j.zones.length} zone(s). Choose one and click Protect.` : 'No zones returned. Check token scopes.';
       }catch(e){ cfLog.textContent = e.message; }
       finally{ cfListBtn.disabled = false; }
     });
@@ -348,10 +411,7 @@
       if(!zone_id){ cfLog.textContent = 'Please choose a zone first.'; return; }
       cfProtectBtn.disabled = true; cfLog.textContent = 'Protecting… (writing SPF, DKIM, DMARC)';
       try{
-        const r = await fetch(API_BASE + '/api/cf/protect', {
-          method:'POST', headers:{'content-type':'application/json'},
-          body: JSON.stringify({ token, zone_id })
-        });
+        const r = await fetch(API_BASE + '/api/cf/protect', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ token, zone_id }) });
         const j = await r.json();
         if(!j.ok) throw new Error(j.error || 'Failed to protect');
         const lines = (j.results||[]).map(x => `${x.type} ${x.name} → ${x.action}`);
@@ -360,7 +420,7 @@
       finally{ cfProtectBtn.disabled = false; }
     });
 
-    // ----- Connect Route 53 -----
+    // ---------- Connect Route 53 ----------
     const r53Akid = document.getElementById('r53-akid');
     const r53Secret = document.getElementById('r53-secret');
     const r53ListBtn = document.getElementById('r53ListBtn');
@@ -374,10 +434,7 @@
       if(!access_key_id || !secret_access_key){ r53Log.textContent = 'Paste AWS Access Key ID and Secret first.'; return; }
       r53ListBtn.disabled = true; r53Log.textContent = 'Listing hosted zones…';
       try{
-        const r = await fetch(API_BASE + '/api/r53/list-zones', {
-          method:'POST', headers:{'content-type':'application/json'},
-          body: JSON.stringify({ access_key_id, secret_access_key })
-        });
+        const r = await fetch(API_BASE + '/api/r53/list-zones', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ access_key_id, secret_access_key }) });
         const j = await r.json();
         if(!j.ok) throw new Error(j.error || 'Failed to list hosted zones');
         r53ZoneSel.innerHTML = '<option value="">— choose a hosted zone —</option>';
@@ -386,8 +443,7 @@
           opt.value = z.id; opt.textContent = `${z.name} (${z.id})`;
           r53ZoneSel.appendChild(opt);
         });
-        if((j.zones||[]).length === 0) r53Log.textContent = 'No hosted zones found. Create one in AWS Route 53 or use Cloudflare Connect.';
-        else r53Log.textContent = `Found ${j.zones.length} hosted zone(s). Choose one and click Protect.`;
+        r53Log.textContent = (j.zones||[]).length ? `Found ${j.zones.length} hosted zone(s). Choose one and click Protect.` : 'No hosted zones found.';
       }catch(e){ r53Log.textContent = e.message; }
       finally{ r53ListBtn.disabled = false; }
     });
@@ -400,10 +456,7 @@
       if(!hosted_zone_id){ r53Log.textContent = 'Choose a hosted zone first.'; return; }
       r53ProtectBtn.disabled = true; r53Log.textContent = 'Protecting… (writing SPF, DKIM, DMARC)';
       try{
-        const r = await fetch(API_BASE + '/api/r53/protect', {
-          method:'POST', headers:{'content-type':'application/json'},
-          body: JSON.stringify({ access_key_id, secret_access_key, hosted_zone_id })
-        });
+        const r = await fetch(API_BASE + '/api/r53/protect', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ access_key_id, secret_access_key, hosted_zone_id }) });
         const j = await r.json();
         if(!j.ok) throw new Error(j.error || 'Failed to protect');
         const lines = (j.results||[]).map(x => `${x.type} ${x.name} → ${x.action}`);
@@ -411,6 +464,9 @@
       }catch(e){ r53Log.textContent = e.message; }
       finally{ r53ProtectBtn.disabled = false; }
     });
+
+    // initial loads
+    listDomains(); loadStatus();
   </script>
 </body>
 </html>
