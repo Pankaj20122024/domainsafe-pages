@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DomainSafe — Status · Add · Quick‑Codes · Verify · Connect</title>
+  <title>DomainSafe — Status · Quick‑Codes · Verify · Connect · Docs</title>
+
+  <!-- tiny inline favicon (no file uploads) -->
+  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="%239dc0ff"/><stop offset="1" stop-color="%237aa2ff"/></linearGradient></defs><rect width="64" height="64" rx="12" fill="%2310193a"/><path d="M16 33c8-14 24-14 32 0" stroke="url(%23g)" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="32" cy="36" r="6" fill="%236be28e"/></svg>'>
+
   <style>
     :root { --bg:#0f1221; --card:#151935; --text:#e8ebff; --muted:#b7c0ff; --accent:#7aa2ff; --ok:#6be28e; --warn:#ffd277; --err:#ff8b8b; --line:#2a3470; }
     *{box-sizing:border-box}
@@ -14,11 +18,12 @@
     p{color:var(--muted);margin:0 0 16px;line-height:1.6}
     h3,h4{color:var(--text);margin:12px 0 8px}
     label{color:var(--text);font-size:14px;display:block;margin-bottom:6px}
-    input,select{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0f1533;color:#dbe1ff;outline:none}
-    input::placeholder{color:#8ea0ff}
+    input,select,textarea{width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:#0f1533;color:#dbe1ff;outline:none}
+    input::placeholder,textarea::placeholder{color:#8ea0ff}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .row > div{flex:1;min-width:240px}
     .btn{display:inline-block;margin-top:8px;padding:12px 16px;color:#08122b;background:linear-gradient(180deg,#9dc0ff,#7aa2ff);border:none;border-radius:10px;text-decoration:none;font-weight:600;cursor:pointer}
+    .btn.secondary{background:#0f1533;color:#cbd5ff;border:1px solid var(--line)}
     .btn:disabled{opacity:.6;cursor:not-allowed}
     .chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 8px}
     .chip{padding:8px 12px;border-radius:999px;border:1px solid var(--line);color:#c6d0ff;background:#0f1533;font-size:13px}
@@ -33,6 +38,9 @@
     .mono{font-family:ui-monospace,Consolas,Monaco,monospace}
     .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
     .mini{font-size:12px;color:#b7c0ff}
+    .kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 6px;font-size:12px;background:#0f1533;color:#cbd5ff}
+    .tips{font-size:13px;color:#b7c0ff}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;margin-left:8px}
   </style>
 </head>
 <body>
@@ -40,6 +48,7 @@
     <div class="card">
       <h1>DomainSafe is live ✅</h1>
       <p>Status, Quick‑Codes, Verify, and one‑click Protect across providers. The robot keeps watch daily.</p>
+
       <div class="chips">
         <div class="chip">Calm</div>
         <div class="chip">Minimal</div>
@@ -47,14 +56,15 @@
       </div>
 
       <div class="grid">
+
         <!-- Status -->
         <div class="full">
           <h3>Domain Status (daily robot checks)</h3>
           <div class="row">
-            <button class="btn" id="stRefresh">Refresh status (load latest)</button>
+            <button class="btn" id="stRefresh">Refresh status</button>
             <button class="btn" id="stRun">Run now (dev)</button>
           </div>
-          <div class="log" id="st-log">This loads the latest recorded check per domain. "Run now" triggers a one‑time check.</div>
+          <div class="log" id="st-log">Shows the latest recorded check per domain. “Run now” triggers a one‑time check.</div>
           <table id="st-table" style="margin-top:8px">
             <thead><tr>
               <th>Domain</th><th>Owner</th><th>SPF</th><th>DMARC</th><th>DKIM s1</th><th>DKIM s2</th><th>Checked at</th>
@@ -89,32 +99,44 @@
         <!-- Quick‑Codes -->
         <div>
           <h3>Quick‑Codes (one‑time DNS)</h3>
+          <p class="tips">Use this if you don’t want to connect a provider account. Paste these values at your DNS provider and you’re done.</p>
           <div class="row">
             <div>
               <label for="qc-domain">Domain to secure</label>
               <input id="qc-domain" type="text" placeholder="example.com" />
             </div>
           </div>
-          <button class="btn" id="qcBtn">Generate Quick‑Codes</button>
+          <div class="row">
+            <button class="btn" id="qcBtn">Generate Quick‑Codes</button>
+            <label style="display:flex;align-items:center;gap:8px">
+              <input type="checkbox" id="qcShowExtras" />
+              <span>Show optional extras (MTA‑STS & TLS‑RPT)</span>
+            </label>
+            <button class="btn secondary" id="qcCopyAll" title="Copy all records">Copy all</button>
+          </div>
           <div class="log" id="qc-log">Enter a domain and click “Generate Quick‑Codes”.</div>
 
           <div id="qc-table-wrap" style="display:none">
             <h4>Required records</h4>
             <table id="qc-table">
-              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th></tr></thead>
+              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
               <tbody id="qc-body"></tbody>
             </table>
-            <h4>Optional extras</h4>
-            <table id="qc-extras">
-              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th></tr></thead>
-              <tbody id="qc-body-extras"></tbody>
-            </table>
+            <div id="qc-extras-wrap" style="display:none">
+              <h4>Optional extras</h4>
+              <table id="qc-extras">
+                <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
+                <tbody id="qc-body-extras"></tbody>
+              </table>
+              <p class="tips">Extras improve transport security and reporting. They are not required for sending/receiving, but recommended.</p>
+            </div>
           </div>
         </div>
 
         <!-- Verify Records -->
         <div class="full">
           <h3>Verify Records</h3>
+          <p class="tips">Checks the public DNS. Green means your domain is wired to the central controls so you don’t need to revisit DNS later.</p>
           <div class="row">
             <div>
               <label for="vr-domain">Domain to check</label>
@@ -134,8 +156,9 @@
         <div class="full">
           <h3>Connect Cloudflare (one‑click Protect)</h3>
           <p class="mono" style="color:#cbd5ff">
-            Paste a Cloudflare API Token (Permissions: <b>Zone:Read</b> and <b>DNS:Edit</b>, scoped to the zone you’ll test).
-            Nothing is stored—token is used only for this request.
+            Paste a Cloudflare API Token (Permissions: <b>Zone:Read</b> and <b>DNS:Edit</b>, scoped to the zone you’ll test).<br/>
+            Token is used only for this request and not stored.
+            <span class="pill">Platform: Cloudflare Dashboard → <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" style="color:#9dc0ff">API Tokens</a></span>
           </p>
           <div class="row">
             <div>
@@ -156,9 +179,11 @@
 
         <!-- Connect Route 53 -->
         <div class="full">
-          <h3>Connect AWS Route 53 (one‑click Protect)</h3>
+          <h3>Connect AWS Route 53 (one‑click Protect)</h3>
           <p class="mono" style="color:#cbd5ff">
-            Paste an AWS Access Key ID + Secret (IAM user limited to Route 53). Nothing is stored—keys are used only for this request.
+            Paste an AWS Access Key ID + Secret (IAM user limited to Route 53). Keys are used only for this request.
+            <span class="pill">Platform: AWS Console → <a href="https://console.aws.amazon.com/iam/home#/users" target="_blank" style="color:#9dc0ff">IAM Users</a></span>
+            <span class="pill">Hosted zones: <a href="https://console.aws.amazon.com/route53/home#HostedZones" target="_blank" style="color:#9dc0ff">Route 53 Hosted Zones</a></span>
           </p>
           <div class="row">
             <div>
@@ -180,17 +205,58 @@
           </div>
           <div class="log" id="r53-log">Paste keys → List hosted zones → choose one → Protect.</div>
         </div>
-      </div>
 
+        <!-- Docs -->
+        <div class="full">
+          <h3>Docs (short & practical)</h3>
+          <h4>Option A — Quick‑Codes (copy‑paste at your DNS provider)</h4>
+          <ol>
+            <li>Enter your domain in <b>Quick‑Codes</b> → <b>Generate</b>.</li>
+            <li>Copy each required row (use <b>Copy</b> buttons) and paste at your DNS provider (TXT/CNAME records).</li>
+            <li>(Optional) Tick “Show optional extras” and add those too.</li>
+            <li>Go to <b>Verify Records</b> → <b>Check</b> → expect all green.</li>
+          </ol>
+          <p class="tips">
+            Platform links: <a href="https://dash.cloudflare.com/" target="_blank" style="color:#9dc0ff">Cloudflare Dashboard</a> ·
+            <a href="https://console.aws.amazon.com/route53/home#HostedZones" target="_blank" style="color:#9dc0ff">AWS Route 53</a>
+          </p>
+
+          <h4>Option B — Connect Cloudflare (one‑click)</h4>
+          <ol>
+            <li>Cloudflare Dashboard → <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" style="color:#9dc0ff">API Tokens</a> → Create Token (Zone:Read + DNS:Edit).</li>
+            <li>Paste token here → <b>List zones</b> → choose zone → <b>Protect</b>.</li>
+            <li>Use <b>Verify Records</b> to confirm.</li>
+          </ol>
+
+          <h4>Option C — Connect AWS Route 53 (one‑click)</h4>
+          <ol>
+            <li>AWS Console → IAM Users → create user with <b>AmazonRoute53FullAccess</b> (for first test).</li>
+            <li>Create access key (CLI) → paste here → <b>List hosted zones</b> → choose → <b>Protect</b>.</li>
+            <li>Use <b>Verify Records</b> to confirm.</li>
+          </ol>
+
+          <h4>What the robot sets</h4>
+          <ul>
+            <li><b>SPF</b> TXT at apex: <span class="mono">v=spf1 include:_spf.control.domainsafepro.com ~all</span></li>
+            <li><b>DKIM</b> CNAMEs: <span class="mono">s1._domainkey</span> and <span class="mono">s2._domainkey</span> → central keys</li>
+            <li><b>DMARC</b> TXT at <span class="mono">_dmarc</span>: monitor mode (<span class="mono">p=none</span>) to start</li>
+            <li><b>Extras</b> (optional): <span class="mono">mta-sts</span> CNAME and <span class="mono">_smtp._tls</span> TXT for TLS reporting</li>
+          </ul>
+          <p class="tips">You can tighten DMARC later without touching customer DNS because SPF/DKIM are centrally included.</p>
+        </div>
+
+      </div>
     </div>
   </div>
 
   <script>
+    // API base is your real Worker (no placeholder).
     const API_BASE = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 
     // Helpers
     const pill = (ok)=> `<span class="tag" style="border-color:${ok?'#2f7':'#d66'};color:${ok?'#6be28e':'#ff8b8b'}">${ok?'OK':'Needs fix'}</span>`;
     const esc = (s)=> (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    function copy(text){ navigator.clipboard?.writeText(text).catch(()=>{}); }
 
     // ---------- Status ----------
     const stBody = document.getElementById('st-body');
@@ -230,8 +296,6 @@
       }
     }
     stRefreshBtn.addEventListener('click', loadStatus);
-
-    // One‑time dev run to seed checks
     stRunBtn.addEventListener('click', async ()=>{
       stRunBtn.disabled = true; stLog.textContent = 'Running checks…';
       try{
@@ -308,16 +372,21 @@
     const qcWrap = document.getElementById('qc-table-wrap');
     const qcBody = document.getElementById('qc-body');
     const qcBodyExtras = document.getElementById('qc-body-extras');
+    const qcShowExtras = document.getElementById('qcShowExtras');
+    const qcExtrasWrap = document.getElementById('qc-extras-wrap');
+    const qcCopyAll = document.getElementById('qcCopyAll');
 
     function rowHTML(r){
       const value = esc(r.value);
       const host = esc(r.name);
+      const cmd = `${r.type} ${host} ${r.value} TTL=${r.ttl||3600}`;
       return `<tr>
         <td>${esc(r.type)}</td>
         <td>${host}</td>
         <td style="max-width:520px;word-break:break-all" class="mono">${value}</td>
         <td>${esc(String(r.ttl || '3600'))}</td>
         <td>${esc(r.purpose || '')}</td>
+        <td><button class="btn secondary" onclick="copy(${JSON.stringify(cmd).replace(/</g,'\\u003c')})">Copy</button></td>
       </tr>`;
     }
 
@@ -333,9 +402,26 @@
         (j.records || []).forEach(r => qcBody.insertAdjacentHTML('beforeend', rowHTML(r)));
         (j.extras || []).forEach(r => qcBodyExtras.insertAdjacentHTML('beforeend', rowHTML(r)));
         qcWrap.style.display = 'block';
+        qcExtrasWrap.style.display = qcShowExtras.checked ? 'block' : 'none';
         qcLog.textContent = `TTL ${j.ttl}s • Control domain: ${j.control_domain}`;
       }catch(e){ qcLog.textContent = e.message; }
       finally{ qcBtn.disabled = false; }
+    });
+
+    qcShowExtras.addEventListener('change', ()=>{
+      qcExtrasWrap.style.display = qcShowExtras.checked ? 'block' : 'none';
+    });
+
+    qcCopyAll.addEventListener('click', ()=>{
+      const rows = [...document.querySelectorAll('#qc-table tbody tr, #qc-extras tbody tr')];
+      const lines = rows.map(tr=>{
+        const t = tr.children[0]?.textContent?.trim();
+        const n = tr.children[1]?.textContent?.trim();
+        const v = tr.children[2]?.textContent?.trim();
+        const ttl = tr.children[3]?.textContent?.trim();
+        return `${t} ${n} ${v} TTL=${ttl}`;
+      }).join('\n');
+      copy(lines);
     });
 
     // ---------- Verify ----------
@@ -368,7 +454,7 @@
         ];
         rows.forEach(([label, ok, detail])=>{
           const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${label}</td><td>${pill(ok)}</td><td class="mono" style="max-width:620px;word-break:break-all">${esc(detail)}</td>`;
+          tr.innerHTML = `<td>${label}</td><td>${ok?'<span class="ok">OK</span>':'<span class="err">Needs fix</span>'}</td><td class="mono" style="max-width:620px;word-break:break-all">${esc(detail)}</td>`;
           vrBody.appendChild(tr);
         });
 
