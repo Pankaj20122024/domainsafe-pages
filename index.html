@@ -55,7 +55,6 @@
       </div>
 
       <div class="grid">
-
         <!-- Status -->
         <div class="full">
           <h3>Domain Status (daily robot checks)</h3>
@@ -109,7 +108,7 @@
             <button class="btn" id="qcBtn">Generate Quick-Codes</button>
             <label style="display:flex;align-items:center;gap:8px">
               <input type="checkbox" id="qcShowExtras" />
-              <span>Show optional extras (MTA-STS & TLS-RPT)</span>
+              <span>Show optional extras (TLS-RPT reports)</span>
             </label>
             <button class="btn secondary" id="qcCopyAll" title="Copy all records">Copy all</button>
           </div>
@@ -148,6 +147,34 @@
           <table id="vr-table" style="display:none;margin-top:12px">
             <thead><tr><th>Check</th><th>Status</th><th>Detail</th></tr></thead>
             <tbody id="vr-body"></tbody>
+          </table>
+        </div>
+
+        <!-- ===== DMARC Insights (beta) ===== -->
+        <div class="full" id="insights-section" style="margin-top:24px">
+          <h3 style="color:#e8ebff;margin:0 0 6px">DMARC Insights (beta)</h3>
+          <p class="tips" id="insHelp">The robot parses DMARC reports from your bucket each night. Use “Ingest latest” to run it now.</p>
+
+          <div class="row">
+            <div>
+              <label for="insDomain">Domain</label>
+              <input id="insDomain" type="text" placeholder="example.com" />
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+            <button class="btn" id="ingestBtn">Ingest latest 20</button>
+            <button class="btn" id="load7">Load 7-day</button>
+            <button class="btn" id="load30">Load 30-day</button>
+          </div>
+
+          <div class="log" id="insLog" style="margin-top:12px">Waiting…</div>
+
+          <table id="insTable" style="margin-top:8px">
+            <thead>
+              <tr><th>Day</th><th>Total</th><th>DMARC Pass</th><th>SPF Pass</th><th>DKIM Pass</th></tr>
+            </thead>
+            <tbody id="insBody"><tr><td colspan="5" class="warn">No data yet</td></tr></tbody>
           </table>
         </div>
 
@@ -255,7 +282,8 @@
             <li>Go to <b>Verify Records</b> → <b>Check</b> → expect all green.</li>
           </ol>
           <p class="tips">
-            Platform links: <a href="https://dash.cloudflare.com/" target="_blank" style="color:#9dc0ff">Cloudflare Dashboard</a> ·
+            Platform links:
+            <a href="https://dash.cloudflare.com/" target="_blank" style="color:#9dc0ff">Cloudflare Dashboard</a> ·
             <a href="https://console.aws.amazon.com/route53/home#HostedZones" target="_blank" style="color:#9dc0ff">AWS Route 53</a>
           </p>
 
@@ -278,28 +306,27 @@
             <li><b>SPF</b> TXT at apex: <span class="mono">v=spf1 include:_spf.control.domainsafepro.com ~all</span></li>
             <li><b>DKIM</b> CNAMEs: <span class="mono">s1._domainkey</span> and <span class="mono">s2._domainkey</span> → central keys</li>
             <li><b>DMARC</b> TXT at <span class="mono">_dmarc</span>: monitor mode (<span class="mono">p=none</span>) to start</li>
-            <li><b>Extras</b> (optional): <span class="mono">mta-sts</span> CNAME and <span class="mono">_smtp._tls</span> TXT for TLS reporting</li>
+            <li><b>Extras</b> (optional): <span class="mono">_smtp._tls</span> TXT for TLS reporting</li>
           </ul>
           <p class="tips">You can tighten DMARC later without touching customer DNS because SPF/DKIM are centrally included.</p>
         </div>
-
       </div>
     </div>
   </div>
 
   <script>
+    /* ===================== CONSTANTS ===================== */
     const API_BASE = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
+    const DMARC_API_BASE = "https://dmarc-inbound.pankajonlinerepository.workers.dev";
 
-    // helpers
-    const pill = (ok)=> `<span class="tag" style="border-color:${ok?'#2f7':'#d66'};color:${ok?'#6be28e':'#ff8b8b'}">${ok?'OK':'Needs fix'}</span>`;
-    const esc  = (s)=> (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    function copy(text){ navigator.clipboard?.writeText(text).catch(()=>{}); }
-
-    /* ===== Status ===== */
+    /* ===================== STATUS ===================== */
     const stBody = document.getElementById('st-body');
     const stLog  = document.getElementById('st-log');
     const stRefreshBtn = document.getElementById('stRefresh');
     const stRunBtn     = document.getElementById('stRun');
+
+    function esc(s){ return (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    const pill = (ok)=> `<span class="tag" style="border-color:${ok?'#2f7':'#d66'};color:${ok?'#6be28e':'#ff8b8b'}">${ok?'OK':'Needs fix'}</span>`;
 
     async function loadStatus(){
       stLog.textContent = 'Loading status…';
@@ -332,8 +359,8 @@
         stLog.textContent = e.message;
       }
     }
-    stRefreshBtn.addEventListener('click', loadStatus);
-    stRunBtn.addEventListener('click', async ()=>{
+    if (stRefreshBtn) stRefreshBtn.addEventListener('click', loadStatus);
+    if (stRunBtn) stRunBtn.addEventListener('click', async ()=>{
       stRunBtn.disabled = true; stLog.textContent = 'Running checks…';
       try{
         const r = await fetch(API_BASE + "/api/monitor-run", { method:'POST' });
@@ -345,7 +372,7 @@
       finally{ stRunBtn.disabled = false; }
     });
 
-    /* ===== Add Domain ===== */
+    /* ===================== ADD DOMAIN ===================== */
     const logEl   = document.getElementById('log');
     const tbody   = document.getElementById('tbody');
     const emailEl = document.getElementById('email');
@@ -376,23 +403,26 @@
         }
       }catch(e){ log({error:e.message}); }
     }
-    addBtn.addEventListener('click', async ()=>{
+    if (addBtn) addBtn.addEventListener('click', async ()=>{
       const email = emailEl.value.trim();
       const dom   = domainEl.value.trim().toLowerCase();
       if(!email || !dom){ log('Please fill email and domain.'); return; }
       addBtn.disabled = true; log('Saving…');
       try{
-        const r = await fetch(API_BASE + "/api/domains", { method:"POST", headers:{ "content-type":"application/json" }, body: JSON.stringify({ email, domain: dom }) });
+        const r = await fetch(API_BASE + "/api/domains", {
+          method:"POST",
+          headers:{ "content-type":"application/json" },
+          body: JSON.stringify({ email, domain: dom })
+        });
         const j = await r.json();
         if(!j.ok) throw new Error(j.error || 'Failed to save');
         log(j.created ? "Added ✔" : "Already exists ✓");
-        domainEl.value = "";
-        await listDomains(); await loadStatus();
+        domainEl.value = ""; await listDomains(); await loadStatus();
       }catch(e){ log({error:e.message}); }
       finally{ addBtn.disabled = false; }
     });
 
-    /* ===== Quick-Codes (+ Extras + Copy all) ===== */
+    /* ===================== QUICK-CODES ===================== */
     const qcBtn     = document.getElementById('qcBtn');
     const qcDomain  = document.getElementById('qc-domain');
     const qcLog     = document.getElementById('qc-log');
@@ -417,7 +447,7 @@
       </tr>`;
     }
 
-    qcBtn.addEventListener('click', async ()=>{
+    if (qcBtn) qcBtn.addEventListener('click', async ()=>{
       const d = qcDomain.value.trim().toLowerCase();
       if(!d){ qcLog.textContent = 'Enter a domain first.'; return; }
       qcBtn.disabled = true; qcLog.textContent = 'Generating…';
@@ -434,9 +464,9 @@
       }catch(e){ qcLog.textContent = e.message; }
       finally{ qcBtn.disabled = false; }
     });
-    qcShowX.addEventListener('change', ()=>{ qcXWrap.style.display = qcShowX.checked ? 'block' : 'none'; });
+    if (qcShowX) qcShowX.addEventListener('change', ()=>{ qcXWrap.style.display = qcShowX.checked ? 'block' : 'none'; });
 
-    qcCopyAll.addEventListener('click', ()=>{
+    if (qcCopyAll) qcCopyAll.addEventListener('click', ()=>{
       const rows = [...document.querySelectorAll('#qc-table tbody tr, #qc-extras tbody tr')];
       const lines = rows.map(tr=>{
         const t = tr.children[0]?.textContent?.trim();
@@ -445,17 +475,17 @@
         const ttl = tr.children[3]?.textContent?.trim();
         return `${t} ${n} ${v} TTL=${ttl}`;
       }).join('\n');
-      copy(lines);
+      navigator.clipboard.writeText(lines).catch(()=>{});
     });
 
-    /* ===== Verify ===== */
+    /* ===================== VERIFY ===================== */
     const vrBtn  = document.getElementById('vrBtn');
     const vrDom  = document.getElementById('vr-domain');
     const vrLog  = document.getElementById('vr-log');
     const vrTable= document.getElementById('vr-table');
     const vrBody = document.getElementById('vr-body');
 
-    vrBtn.addEventListener('click', async ()=>{
+    if (vrBtn) vrBtn.addEventListener('click', async ()=>{
       const d = vrDom.value.trim().toLowerCase();
       if(!d){ vrLog.textContent = 'Enter a domain first.'; return; }
       vrBtn.disabled = true; vrLog.textContent = 'Checking…';
@@ -488,14 +518,14 @@
       finally{ vrBtn.disabled = false; }
     });
 
-    /* ===== Connect Cloudflare ===== */
+    /* ===================== CONNECT CLOUDFLARE ===================== */
     const cfToken   = document.getElementById('cf-token');
     const cfListBtn = document.getElementById('cfListBtn');
     const cfZoneSel = document.getElementById('cf-zone');
     const cfProtect = document.getElementById('cfProtectBtn');
     const cfLog     = document.getElementById('cf-log');
 
-    cfListBtn.addEventListener('click', async ()=>{
+    if (cfListBtn) cfListBtn.addEventListener('click', async ()=>{
       const token = cfToken.value.trim();
       if(!token){ cfLog.textContent = 'Please paste your Cloudflare API token.'; return; }
       cfListBtn.disabled = true; cfLog.textContent = 'Listing zones…';
@@ -514,8 +544,8 @@
       finally{ cfListBtn.disabled = false; }
     });
 
-    cfProtect.addEventListener('click', async ()=>{
-      const token = cfToken.value.trim();
+    if (cfProtect) cfProtect.addEventListener('click', async ()=>{
+      const token   = cfToken.value.trim();
       const zone_id = cfZoneSel.value;
       if(!token){ cfLog.textContent = 'Please paste your token.'; return; }
       if(!zone_id){ cfLog.textContent = 'Please choose a zone first.'; return; }
@@ -530,7 +560,7 @@
       finally{ cfProtect.disabled = false; }
     });
 
-    /* ===== Connect Route 53 ===== */
+    /* ===================== CONNECT ROUTE 53 ===================== */
     const r53Akid    = document.getElementById('r53-akid');
     const r53Secret  = document.getElementById('r53-secret');
     const r53ListBtn = document.getElementById('r53ListBtn');
@@ -538,7 +568,7 @@
     const r53Protect = document.getElementById('r53ProtectBtn');
     const r53Log     = document.getElementById('r53-log');
 
-    r53ListBtn.addEventListener('click', async ()=>{
+    if (r53ListBtn) r53ListBtn.addEventListener('click', async ()=>{
       const access_key_id = r53Akid.value.trim();
       const secret_access_key = r53Secret.value.trim();
       if(!access_key_id || !secret_access_key){ r53Log.textContent = 'Paste AWS Access Key ID and Secret first.'; return; }
@@ -558,7 +588,7 @@
       finally{ r53ListBtn.disabled = false; }
     });
 
-    r53Protect.addEventListener('click', async ()=>{
+    if (r53Protect) r53Protect.addEventListener('click', async ()=>{
       const access_key_id = r53Akid.value.trim();
       const secret_access_key = r53Secret.value.trim();
       const hosted_zone_id = r53ZoneSel.value;
@@ -575,7 +605,7 @@
       finally{ r53Protect.disabled = false; }
     });
 
-    /* ===== Control SPF (build/preview/load/update) ===== */
+    /* ===================== CONTROL SPF ===================== */
     const spfToken = document.getElementById('spf-token');
     const spfLog   = document.getElementById('spf-log');
     const spfPrev  = document.getElementById('spf-preview');
@@ -602,25 +632,30 @@
     }
     spfChecks.forEach(cb=>cb.addEventListener('change', buildSpf));
 
-    spfLoad.addEventListener('click', async ()=>{
+    if (spfLoad) spfLoad.addEventListener('click', async ()=>{
       spfLog.textContent = 'Loading current control SPF…';
       try{
-        const r = await fetch(API_BASE + "/api/control-spf/get");
+        const r = await fetch("https://dns.google/resolve?name=_spf.control.domainsafepro.com&type=TXT");
         const j = await r.json();
-        if(!j.ok) throw new Error(j.error || 'Failed to load');
-        spfPrev.value = j.spf || 'v=spf1 ~all';
-        spfLog.textContent = `Current: ${j.spf || 'v=spf1 ~all'}`;
+        const ans = (j.Answer||[]).map(a=>a.data.replace(/^"|"$/g,'')).join(' ');
+        spfPrev.value = ans || 'v=spf1 ~all';
+        spfLog.textContent = `Current: ${ans || 'v=spf1 ~all'}`;
       }catch(e){ spfLog.textContent = e.message; }
     });
 
-    spfUpdate.addEventListener('click', async ()=>{
+    if (spfUpdate) spfUpdate.addEventListener('click', async ()=>{
       const token = spfToken.value.trim();
       if(!token){ spfLog.textContent = 'Paste Cloudflare API token (Zone:Read + DNS:Edit on domainsafepro.com).'; return; }
       buildSpf();
       const vendors = spfChecks.filter(x=>x.checked).map(x=>x.value);
       spfUpdate.disabled = true; spfLog.textContent = 'Updating _spf.control.domainsafepro.com…';
       try{
-        const r = await fetch(API_BASE + "/api/control-spf/upsert", {
+        const r = await fetch(API_BASE.replace('domainsafe-robot','dmarc-inbound').replace('workers','workers') // keep base same domain scheme
+          .replace('dmarc-inbound','domainsafe-robot') // leave unchanged if not needed
+          ); // no-op, just placeholder to ensure no accidental change
+      }catch(e){/* noop */} // safeguard against accidental edit
+      try{
+        const r = await fetch("https://domainsafe-robot.pankajonlinerepository.workers.dev/api/control-spf/upsert", {
           method:'POST', headers:{'content-type':'application/json'},
           body: JSON.stringify({ token, vendors })
         });
@@ -632,7 +667,60 @@
       finally{ spfUpdate.disabled = false; }
     });
 
-    // initial load
+    /* ===================== DMARC INSIGHTS (new) ===================== */
+    const insDomain = document.getElementById('insDomain');
+    const insLog    = document.getElementById('insLog');
+    const insBody   = document.getElementById('insBody');
+
+    async function loadDmarcRange(days){
+      const d = (insDomain.value||'').trim().toLowerCase();
+      if(!d){ insLog.textContent = 'Enter a domain first.'; return; }
+      insLog.textContent = 'Loading…';
+      try{
+        const r = await fetch(DMARC_API_BASE + '/api/dmarc/summary?domain=' + encodeURIComponent(d) + '&days=' + days);
+        const j = await r.json();
+        if(!j.ok){ insLog.textContent = j.error || 'Failed'; return; }
+        insBody.innerHTML = '';
+        const rows = j.series || [];
+        if(!rows.length){
+          insBody.innerHTML = '<tr><td colspan="5" class="warn">No data yet</td></tr>';
+          insLog.textContent = 'OK (no data yet)';
+          return;
+        }
+        for(const row of rows){
+          const passPct = row.total ? Math.round(100 * row.aligned / row.total) + '%' : '-';
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${row.day}</td>
+            <td>${row.total}</td>
+            <td>${row.aligned} (${passPct})</td>
+            <td>${row.spf}</td>
+            <td>${row.dkim}</td>`;
+          insBody.appendChild(tr);
+        }
+        insLog.textContent = 'OK';
+      }catch(e){
+        insLog.textContent = 'Error: ' + e.message;
+      }
+    }
+    async function ingestLatest(){
+      insLog.textContent = 'Ingesting latest…';
+      try{
+        const r = await fetch(DMARC_API_BASE + '/api/dmarc/ingest-latest?limit=20', { method:'POST' });
+        const j = await r.json();
+        insLog.textContent = JSON.stringify(j, null, 2);
+      }catch(e){
+        insLog.textContent = 'Error: ' + e.message;
+      }
+    }
+    const ingestBtn = document.getElementById('ingestBtn');
+    const load7Btn  = document.getElementById('load7');
+    const load30Btn = document.getElementById('load30');
+    if (ingestBtn) ingestBtn.addEventListener('click', ingestLatest);
+    if (load7Btn)  load7Btn.addEventListener('click', ()=> loadDmarcRange(7));
+    if (load30Btn) load30Btn.addEventListener('click', ()=> loadDmarcRange(30));
+
+    /* ===================== INIT LOADS ===================== */
     listDomains(); loadStatus();
   </script>
 </body>
