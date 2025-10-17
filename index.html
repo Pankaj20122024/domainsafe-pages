@@ -50,12 +50,13 @@
     #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#10163a;border:1px solid #2a3470;color:#dbe1ff;
       padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s}
     #toast.show{opacity:1}
+    .badge{font-size:12px;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #2a3470;background:#0f1533}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card">
-      <h1>DomainSafe is live ✅</h1>
+      <h1>DomainSafe is live ✅ <span class="badge" id="ui-version"></span></h1>
       <p>Status, Quick-Codes, Verify, one-click Connect, new <b>DMARC Policy Step-Up</b>, Control SPF, Insights. The robot keeps watch daily.</p>
 
       <div class="chips">
@@ -197,6 +198,15 @@
               <textarea id="dm-preview" rows="4" class="mono" readonly placeholder="v=DMARC1; p=..."></textarea>
             </div>
           </div>
+
+          <div class="row">
+            <div>
+              <label for="dm-apex">Target domain (apex)</label>
+              <input id="dm-apex" type="text" class="mono" placeholder="example.com" readonly />
+              <p class="tips">Populated automatically from your selected Cloudflare / Route 53 zone.</p>
+            </div>
+          </div>
+
           <div class="row">
             <button class="btn" id="dmPreviewBtn">Preview</button>
             <button class="btn" id="dmApplyCF">Apply via Cloudflare (uses selected zone)</button>
@@ -313,12 +323,16 @@
   <div id="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // Endpoints (no placeholders)
+    // ---- Version badge (helps bust cache) ----
+    const UI_VERSION = 'StepUp-UI 2025-10-17-02';
+    (function(){ const b=document.getElementById('ui-version'); if(b) b.textContent=UI_VERSION; })();
+
+    // ---- Endpoints (no placeholders) ----
     const API_BASE  = 'https://domainsafe-robot.pankajonlinerepository.workers.dev';
     const DMARC_API = 'https://api.domainsafepro.com';
     const CONTROL_DOMAIN = 'control.domainsafepro.com';
 
-    // Tiny helpers
+    // ---- Tiny helpers ----
     const id = (x)=>document.getElementById(x);
     const on = (x,ev,fn)=>id(x).addEventListener(ev,fn);
     const esc = (s)=> (s||'').toString().replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -327,7 +341,7 @@
     async function post(url,body){ const r=await fetch(url,{method:'POST',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify(body||{})}); const j=await r.json(); if(j && j.ok===false) throw new Error(j.error||'Failed'); return j; }
     function toast(msg){ const t=id('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1500); }
 
-    // Add Domain + list
+    // ---- Add Domain + list ----
     const logEl=id('log'), tbody=id('tbody');
     on('addBtn','click', async ()=>{
       const email=id('email').value.trim().toLowerCase();
@@ -350,7 +364,7 @@
     }
     listDomains();
 
-    // Status
+    // ---- Status ----
     const stLog=id('st-log'), stBody=id('st-body');
     on('stRefresh','click', loadStatus);
     on('stRun','click', async ()=>{ stLog.textContent='Running…'; try{ const j=await post(API_BASE+'/api/monitor-run',{}); stLog.textContent=`OK (${j.count} checked)`; await loadStatus(); }catch(e){ stLog.textContent='Error: '+e.message; }});
@@ -372,7 +386,7 @@
     }
     loadStatus();
 
-    // Quick-Codes
+    // ---- Quick-Codes ----
     const qcLog=id('qc-log'), qcBody=id('qc-body'), qcExtrasBody=id('qc-body-extras'), qcWrap=id('qc-table-wrap'), qcExtrasWrap=id('qc-extras-wrap');
     on('qcBtn','click', genQuickCodes);
     on('qcShowExtras','change', ()=> qcExtrasWrap.style.display = id('qcShowExtras').checked?'block':'none');
@@ -408,7 +422,7 @@
       await navigator.clipboard.writeText(lines.join('\n')); toast('All copied');
     }
 
-    // Verify Records
+    // ---- Verify Records ----
     const vrLog=id('vr-log'), vrBody=id('vr-body'), vrTable=id('vr-table');
     on('vrBtn','click', verify);
     async function verify(){
@@ -431,8 +445,8 @@
       vrBody.appendChild(tr);
     }
 
-    // Connect Cloudflare
-    const cfLog=id('cf-log'), cfZone=id('cf-zone');
+    // ---- Connect Cloudflare ----
+    const cfLog=id('cf-log'), cfZone=id('cf-zone'), apexField=id('dm-apex');
     let CF_ZONES_BY_ID = {};
     on('cfListBtn','click', async ()=>{
       const token=id('cf-token').value.trim(); if(!token){ cfLog.textContent='Paste token'; return; }
@@ -443,10 +457,17 @@
         CF_ZONES_BY_ID = {};
         for(const z of j.zones||[]){
           const o=document.createElement('option'); o.value=z.id; o.textContent=`${z.name} (${z.status})`; cfZone.appendChild(o);
-          CF_ZONES_BY_ID[z.id] = z.name; // cache apex name for Step-Up
+          CF_ZONES_BY_ID[z.id] = z.name; // cache apex
         }
         cfLog.textContent=`OK (${(j.zones||[]).length})`;
       }catch(e){ cfLog.textContent='Error: '+e.message; }
+    });
+    cfZone.addEventListener('change', ()=>{
+      const zone_id = cfZone.value;
+      const fromMap = CF_ZONES_BY_ID[zone_id];
+      const fromOption = (cfZone.selectedOptions[0]?.textContent||'').split(' (')[0].trim();
+      const apex = fromMap || fromOption || '';
+      apexField.value = apex;
     });
     on('cfProtectBtn','click', async ()=>{
       const token=id('cf-token').value.trim(); const zone_id=cfZone.value;
@@ -455,10 +476,12 @@
       try{
         const j=await post(API_BASE+'/api/cf/protect',{token,zone_id});
         cfLog.textContent=`Zone ${j.apex}: `+(j.results||[]).map(x=>`${x.type} ${x.name} → ${x.action}`).join(' | ');
+        // also reflect apex in Step-Up panel
+        apexField.value = j.apex || apexField.value;
       }catch(e){ cfLog.textContent='Error: '+e.message; }
     });
 
-    // Connect Route 53
+    // ---- Connect Route 53 ----
     const r53Log=id('r53-log'), r53Zone=id('r53-zone');
     on('r53ListBtn','click', async ()=>{
       const access_key_id=id('r53-akid').value.trim(), secret_access_key=id('r53-secret').value.trim();
@@ -471,17 +494,22 @@
         r53Log.textContent=`OK (${(j.zones||[]).length})`;
       }catch(e){ r53Log.textContent='Error: '+e.message; }
     });
+    r53Zone.addEventListener('change', ()=>{
+      const fromOption = (r53Zone.selectedOptions[0]?.textContent||'').split(' (')[0].trim();
+      apexField.value = fromOption || apexField.value;
+    });
     on('r53ProtectBtn','click', async ()=>{
       const access_key_id=id('r53-akid').value.trim(), secret_access_key=id('r53-secret').value.trim(), hosted_zone_id=r53Zone.value;
       if(!access_key_id||!secret_access_key||!hosted_zone_id){ r53Log.textContent='Keys + hosted zone required.'; return; }
       r53Log.textContent='Protecting…';
       try{
-        const j=await post(API_BASE+'/api/r53/protect',{access_key_id,secret_access_key,hosted_zone_id});
+        const j=await post(API_BASE+'/api/r53/protect',{ access_key_id, secret_access_key, hosted_zone_id });
         r53Log.textContent=`Zone ${j.apex}: `+(j.results||[]).map(x=>`${x.type} ${x.name} → ${x.action}`).join(' | ');
+        apexField.value = j.apex || apexField.value;
       }catch(e){ r53Log.textContent='Error: '+e.message; }
     });
 
-    // DMARC Policy Step-Up (preview + apply)
+    // ---- DMARC Policy Step-Up (preview + apply) ----
     const dmLog=id('dm-log'), dmPreview=id('dm-preview'), pctRow=id('pctRow'), pct=id('pct'), pctVal=id('pctVal');
     Array.from(document.querySelectorAll('input[name="dm-mode"]')).forEach(r=>{
       r.addEventListener('change', ()=>{ pctRow.style.display=(getMode()==='quarantine')?'':'none'; previewDmarc(); });
@@ -499,21 +527,25 @@
     }
     function previewDmarc(){
       const mode=getMode(), rua=id('rua').value.trim()||'dmarc@domainsafepro.com';
-      const txt=buildDmarcTxt(mode, Number(pct.value||25), rua);
-      dmPreview.value=txt;
+      dmPreview.value = buildDmarcTxt(mode, Number(pct.value||25), rua);
     }
     previewDmarc();
 
     on('dmApplyCF','click', async ()=>{
       const token=id('cf-token').value.trim(); const zone_id=id('cf-zone').value;
       if(!token||!zone_id){ dmLog.textContent='Cloudflare token + zone required.'; return; }
-      const domain = CF_ZONES_BY_ID[zone_id];
-      if(!domain){ dmLog.textContent='Select a Cloudflare zone from the dropdown.'; return; }
+      // derive apex
+      const fromMap = CF_ZONES_BY_ID[zone_id];
+      const fromOpt = (id('cf-zone').selectedOptions[0]?.textContent||'').split(' (')[0].trim();
+      const apex = id('dm-apex').value.trim() || fromMap || fromOpt;
+      if(!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(apex)){ dmLog.textContent='Could not determine apex domain.'; return; }
+      id('dm-apex').value = apex; // reflect
       const mode=getMode(), rua=id('rua').value.trim()||'dmarc@domainsafepro.com';
       const pctNum=Number(pct.value||25);
       dmLog.textContent='Applying…';
       try{
-        const j=await post(API_BASE+'/api/policy/dmarc/cf',{ token, zone_id, domain, mode, pct:pctNum, rua_email:rua });
+        // send BOTH apex and domain to satisfy server variants
+        const j=await post(API_BASE+'/api/policy/dmarc/cf',{ token, zone_id, apex, domain:apex, mode, pct:pctNum, rua_email:rua });
         dmLog.textContent=JSON.stringify(j,null,2);
       }catch(e){ dmLog.textContent='Error: '+e.message; }
     });
@@ -521,16 +553,18 @@
     on('dmApplyR53','click', async ()=>{
       const access_key_id=id('r53-akid').value.trim(), secret_access_key=id('r53-secret').value.trim(), hosted_zone_id=id('r53-zone').value;
       if(!access_key_id||!secret_access_key||!hosted_zone_id){ dmLog.textContent='AWS keys + hosted zone required.'; return; }
+      const apex = id('dm-apex').value.trim() || (id('r53-zone').selectedOptions[0]?.textContent||'').split(' (')[0].trim();
+      if(!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(apex)){ dmLog.textContent='Could not determine apex domain.'; return; }
       const mode=getMode(), rua=id('rua').value.trim()||'dmarc@domainsafepro.com';
       const pctNum=Number(pct.value||25);
       dmLog.textContent='Applying…';
       try{
-        const j=await post(API_BASE+'/api/policy/dmarc/r53',{ access_key_id, secret_access_key, hosted_zone_id, mode, pct:pctNum, rua_email:rua });
+        const j=await post(API_BASE+'/api/policy/dmarc/r53',{ access_key_id, secret_access_key, hosted_zone_id, apex, domain:apex, mode, pct:pctNum, rua_email:rua });
         dmLog.textContent=JSON.stringify(j,null,2);
       }catch(e){ dmLog.textContent='Error: '+e.message; }
     });
 
-    // Control SPF
+    // ---- Control SPF ----
     const SPF_MAP={
       google:'include:_spf.google.com', m365:'include:spf.protection.outlook.com', sendgrid:'include:sendgrid.net',
       ses:'include:amazonses.com', mailgun:'include:mailgun.org', mailchimp:'include:servers.mcsv.net',
@@ -555,7 +589,7 @@
       catch(e){ spfLog.textContent='Error: '+e.message; }
     });
 
-    // DMARC Insights
+    // ---- DMARC Insights ----
     const dmLog2=id('dm-log'), dmTrendInner=document.querySelector('#dm-trend > div'), dmOrgsBody=id('dm-orgs'), dmDaysBody=id('dm-days');
     on('dmIngest','click', async ()=>{
       const domain=id('dm-domain').value.trim().toLowerCase(); if(!domain){ dmLog2.textContent='Enter domain'; return; }
