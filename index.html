@@ -41,15 +41,12 @@
       font:13px/1.5 ui-monospace,Consolas,Monaco,monospace;white-space:pre-wrap}
     table{width:100%;border-collapse:collapse;margin-top:8px}
     th,td{border-bottom:1px solid var(--line);padding:8px 8px;color:#cbd5ff;font-size:14px;text-align:left;vertical-align:top}
-    th{color:#e8ebff}
+    th{color:var(--text)}
     .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
     .section{padding-top:8px;border-top:1px dashed #2a3470;margin-top:14px}
     .tips{color:#cbd5ff}
-    /* DMARC beta box */
-    .beta{font-size:12px;margin-left:8px;padding:2px 8px;border-radius:999px;border:1px solid #2a3470;background:#0f1533}
     #dm-trend{height:6px;border:1px solid #2a3470;border-radius:6px;background:#0f1533;overflow:hidden}
     #dm-trend > div{height:100%;background:linear-gradient(90deg,#7aa2ff,#6be28e);width:0%}
-    /* toast */
     #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#10163a;border:1px solid #2a3470;color:#dbe1ff;
       padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s}
     #toast.show{opacity:1}
@@ -62,14 +59,12 @@
       <p>Status, Quick-Codes, Verify, one-click Connect, new <b>DMARC Policy Step-Up</b>, Control SPF, Insights. The robot keeps watch daily.</p>
 
       <div class="chips">
-        <div class="chip">Calm</div>
-        <div class="chip">Minimal</div>
-        <div class="chip">One-and-done</div>
+        <div class="chip">Calm</div><div class="chip">Minimal</div><div class="chip">One-and-done</div>
       </div>
 
       <div class="grid">
 
-        <!-- Status -------------------------------------------------------->
+        <!-- Status -->
         <div class="full section">
           <h3>Domain Status (daily robot checks)</h3>
           <div class="row">
@@ -83,76 +78,50 @@
           </table>
         </div>
 
-        <!-- Add Domain ---------------------------------------------------->
+        <!-- Add Domain -->
         <div class="section">
           <h3>Add Domain</h3>
           <div class="row">
-            <div>
-              <label for="email">Contact email</label>
-              <input id="email" type="email" placeholder="you@example.com"/>
-            </div>
-            <div>
-              <label for="domain">Domain</label>
-              <input id="domain" type="text" placeholder="example.com"/>
-            </div>
+            <div><label for="email">Contact email</label><input id="email" type="email" placeholder="you@example.com"/></div>
+            <div><label for="domain">Domain</label><input id="domain" type="text" placeholder="example.com"/></div>
           </div>
           <button class="btn" id="addBtn">Add domain</button>
           <div class="log" id="log">Waiting…</div>
-
           <h4 style="margin-top:12px">Recent domains</h4>
-          <table id="table">
-            <thead><tr><th>Domain</th><th>Status</th><th>Owner</th><th>Created</th></tr></thead>
-            <tbody id="tbody"><tr><td colspan="4" class="warn">No rows yet</td></tr></tbody>
-          </table>
+          <table id="table"><thead><tr><th>Domain</th><th>Status</th><th>Owner</th><th>Created</th></tr></thead>
+            <tbody id="tbody"><tr><td colspan="4" class="warn">No rows yet</td></tr></tbody></table>
         </div>
 
-        <!-- Quick-Codes --------------------------------------------------->
+        <!-- Quick-Codes -->
         <div class="section">
           <h3>Quick-Codes (one-time DNS)</h3>
           <p class="tips">Use if you don’t want to connect a provider account. Paste these at your DNS provider and you’re done.</p>
-          <div class="row">
-            <div>
-              <label for="qc-domain">Domain to secure</label>
-              <input id="qc-domain" type="text" placeholder="example.com"/>
-            </div>
-          </div>
+          <div class="row"><div><label for="qc-domain">Domain to secure</label><input id="qc-domain" type="text" placeholder="example.com"/></div></div>
           <div class="row">
             <button class="btn" id="qcBtn">Generate Quick-Codes</button>
-            <label style="display:flex;align-items:center;gap:8px">
-              <input type="checkbox" id="qcShowExtras"/>
-              <span>Show optional extras (MTA-STS & TLS-RPT)</span>
-            </label>
+            <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="qcShowExtras"/><span>Show optional extras (MTA-STS & TLS-RPT)</span></label>
             <button class="btn secondary" id="qcCopyAll" title="Copy all records">Copy all</button>
           </div>
           <div class="log" id="qc-log">Enter a domain → Generate.</div>
 
           <div id="qc-table-wrap" style="display:none">
             <h4>Required records</h4>
-            <table id="qc-table">
-              <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
-              <tbody id="qc-body"></tbody>
-            </table>
+            <table id="qc-table"><thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
+              <tbody id="qc-body"></tbody></table>
             <div id="qc-extras-wrap" style="display:none">
               <h4>Optional extras</h4>
-              <table id="qc-extras">
-                <thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
-                <tbody id="qc-body-extras"></tbody>
-              </table>
+              <table id="qc-extras"><thead><tr><th>Type</th><th>Name/Host</th><th>Value</th><th>TTL</th><th>Purpose</th><th></th></tr></thead>
+                <tbody id="qc-body-extras"></tbody></table>
               <p class="tips">Extras improve transport security and reporting.</p>
             </div>
           </div>
         </div>
 
-        <!-- Verify Records ------------------------------------------------>
+        <!-- Verify Records -->
         <div class="full section">
           <h3>Verify Records</h3>
           <p class="tips">Checks the public DNS. Green means your domain is wired to central controls.</p>
-          <div class="row">
-            <div>
-              <label for="vr-domain">Domain to check</label>
-              <input id="vr-domain" type="text" placeholder="example.com"/>
-            </div>
-          </div>
+          <div class="row"><div><label for="vr-domain">Domain to check</label><input id="vr-domain" type="text" placeholder="example.com"/></div></div>
           <button class="btn" id="vrBtn">Check</button>
           <div class="log" id="vr-log">Enter a domain → Check.</div>
           <table id="vr-table" style="display:none;margin-top:12px">
@@ -161,19 +130,14 @@
           </table>
         </div>
 
-        <!-- Connect Cloudflare ------------------------------------------->
+        <!-- Connect Cloudflare -->
         <div class="full section">
           <h3>Connect Cloudflare (one-click Protect)</h3>
           <p class="mono" style="color:#cbd5ff">
             Paste a Cloudflare API Token (<b>Zone:Read</b> + <b>DNS:Edit</b>). Token is used only for this request.
             <span class="pill">Cloudflare → <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank">API Tokens</a></span>
           </p>
-          <div class="row">
-            <div>
-              <label for="cf-token">Cloudflare API Token</label>
-              <input id="cf-token" type="password" placeholder="paste token here"/>
-            </div>
-          </div>
+          <div class="row"><div><label for="cf-token">Cloudflare API Token</label><input id="cf-token" type="password" placeholder="paste token here"/></div></div>
           <div class="row">
             <button class="btn" id="cfListBtn">List zones</button>
             <div style="flex:1;min-width:240px">
@@ -185,7 +149,7 @@
           <div class="log" id="cf-log">Paste token → List zones → choose zone → Protect.</div>
         </div>
 
-        <!-- Connect Route 53 --------------------------------------------->
+        <!-- Connect Route 53 -->
         <div class="full section">
           <h3>Connect AWS Route 53 (one-click Protect)</h3>
           <p class="mono" style="color:#cbd5ff">
@@ -194,14 +158,8 @@
             <span class="pill"><a href="https://console.aws.amazon.com/route53/home#HostedZones" target="_blank">Hosted Zones</a></span>
           </p>
           <div class="row">
-            <div>
-              <label for="r53-akid">AWS Access Key ID</label>
-              <input id="r53-akid" type="text" placeholder="AKIA..."/>
-            </div>
-            <div>
-              <label for="r53-secret">AWS Secret Access Key</label>
-              <input id="r53-secret" type="password" placeholder="********"/>
-            </div>
+            <div><label for="r53-akid">AWS Access Key ID</label><input id="r53-akid" type="text" placeholder="AKIA..."/></div>
+            <div><label for="r53-secret">AWS Secret Access Key</label><input id="r53-secret" type="password" placeholder="********"/></div>
           </div>
           <div class="row">
             <button class="btn" id="r53ListBtn">List hosted zones</button>
@@ -214,7 +172,7 @@
           <div class="log" id="r53-log">Paste keys → List hosted zones → choose one → Protect.</div>
         </div>
 
-        <!-- DMARC Policy Step-Up ----------------------------------------->
+        <!-- DMARC Policy Step-Up -->
         <div class="full section">
           <h3>DMARC Policy Step-Up (None → Quarantine → Reject)</h3>
           <p class="tips">Start safe in monitor (<b>p=none</b>), then raise to <b>quarantine</b> (percentage of mail), finally <b>reject</b>. We write TXT at <span class="mono">_dmarc.&lt;domain&gt;</span>.</p>
@@ -247,7 +205,7 @@
           <div class="log" id="dm-log">Use Preview, then Apply via CF or R53. For “other DNS”, copy the TXT from Preview.</div>
         </div>
 
-        <!-- Control SPF --------------------------------------------------->
+        <!-- Control SPF -->
         <div class="full section">
           <h3>Control SPF (central include for all protected domains)</h3>
           <p class="mono" style="color:#cbd5ff">
@@ -274,10 +232,7 @@
             </div>
           </div>
           <div class="row">
-            <div>
-              <label for="spf-token">Cloudflare API Token (Zone:Read + DNS:Edit on domainsafepro.com)</label>
-              <input id="spf-token" type="password" placeholder="paste token here"/>
-            </div>
+            <div><label for="spf-token">Cloudflare API Token (Zone:Read + DNS:Edit on domainsafepro.com)</label><input id="spf-token" type="password" placeholder="paste token here"/></div>
           </div>
           <div class="row">
             <button class="btn" id="spfLoad">Load current</button>
@@ -286,45 +241,35 @@
           <div class="log" id="spf-log">Use “Load current” to see existing value, select senders, then “Update”.</div>
         </div>
 
-        <!-- DMARC Insights (beta) ---------------------------------------->
+        <!-- DMARC Insights -->
         <div class="full section">
-          <h3>DMARC Insights <span class="beta">beta</span></h3>
+          <h3>DMARC Insights <span class="pill">beta</span></h3>
           <div class="row">
             <div><button class="btn" id="dmIngest">Ingest latest 20</button></div>
-            <div>
-              <label for="dm-domain">Domain</label>
-              <input id="dm-domain" type="text" value="domainsafepro.com"/>
-            </div>
+            <div><label for="dm-domain">Domain</label><input id="dm-domain" type="text" value="domainsafepro.com"/></div>
             <div><button class="btn" id="dmLoad7">Load 7-day</button></div>
             <div><button class="btn" id="dmLoad30">Load 30-day</button></div>
           </div>
-
           <div style="margin-top:10px">
             <label>Pass-rate trend (DMARC aligned %)</label>
             <div id="dm-trend"><div></div></div>
           </div>
-
           <div class="grid" style="margin-top:10px">
             <div>
               <h4>Top sources (by reporting org)</h4>
-              <table>
-                <thead><tr><th>Org</th><th>Total</th><th>DMARC pass</th></tr></thead>
-                <tbody id="dm-orgs"><tr><td colspan="3" class="warn">—</td></tr></tbody>
-              </table>
+              <table><thead><tr><th>Org</th><th>Total</th><th>DMARC pass</th></tr></thead>
+                <tbody id="dm-orgs"><tr><td colspan="3" class="warn">—</td></tr></tbody></table>
             </div>
             <div>
               <h4>Daily roll-up</h4>
-              <table>
-                <thead><tr><th>Day</th><th>Total</th><th>DMARC Pass</th><th>SPF Pass</th><th>DKIM Pass</th></tr></thead>
-                <tbody id="dm-days"><tr><td colspan="5" class="warn">—</td></tr></tbody>
-              </table>
+              <table><thead><tr><th>Day</th><th>Total</th><th>DMARC Pass</th><th>SPF Pass</th><th>DKIM Pass</th></tr></thead>
+                <tbody id="dm-days"><tr><td colspan="5" class="warn">—</td></tr></tbody></table>
             </div>
           </div>
-
           <div class="log" id="dm-log">—</div>
         </div>
 
-        <!-- Docs ---------------------------------------------------------->
+        <!-- Docs -->
         <div class="full section">
           <h3>Docs (short & practical)</h3>
           <h4>Option A — Quick-Codes (copy-paste at your DNS provider)</h4>
@@ -368,84 +313,58 @@
   <div id="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // -------------------------------------------------------------------
     // Endpoints (no placeholders)
-    // -------------------------------------------------------------------
-    const API_BASE  = 'https://domainsafe-robot.pankajonlinerepository.workers.dev'; // your robot Worker
-    const DMARC_API = 'https://api.domainsafepro.com';                                // your DMARC API
+    const API_BASE  = 'https://domainsafe-robot.pankajonlinerepository.workers.dev';
+    const DMARC_API = 'https://api.domainsafepro.com';
     const CONTROL_DOMAIN = 'control.domainsafepro.com';
 
-    // -------------------------------------------------------------------
-    // Tiny helpers (covers both old/new styles)
-    // -------------------------------------------------------------------
+    // Tiny helpers
     const id = (x)=>document.getElementById(x);
     const on = (x,ev,fn)=>id(x).addEventListener(ev,fn);
     const esc = (s)=> (s||'').toString().replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
     const yesno = (b)=> b ? '<span class="ok">OK</span>' : '<span class="err">Needs fix</span>';
-    async function get(url){
-      const r = await fetch(url, {headers:{'accept':'application/json'}});
-      const j = await r.json(); if(j && j.ok===false) throw new Error(j.error||'Failed'); return j;
-    }
-    async function post(url, body){
-      const r = await fetch(url, {method:'POST',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify(body||{})});
-      const j = await r.json(); if(j && j.ok===false) throw new Error(j.error||'Failed'); return j;
-    }
+    async function get(url){ const r = await fetch(url,{headers:{'accept':'application/json'}}); const j=await r.json(); if(j && j.ok===false) throw new Error(j.error||'Failed'); return j; }
+    async function post(url,body){ const r=await fetch(url,{method:'POST',headers:{'content-type':'application/json','accept':'application/json'},body:JSON.stringify(body||{})}); const j=await r.json(); if(j && j.ok===false) throw new Error(j.error||'Failed'); return j; }
     function toast(msg){ const t=id('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1500); }
 
-    // -------------------------------------------------------------------
-    // Add domain + list
-    // -------------------------------------------------------------------
-    const logEl = id('log'), tbody = id('tbody');
+    // Add Domain + list
+    const logEl=id('log'), tbody=id('tbody');
     on('addBtn','click', async ()=>{
-      const email = id('email').value.trim().toLowerCase();
-      const domain = id('domain').value.trim().toLowerCase();
-      if(!email || !domain){ logEl.textContent='Please fill email and domain.'; return; }
+      const email=id('email').value.trim().toLowerCase();
+      const domain=id('domain').value.trim().toLowerCase();
+      if(!email||!domain){ logEl.textContent='Please fill email and domain.'; return; }
       logEl.textContent='Saving…';
-      try{
-        const j = await post(API_BASE+'/api/domains',{email,domain});
-        logEl.textContent = j.created ? 'Added ✔' : 'Already exists ✓';
-        id('domain').value=''; await listDomains();
-      }catch(e){ logEl.textContent = 'Error: '+e.message; }
+      try{ const j=await post(API_BASE+'/api/domains',{email,domain}); logEl.textContent=j.created?'Added ✔':'Already exists ✓'; id('domain').value=''; await listDomains(); }
+      catch(e){ logEl.textContent='Error: '+e.message; }
     });
     async function listDomains(){
       try{
-        const j = await get(API_BASE+'/api/domains');
-        tbody.innerHTML='';
-        const rows = j.domains || [];
-        if(!rows.length){ tbody.innerHTML='<tr><td colspan="4" class="warn">No rows yet</td></tr>'; return; }
+        const j=await get(API_BASE+'/api/domains'); tbody.innerHTML='';
+        const rows=j.domains||[]; if(!rows.length){ tbody.innerHTML='<tr><td colspan="4" class="warn">No rows yet</td></tr>'; return; }
         for(const d of rows){
           const tr=document.createElement('tr');
-          tr.innerHTML = `<td>${esc(d.domain_name||'')}</td><td>${esc(d.status||'')}</td>
-                          <td>${esc(d.email||'')}</td><td>${esc(d.created_at||'')}</td>`;
+          tr.innerHTML=`<td>${esc(d.domain_name||'')}</td><td>${esc(d.status||'')}</td><td>${esc(d.email||'')}</td><td>${esc(d.created_at||'')}</td>`;
           tbody.appendChild(tr);
         }
       }catch(e){ logEl.textContent='Error: '+e.message; }
     }
     listDomains();
 
-    // -------------------------------------------------------------------
     // Status
-    // -------------------------------------------------------------------
-    const stLog = id('st-log'), stBody = id('st-body');
+    const stLog=id('st-log'), stBody=id('st-body');
     on('stRefresh','click', loadStatus);
-    on('stRun','click', async ()=>{
-      stLog.textContent='Running…';
-      try{ const j = await post(API_BASE+'/api/monitor-run',{}); stLog.textContent=`OK (${j.count} checked)`; await loadStatus(); }
-      catch(e){ stLog.textContent='Error: '+e.message; }
-    });
+    on('stRun','click', async ()=>{ stLog.textContent='Running…'; try{ const j=await post(API_BASE+'/api/monitor-run',{}); stLog.textContent=`OK (${j.count} checked)`; await loadStatus(); }catch(e){ stLog.textContent='Error: '+e.message; }});
     async function loadStatus(){
       stLog.textContent='Loading…';
       try{
-        const j = await get(API_BASE+'/api/status');
-        stBody.innerHTML='';
-        const rows = j.rows || [];
-        if(!rows.length){ stBody.innerHTML='<tr><td colspan="7" class="warn">No rows</td></tr>'; }
+        const j=await get(API_BASE+'/api/status'); stBody.innerHTML='';
+        const rows=j.rows||[]; if(!rows.length){ stBody.innerHTML='<tr><td colspan="7" class="warn">No rows</td></tr>'; }
         for(const row of rows){
           const tr=document.createElement('tr');
-          tr.innerHTML = `<td>${esc(row.domain_name||'')}</td><td>${esc(row.email||'')}</td>
-                          <td>${yesno(row.spf_ok)}</td><td>${yesno(row.dmarc_ok)}</td>
-                          <td>${yesno(row.dkim_s1_ok)}</td><td>${yesno(row.dkim_s2_ok)}</td>
-                          <td>${esc(row.checked_at||'')}</td>`;
+          tr.innerHTML=`<td>${esc(row.domain_name||'')}</td><td>${esc(row.email||'')}</td>
+                        <td>${yesno(row.spf_ok)}</td><td>${yesno(row.dmarc_ok)}</td>
+                        <td>${yesno(row.dkim_s1_ok)}</td><td>${yesno(row.dkim_s2_ok)}</td>
+                        <td>${esc(row.checked_at||'')}</td>`;
           stBody.appendChild(tr);
         }
         stLog.textContent='OK';
@@ -453,54 +372,43 @@
     }
     loadStatus();
 
-    // -------------------------------------------------------------------
     // Quick-Codes
-    // -------------------------------------------------------------------
-    const qcLog = id('qc-log'), qcBody=id('qc-body'), qcExtrasBody=id('qc-body-extras'),
-          qcWrap=id('qc-table-wrap'), qcExtrasWrap=id('qc-extras-wrap');
+    const qcLog=id('qc-log'), qcBody=id('qc-body'), qcExtrasBody=id('qc-body-extras'), qcWrap=id('qc-table-wrap'), qcExtrasWrap=id('qc-extras-wrap');
     on('qcBtn','click', genQuickCodes);
     on('qcShowExtras','change', ()=> qcExtrasWrap.style.display = id('qcShowExtras').checked?'block':'none');
     on('qcCopyAll','click', copyAllQuickCodes);
-
-    let lastQC = { records:[], extras:[], ttl:3600, control_domain: CONTROL_DOMAIN };
-
+    let lastQC={records:[],extras:[],ttl:3600,control_domain:CONTROL_DOMAIN};
     async function genQuickCodes(){
-      const d = id('qc-domain').value.trim().toLowerCase();
+      const d=id('qc-domain').value.trim().toLowerCase();
       if(!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(d)){ qcLog.textContent='Please enter a valid domain'; return; }
       qcLog.textContent='Working…';
       try{
-        const j = await get(API_BASE+`/api/quick-codes?domain=${encodeURIComponent(d)}`);
-        lastQC = j;
+        const j=await get(API_BASE+`/api/quick-codes?domain=${encodeURIComponent(d)}`); lastQC=j;
         qcBody.innerHTML=''; qcExtrasBody.innerHTML='';
-        for(const rec of j.records) addRecRow(qcBody, rec);
-        for(const rec of j.extras)  addRecRow(qcExtrasBody, rec);
-        qcWrap.style.display='block';
-        qcExtrasWrap.style.display = id('qcShowExtras').checked?'block':'none';
-        qcLog.textContent = `TTL ${j.ttl}s • Control domain: ${j.control_domain}`;
+        for(const rec of j.records) addRecRow(qcBody,rec);
+        for(const rec of j.extras)  addRecRow(qcExtrasBody,rec);
+        qcWrap.style.display='block'; qcExtrasWrap.style.display = id('qcShowExtras').checked?'block':'none';
+        qcLog.textContent=`TTL ${j.ttl}s • Control domain: ${j.control_domain}`;
       }catch(e){ qcLog.textContent='Error: '+e.message; }
     }
     function addRecRow(tbody, r){
       const tr=document.createElement('tr');
-      tr.innerHTML = `<td>${r.type}</td><td class="mono">${esc(r.name)}</td>
+      tr.innerHTML=`<td>${r.type}</td><td class="mono">${esc(r.name)}</td>
         <td class="mono">${esc(r.value)}</td><td>${r.ttl}</td><td>${esc(r.purpose||'')}</td>
         <td><button class="btn secondary">Copy</button></td>`;
       tr.querySelector('button').addEventListener('click', async ()=>{
-        await navigator.clipboard.writeText(`${r.type} ${r.name} ${r.value} TTL=${r.ttl}`);
-        toast('Copied');
+        await navigator.clipboard.writeText(`${r.type} ${r.name} ${r.value} TTL=${r.ttl}`); toast('Copied');
       });
       tbody.appendChild(tr);
     }
     async function copyAllQuickCodes(){
       if(!lastQC.records.length){ toast('Generate first'); return; }
-      const lines=[];
-      for(const r of lastQC.records) lines.push(`${r.type} ${r.name} ${r.value} TTL=${r.ttl}`);
+      const lines=[]; for(const r of lastQC.records) lines.push(`${r.type} ${r.name} ${r.value} TTL=${r.ttl}`);
       if(id('qcShowExtras').checked) for(const r of lastQC.extras) lines.push(`${r.type} ${r.name} ${r.value} TTL=${r.ttl}`);
       await navigator.clipboard.writeText(lines.join('\n')); toast('All copied');
     }
 
-    // -------------------------------------------------------------------
     // Verify Records
-    // -------------------------------------------------------------------
     const vrLog=id('vr-log'), vrBody=id('vr-body'), vrTable=id('vr-table');
     on('vrBtn','click', verify);
     async function verify(){
@@ -508,7 +416,7 @@
       if(!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(d)){ vrLog.textContent='Enter a valid domain'; return; }
       vrLog.textContent='Checking…';
       try{
-        const j = await get(API_BASE+`/api/check-quick-codes?domain=${encodeURIComponent(d)}`);
+        const j=await get(API_BASE+`/api/check-quick-codes?domain=${encodeURIComponent(d)}`);
         vrBody.innerHTML=''; vrTable.style.display='table';
         addCheck('SPF include', j.checks?.spf?.present && j.checks?.spf?.includesControl, j.checks?.spf?.record||'');
         addCheck('DMARC TXT', j.checks?.dmarc?.present, j.checks?.dmarc?.record||'');
@@ -519,22 +427,24 @@
     }
     function addCheck(name, ok, detail){
       const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${name}</td><td>${ok?'<span class="ok">OK</span>':'<span class="err">Fix</span>'}</td>
-        <td class="mono">${esc(detail)}</td>`;
+      tr.innerHTML=`<td>${name}</td><td>${ok?'<span class="ok">OK</span>':'<span class="err">Fix</span>'}</td><td class="mono">${esc(detail)}</td>`;
       vrBody.appendChild(tr);
     }
 
-    // -------------------------------------------------------------------
     // Connect Cloudflare
-    // -------------------------------------------------------------------
     const cfLog=id('cf-log'), cfZone=id('cf-zone');
+    let CF_ZONES_BY_ID = {};
     on('cfListBtn','click', async ()=>{
       const token=id('cf-token').value.trim(); if(!token){ cfLog.textContent='Paste token'; return; }
       cfLog.textContent='Listing…';
       try{
         const j = await post(API_BASE+'/api/cf/list-zones',{token});
         cfZone.innerHTML='<option value="">— choose a zone —</option>';
-        for(const z of j.zones||[]){ const o=document.createElement('option'); o.value=z.id; o.textContent=`${z.name} (${z.status})`; cfZone.appendChild(o); }
+        CF_ZONES_BY_ID = {};
+        for(const z of j.zones||[]){
+          const o=document.createElement('option'); o.value=z.id; o.textContent=`${z.name} (${z.status})`; cfZone.appendChild(o);
+          CF_ZONES_BY_ID[z.id] = z.name; // cache apex name for Step-Up
+        }
         cfLog.textContent=`OK (${(j.zones||[]).length})`;
       }catch(e){ cfLog.textContent='Error: '+e.message; }
     });
@@ -543,21 +453,19 @@
       if(!token||!zone_id){ cfLog.textContent='Token + Zone required.'; return; }
       cfLog.textContent='Protecting…';
       try{
-        const j= await post(API_BASE+'/api/cf/protect',{token,zone_id});
-        cfLog.textContent = `Zone ${j.apex}: ` + (j.results||[]).map(x=>`${x.type} ${x.name} → ${x.action}`).join(' | ');
+        const j=await post(API_BASE+'/api/cf/protect',{token,zone_id});
+        cfLog.textContent=`Zone ${j.apex}: `+(j.results||[]).map(x=>`${x.type} ${x.name} → ${x.action}`).join(' | ');
       }catch(e){ cfLog.textContent='Error: '+e.message; }
     });
 
-    // -------------------------------------------------------------------
     // Connect Route 53
-    // -------------------------------------------------------------------
     const r53Log=id('r53-log'), r53Zone=id('r53-zone');
     on('r53ListBtn','click', async ()=>{
       const access_key_id=id('r53-akid').value.trim(), secret_access_key=id('r53-secret').value.trim();
       if(!access_key_id||!secret_access_key){ r53Log.textContent='Paste keys'; return; }
       r53Log.textContent='Listing…';
       try{
-        const j = await post(API_BASE+'/api/r53/list-zones',{access_key_id,secret_access_key});
+        const j=await post(API_BASE+'/api/r53/list-zones',{access_key_id,secret_access_key});
         r53Zone.innerHTML='<option value="">— choose a hosted zone —</option>';
         for(const z of j.zones||[]){ const o=document.createElement('option'); o.value=z.id; o.textContent=`${z.name} (${z.id})`; r53Zone.appendChild(o); }
         r53Log.textContent=`OK (${(j.zones||[]).length})`;
@@ -568,151 +476,105 @@
       if(!access_key_id||!secret_access_key||!hosted_zone_id){ r53Log.textContent='Keys + hosted zone required.'; return; }
       r53Log.textContent='Protecting…';
       try{
-        const j = await post(API_BASE+'/api/r53/protect',{access_key_id,secret_access_key,hosted_zone_id});
-        r53Log.textContent = `Zone ${j.apex}: ` + (j.results||[]).map(x=>`${x.type} ${x.name} → ${x.action}`).join(' | ');
+        const j=await post(API_BASE+'/api/r53/protect',{access_key_id,secret_access_key,hosted_zone_id});
+        r53Log.textContent=`Zone ${j.apex}: `+(j.results||[]).map(x=>`${x.type} ${x.name} → ${x.action}`).join(' | ');
       }catch(e){ r53Log.textContent='Error: '+e.message; }
     });
 
-    // -------------------------------------------------------------------
-    // DMARC Policy Step-Up (preview + apply via CF/R53)
-    // -------------------------------------------------------------------
+    // DMARC Policy Step-Up (preview + apply)
     const dmLog=id('dm-log'), dmPreview=id('dm-preview'), pctRow=id('pctRow'), pct=id('pct'), pctVal=id('pctVal');
     Array.from(document.querySelectorAll('input[name="dm-mode"]')).forEach(r=>{
-      r.addEventListener('change', ()=>{ pctRow.style.display = (getMode()==='quarantine') ? '' : 'none'; previewDmarc(); });
+      r.addEventListener('change', ()=>{ pctRow.style.display=(getMode()==='quarantine')?'':'none'; previewDmarc(); });
     });
     pct.addEventListener('input', ()=>{ pctVal.textContent=pct.value; previewDmarc(); });
     on('dmPreviewBtn','click', previewDmarc);
 
     function getMode(){ return (document.querySelector('input[name="dm-mode"]:checked')?.value || 'none'); }
     function buildDmarcTxt(mode, pct, rua){
-      const parts = [`v=DMARC1`, `adkim=s`, `aspf=s`, `rua=mailto:${rua}`];
-      if (mode === "reject") parts.unshift("p=reject");
-      else if (mode === "quarantine") parts.unshift("p=quarantine");
-      else parts.unshift("p=none");
-      if (mode === "quarantine") parts.push(`pct=${Math.round(pct)}`); else parts.push(`pct=100`);
-      return parts.join("; ");
+      const parts = ['v=DMARC1'];
+      if (mode === 'reject') parts.push('p=reject'); else if (mode === 'quarantine') parts.push('p=quarantine'); else parts.push('p=none');
+      parts.push('adkim=s','aspf=s',`rua=mailto:${rua}`);
+      parts.push(mode==='quarantine' ? `pct=${Math.round(pct)}` : 'pct=100');
+      return parts.join('; ');
     }
     function previewDmarc(){
-      const mode = getMode(), rua = id('rua').value.trim() || 'dmarc@domainsafepro.com';
-      const txt = buildDmarcTxt(mode, Number(pct.value||25), rua);
-      dmPreview.value = txt;
+      const mode=getMode(), rua=id('rua').value.trim()||'dmarc@domainsafepro.com';
+      const txt=buildDmarcTxt(mode, Number(pct.value||25), rua);
+      dmPreview.value=txt;
     }
     previewDmarc();
 
     on('dmApplyCF','click', async ()=>{
-      const token = id('cf-token').value.trim(); const zone_id = id('cf-zone').value;
-      if(!token || !zone_id){ dmLog.textContent='Cloudflare token + zone required.'; return; }
-      const mode = getMode(), rua = id('rua').value.trim() || 'dmarc@domainsafepro.com';
-      const pctNum = Number(pct.value||25);
+      const token=id('cf-token').value.trim(); const zone_id=id('cf-zone').value;
+      if(!token||!zone_id){ dmLog.textContent='Cloudflare token + zone required.'; return; }
+      const domain = CF_ZONES_BY_ID[zone_id];
+      if(!domain){ dmLog.textContent='Select a Cloudflare zone from the dropdown.'; return; }
+      const mode=getMode(), rua=id('rua').value.trim()||'dmarc@domainsafepro.com';
+      const pctNum=Number(pct.value||25);
       dmLog.textContent='Applying…';
       try{
-        const j = await post(API_BASE+'/api/policy/dmarc/cf', { token, zone_id, mode, pct: pctNum, rua_email: rua });
-        dmLog.textContent = JSON.stringify(j,null,2);
+        const j=await post(API_BASE+'/api/policy/dmarc/cf',{ token, zone_id, domain, mode, pct:pctNum, rua_email:rua });
+        dmLog.textContent=JSON.stringify(j,null,2);
       }catch(e){ dmLog.textContent='Error: '+e.message; }
     });
 
     on('dmApplyR53','click', async ()=>{
       const access_key_id=id('r53-akid').value.trim(), secret_access_key=id('r53-secret').value.trim(), hosted_zone_id=id('r53-zone').value;
       if(!access_key_id||!secret_access_key||!hosted_zone_id){ dmLog.textContent='AWS keys + hosted zone required.'; return; }
-      const mode = getMode(), rua = id('rua').value.trim() || 'dmarc@domainsafepro.com';
-      const pctNum = Number(pct.value||25);
+      const mode=getMode(), rua=id('rua').value.trim()||'dmarc@domainsafepro.com';
+      const pctNum=Number(pct.value||25);
       dmLog.textContent='Applying…';
       try{
-        const j = await post(API_BASE+'/api/policy/dmarc/r53', { access_key_id, secret_access_key, hosted_zone_id, mode, pct: pctNum, rua_email: rua });
-        dmLog.textContent = JSON.stringify(j,null,2);
+        const j=await post(API_BASE+'/api/policy/dmarc/r53',{ access_key_id, secret_access_key, hosted_zone_id, mode, pct:pctNum, rua_email:rua });
+        dmLog.textContent=JSON.stringify(j,null,2);
       }catch(e){ dmLog.textContent='Error: '+e.message; }
     });
 
-    // -------------------------------------------------------------------
     // Control SPF
-    // -------------------------------------------------------------------
-    const SPF_MAP = {
-      google:   'include:_spf.google.com',
-      m365:     'include:spf.protection.outlook.com',
-      sendgrid: 'include:sendgrid.net',
-      ses:      'include:amazonses.com',
-      mailgun:  'include:mailgun.org',
-      mailchimp:'include:servers.mcsv.net',
-      postmark: 'include:pm.mtasv.net',
-      sparkpost:'include:_spf.sparkpostmail.com',
-      zoho:     'include:zoho.com',
-      zendesk:  'include:mail.zendesk.com',
-      intercom: 'include:_spf.intercom.com'
+    const SPF_MAP={
+      google:'include:_spf.google.com', m365:'include:spf.protection.outlook.com', sendgrid:'include:sendgrid.net',
+      ses:'include:amazonses.com', mailgun:'include:mailgun.org', mailchimp:'include:servers.mcsv.net',
+      postmark:'include:pm.mtasv.net', sparkpost:'include:_spf.sparkpostmail.com', zoho:'include:zoho.com',
+      zendesk:'include:mail.zendesk.com', intercom:'include:_spf.intercom.com'
     };
     const spfPreview=id('spf-preview'), spfLog=id('spf-log');
     document.querySelectorAll('.spf-v').forEach(cb=>cb.addEventListener('change', renderSpfPreview));
-    function renderSpfPreview(){
-      const parts=['v=spf1']; document.querySelectorAll('.spf-v:checked').forEach(cb=>parts.push(SPF_MAP[cb.value]));
-      parts.push('~all'); spfPreview.value = parts.join(' ');
-    }
+    function renderSpfPreview(){ const parts=['v=spf1']; document.querySelectorAll('.spf-v:checked').forEach(cb=>parts.push(SPF_MAP[cb.value])); parts.push('~all'); spfPreview.value=parts.join(' '); }
     renderSpfPreview();
-
     on('spfLoad','click', async ()=>{
-      const token=id('spf-token').value.trim();
-      if(!token){ spfLog.textContent='Paste token (Zone:Read on domainsafepro.com).'; return; }
+      const token=id('spf-token').value.trim(); if(!token){ spfLog.textContent='Paste token (Zone:Read on domainsafepro.com).'; return; }
       spfLog.textContent='Loading…';
-      try{
-        const j = await post(API_BASE+'/api/control-spf/load',{ token });
-        spfPreview.value = j.value || 'v=spf1 ~all';
-        spfLog.textContent='Loaded';
-      }catch(e){ spfLog.textContent='Error: '+e.message; }
+      try{ const j=await post(API_BASE+'/api/control-spf/load',{ token }); spfPreview.value=j.value||'v=spf1 ~all'; spfLog.textContent='Loaded'; }
+      catch(e){ spfLog.textContent='Error: '+e.message; }
     });
     on('spfUpdate','click', async ()=>{
-      const token=id('spf-token').value.trim();
-      if(!token){ spfLog.textContent='Paste token (DNS:Edit on domainsafepro.com).'; return; }
-      const value = spfPreview.value.trim();
-      if(!value.startsWith('v=spf1')){ spfLog.textContent='Preview does not look like an SPF string.'; return; }
+      const token=id('spf-token').value.trim(); if(!token){ spfLog.textContent='Paste token (DNS:Edit on domainsafepro.com).'; return; }
+      const value=spfPreview.value.trim(); if(!value.startsWith('v=spf1')){ spfLog.textContent='Preview does not look like an SPF string.'; return; }
       spfLog.textContent='Updating…';
-      try{
-        const j = await post(API_BASE+'/api/control-spf/update',{ token, value });
-        spfLog.textContent = j.ok ? 'Updated ✓' : ('Error: ' + (j.error||'Failed'));
-      }catch(e){ spfLog.textContent='Error: '+e.message; }
+      try{ const j=await post(API_BASE+'/api/control-spf/update',{ token, value }); spfLog.textContent=j.ok?'Updated ✓':('Error: '+(j.error||'Failed')); }
+      catch(e){ spfLog.textContent='Error: '+e.message; }
     });
 
-    // -------------------------------------------------------------------
-    // DMARC Insights (trend + orgs + roll-up)
-    // -------------------------------------------------------------------
-    const dmLog2=id('dm-log'), dmTrendInner=document.querySelector('#dm-trend > div'),
-          dmOrgsBody=id('dm-orgs'), dmDaysBody=id('dm-days');
+    // DMARC Insights
+    const dmLog2=id('dm-log'), dmTrendInner=document.querySelector('#dm-trend > div'), dmOrgsBody=id('dm-orgs'), dmDaysBody=id('dm-days');
     on('dmIngest','click', async ()=>{
-      const domain = id('dm-domain').value.trim().toLowerCase();
-      if(!domain){ dmLog2.textContent='Enter domain'; return; }
+      const domain=id('dm-domain').value.trim().toLowerCase(); if(!domain){ dmLog2.textContent='Enter domain'; return; }
       dmLog2.textContent='Ingesting…';
-      try{
-        const j = await post(DMARC_API+'/api/dmarc/ingest-latest',{ domain, limit:20 });
-        dmLog2.textContent = (j.ok? 'OK' : 'Error') + (j.note? (' · '+j.note):'');
-      }catch(e){ dmLog2.textContent='Error: '+e.message; }
+      try{ const j=await post(DMARC_API+'/api/dmarc/ingest-latest',{ domain, limit:20 }); dmLog2.textContent=(j.ok?'OK':'Error')+(j.note?(' · '+j.note):''); }
+      catch(e){ dmLog2.textContent='Error: '+e.message; }
     });
     on('dmLoad7','click', ()=>loadDmSummary(7));
     on('dmLoad30','click', ()=>loadDmSummary(30));
-
     async function loadDmSummary(days){
-      const domain = id('dm-domain').value.trim().toLowerCase();
-      if(!domain){ dmLog2.textContent='Enter domain'; return; }
+      const domain=id('dm-domain').value.trim().toLowerCase(); if(!domain){ dmLog2.textContent='Enter domain'; return; }
       dmLog2.textContent='Loading…';
       try{
-        const j = await get(DMARC_API+`/api/dmarc/summary?domain=${encodeURIComponent(domain)}&days=${days}`);
-        // Expect shape: { pass_rate: number(0-100), orgs:[{org,total,pass_dmarc}], days:[{day,total,pass_dmarc,pass_spf,pass_dkim}] }
-        const pr = Math.max(0, Math.min(100, Number(j.pass_rate||0)));
-        dmTrendInner.style.width = pr + '%';
-
-        dmOrgsBody.innerHTML='';
-        const orgs = j.orgs || [];
-        if(!orgs.length){ dmOrgsBody.innerHTML='<tr><td colspan="3" class="warn">—</td></tr>'; }
-        for(const o of orgs){
-          const tr=document.createElement('tr');
-          tr.innerHTML = `<td>${esc(o.org||'')}</td><td>${esc(o.total||0)}</td><td>${esc(o.pass_dmarc||0)}</td>`;
-          dmOrgsBody.appendChild(tr);
-        }
-
-        dmDaysBody.innerHTML='';
-        const daysRows = j.days || [];
-        if(!daysRows.length){ dmDaysBody.innerHTML='<tr><td colspan="5" class="warn">—</td></tr>'; }
-        for(const d of daysRows){
-          const tr=document.createElement('tr');
-          tr.innerHTML = `<td>${esc(d.day||'')}</td><td>${esc(d.total||0)}</td><td>${esc(d.pass_dmarc||0)}</td><td>${esc(d.pass_spf||0)}</td><td>${esc(d.pass_dkim||0)}</td>`;
-          dmDaysBody.appendChild(tr);
-        }
+        const j=await get(DMARC_API+`/api/dmarc/summary?domain=${encodeURIComponent(domain)}&days=${days}`);
+        const pr=Math.max(0,Math.min(100,Number(j.pass_rate||0))); dmTrendInner.style.width=pr+'%';
+        dmOrgsBody.innerHTML=''; const orgs=j.orgs||[]; if(!orgs.length){ dmOrgsBody.innerHTML='<tr><td colspan="3" class="warn">—</td></tr>'; }
+        for(const o of orgs){ const tr=document.createElement('tr'); tr.innerHTML=`<td>${esc(o.org||'')}</td><td>${esc(o.total||0)}</td><td>${esc(o.pass_dmarc||0)}</td>`; dmOrgsBody.appendChild(tr); }
+        dmDaysBody.innerHTML=''; const daysRows=j.days||[]; if(!daysRows.length){ dmDaysBody.innerHTML='<tr><td colspan="5" class="warn">—</td></tr>'; }
+        for(const d of daysRows){ const tr=document.createElement('tr'); tr.innerHTML=`<td>${esc(d.day||'')}</td><td>${esc(d.total||0)}</td><td>${esc(d.pass_dmarc||0)}</td><td>${esc(d.pass_spf||0)}</td><td>${esc(d.pass_dkim||0)}</td>`; dmDaysBody.appendChild(tr); }
         dmLog2.textContent='OK';
       }catch(e){ dmLog2.textContent='Error: '+e.message; }
     }
