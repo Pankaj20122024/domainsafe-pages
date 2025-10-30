@@ -3,554 +3,626 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>DomainSafe — Calm · Minimal · One‑and‑done</title>
+  <title>DomainSafe — Status • Quick‑Codes • Step‑Up</title>
   <style>
     :root{
-      --bg:#0f1221; --fg:#e8ebff; --mut:#b8c3ff; --card:#121633; --border:#2a3470; --accent:#9dc0ff;
-      --ok:#2ecc71; --warn:#f1c40f; --bad:#e74c3c; --btn:#233064;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --bg:#0f1221; --fg:#e8ebff; --muted:#a7b1e6; --card:#14183a; --line:#2a3470;
+      --ok:#3ddc97; --warn:#ffcc66; --bad:#ff6b6b; --btn:#3142d0; --btn2:#1f2a7a;
+      --mono:#0f1533;
     }
     *{box-sizing:border-box}
-    body{margin:0;padding:32px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg)}
-    a{color:var(--accent);text-decoration:none}
-    h1{margin:0 0 12px 0;font-size:24px}
-    h2{margin:28px 0 12px 0;font-size:18px}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
-    .full{grid-column:1/13}.half{grid-column:1/7}.halfR{grid-column:7/13}
-    label{display:block;margin:6px 0 4px 0;color:var(--mut);font-size:12px}
-    input,select,textarea{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0f1533;color:var(--fg);font-family:inherit}
-    textarea{min-height:88px}
-    .row{display:flex;gap:12px;flex-wrap:wrap}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
+      background:var(--bg); color:var(--fg); line-height:1.45;
+    }
+    header{padding:28px 20px 8px; border-bottom:1px solid var(--line)}
+    header h1{margin:0 0 6px 0; font-size:22px}
+    header .tag{color:var(--muted); font-size:13px}
+    main{max-width:1100px; margin:0 auto; padding:24px 16px 48px}
+    .grid{display:grid; grid-template-columns:1fr; gap:16px}
+    @media(min-width:980px){ .grid{grid-template-columns:1fr 1fr} }
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px;
+    }
+    .card h3{margin:0 0 8px 0; font-size:18px}
+    .desc{color:var(--muted); font-size:13px; margin:0 0 10px 0}
+    label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px}
+    input,select,textarea{
+      width:100%; padding:10px 12px; background:#0f1533; border:1px solid var(--line); color:var(--fg);
+      border-radius:8px; outline:none;
+    }
+    textarea{min-height:100px}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
     .row > div{flex:1 1 200px}
-    .btn{background:var(--btn);border:1px solid var(--border);padding:10px 14px;border-radius:8px;cursor:pointer;color:var(--fg)}
-    .btn.secondary{background:transparent}
-    .btn.ok{background:#1d7b46;border-color:#1d7b46}
-    .mono{font-family:var(--mono)}
-    .mut{color:var(--mut)}
-    .pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--border);background:#0f1533}
-    .table{width:100%;border-collapse:collapse;font-size:14px}
-    .table th,.table td{border:1px solid var(--border);padding:8px 10px;text-align:left;vertical-align:top}
-    .log{background:#0b0f26;border:1px solid var(--border);border-radius:8px;padding:10px;white-space:pre-wrap;font-family:var(--mono);min-height:58px}
-    .ok{color:var(--ok)} .bad{color:var(--bad)}
-    .tips{color:var(--mut);margin-top:0}
-    .section-note{font-size:12px;color:var(--mut)}
+    .btn{
+      appearance:none; border:1px solid var(--btn); background:var(--btn);
+      color:#fff; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600;
+    }
+    .btn.secondary{background:var(--btn2); border-color:var(--btn2)}
+    .btn.ghost{background:transparent; color:var(--fg); border-color:var(--line)}
+    .btn:disabled{opacity:0.6; cursor:not-allowed}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+    .log{white-space:pre-wrap; font-family:ui-monospace, Menlo, Monaco, Consolas, monospace;
+         background:var(--mono); border:1px solid var(--line); border-radius:8px; padding:10px; font-size:13px}
+    table{width:100%; border-collapse:collapse; font-size:14px}
+    th,td{border-bottom:1px solid var(--line); padding:8px 6px; text-align:left}
+    th{color:var(--muted); font-weight:600}
+    .pill{display:inline-block; padding:3px 8px; border-radius:999px; font-size:12px}
+    .ok{background:rgba(61,220,151,.15); color:var(--ok); border:1px solid rgba(61,220,151,.4)}
+    .bad{background:rgba(255,107,107,.15); color:var(--bad); border:1px solid rgba(255,107,107,.35)}
+    .warn{background:rgba(255,204,102,.12); color:var(--warn); border:1px solid rgba(255,204,102,.35)}
+    .hint{font-size:12px; color:var(--muted)}
+    .flex{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .spacer{height:6px}
+    .danger{color:#ff9f9f}
+    .success{color:#8be8bd}
+    .muted{color:var(--muted)}
+    .copybtn{margin-left:8px}
+    .section-title{margin:24px 0 6px 0; font-size:16px; color:#cbd3ff}
+    .tiny{font-size:12px}
   </style>
 </head>
 <body>
+<header>
+  <h1>DomainSafe is live ✅ <span class="muted">StepUp‑UI 2025‑10‑30</span></h1>
+  <div class="tag">Status, Quick‑Codes, Verify, one‑click Connect, DMARC Policy Step‑Up, Control SPF, Insights. The robot keeps watch daily.</div>
+</header>
 
-  <h1>DomainSafe is live ✅ <span class="mut pill">StepUp‑UI</span></h1>
-  <p class="mut">Status, Quick‑Codes, Verify, one‑click Connect, new DMARC Policy Step‑Up, Control SPF, Insights. The robot keeps watch daily.</p>
+<main>
+  <!-- STATUS & QUICK CHECK -->
+  <section class="grid">
+    <div class="card">
+      <h3>Domain Status (daily robot checks)</h3>
+      <p class="desc">The robot monitors connected domains and records SPF / DMARC / DKIM health snapshots.</p>
+      <div class="row">
+        <button class="btn" id="btnRunMonitor">Refresh status</button>
+        <button class="btn secondary" id="btnRunMonitorDev">Run now (dev)</button>
+      </div>
+      <div class="spacer"></div>
+      <div id="statusTableWrap">
+        <table id="statusTable">
+          <thead>
+            <tr><th>Domain</th><th>Owner</th><th>SPF</th><th>DMARC</th><th>DKIM s1</th><th>DKIM s2</th><th>Checked at</th></tr>
+          </thead>
+          <tbody id="statusRows"><tr><td colspan="7" class="muted">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
 
-  <div class="grid">
+    <div class="card">
+      <h3>“Check my domain” (instant protection check)</h3>
+      <p class="desc">Quick, safe checker — no tokens. We only read public DNS and your robot’s status.</p>
+      <div class="row">
+        <div><label>Domain</label><input id="chk-domain" class="mono" placeholder="example.com"/></div>
+        <div style="flex:0 0 180px; align-self:flex-end"><button class="btn" id="btnCheck">Check now</button></div>
+      </div>
+      <div class="spacer"></div>
+      <pre class="log" id="chk-log">Enter a domain → Check now.</pre>
+      <p class="hint tiny">We consult: Robot <code>/api/status</code>, Robot <code>/api/check-quick-codes</code>, and DoH TXT for <code>_dmarc</code>, <code>_smtp._tls</code>, and <code>mta-sts</code>.</p>
+    </div>
+  </section>
 
-    <!-- Domain Status -->
-    <div class="card full">
-      <h2>Domain Status (daily robot checks)</h2>
+  <!-- ONBOARD / ADD DOMAIN -->
+  <section class="grid">
+    <div class="card">
+      <h3>Add Domain</h3>
+      <p class="desc">Register a domain with the robot (owner email only; no tokens here).</p>
+      <div class="row">
+        <div><label>Contact email</label><input id="add-email" class="mono" placeholder="you@example.com" value="pankajonlinerepository@gmail.com"/></div>
+        <div><label>Domain</label><input id="add-domain" class="mono" placeholder="example.com"/></div>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn" id="btnAddDomain">Add domain</button>
+      <div class="spacer"></div>
+      <pre class="log" id="add-log">Waiting…</pre>
+
+      <h4 class="section-title">Recent domains</h4>
+      <div id="recentWrap" class="tiny muted">—</div>
+    </div>
+
+    <div class="card">
+      <h3>Verify Records</h3>
+      <p class="desc">Checks public DNS. Green means your domain is wired to central controls.</p>
+      <div class="row">
+        <div><label>Domain to check</label><input id="verify-domain" class="mono" placeholder="example.com"/></div>
+        <div style="flex:0 0 160px; align-self:flex-end"><button class="btn" id="btnVerify">Check</button></div>
+      </div>
+      <div class="spacer"></div>
+      <pre class="log" id="verify-log">Enter a domain → Check.</pre>
+    </div>
+  </section>
+
+  <!-- QUICK CODES -->
+  <section class="grid">
+    <div class="card">
+      <h3>Quick‑Codes (one‑time DNS)</h3>
+      <p class="desc">Use if you don’t want to connect a provider account. Paste these at your DNS provider and you’re done.</p>
+      <div class="row">
+        <div><label>Domain to secure</label><input id="qc-domain" class="mono" placeholder="example.com"/></div>
+        <div style="flex:0 0 160px; align-self:flex-end"><button class="btn" id="btnQCodes">Generate Quick‑Codes</button></div>
+      </div>
+      <div style="margin:8px 0">
+        <label class="flex"><input type="checkbox" id="qc-extras"/> <span>Show optional extras (MTA‑STS &amp; TLS‑RPT)</span></label>
+      </div>
+      <div class="spacer"></div>
+      <div id="qc-results" class="tiny muted">Enter a domain → Generate.</div>
+      <div class="spacer"></div>
+      <button class="btn ghost" id="btnCopyAll">Copy all</button>
+    </div>
+
+    <div class="card">
+      <h3>Connect Cloudflare (one‑click Protect)</h3>
+      <p class="desc">Paste a Cloudflare API Token (Zone:Read + DNS:Edit). Token is used only for this request.</p>
+      <div class="row">
+        <div><label>Cloudflare API Token</label><input id="cf-token" class="mono" type="password" placeholder="paste token here"/></div>
+        <div style="flex:0 0 160px; align-self:flex-end"><button class="btn" id="btnCfList">List zones</button></div>
+      </div>
+      <div class="row">
+        <div><label>Zone</label><select id="cf-zones"><option value="">— choose a zone —</option></select></div>
+        <div style="flex:0 0 160px; align-self:flex-end"><button class="btn" id="btnCfProtect">Protect</button></div>
+      </div>
+      <div class="spacer"></div>
+      <pre class="log tiny" id="cf-log">Paste token → List zones → choose zone → Protect.</pre>
+      <p class="hint">Safety: “Protect” is for first‑time onboarding; it starts DMARC at <code>p=none</code>. Policy changes later should use **Step‑Up** below (or automation).</p>
+    </div>
+  </section>
+
+  <!-- ROUTE 53 -->
+  <section class="grid">
+    <div class="card">
+      <h3>Connect AWS Route 53 (one‑click Protect)</h3>
+      <p class="desc">Paste an AWS Access Key ID + Secret (IAM user limited to Route 53). Keys are used only for this request.</p>
+      <div class="row">
+        <div><label>AWS Access Key ID</label><input id="r53-key" class="mono" placeholder="AKIA..."/></div>
+        <div><label>AWS Secret Access Key</label><input id="r53-secret" class="mono" type="password" placeholder="********"/></div>
+      </div>
+      <div class="row">
+        <div><label>Hosted zone</label><select id="r53-zones"><option value="">— choose a hosted zone —</option></select></div>
+        <div style="flex:0 0 160px; align-self:flex-end"><button class="btn" id="btnR53Protect">Protect</button></div>
+      </div>
+      <div class="spacer"></div>
+      <pre class="log tiny" id="r53-log">Paste keys → List hosted zones → choose one → Protect.</pre>
+    </div>
+
+    <div class="card">
+      <h3>DMARC Policy Step‑Up (None → Quarantine → Reject)</h3>
+      <p class="desc">Start safe in monitor (<code>p=none</code>), then raise to <code>quarantine</code> (percentage of mail), finally <code>reject</code>. We write TXT at <code>_dmarc.&lt;domain&gt;</code>.</p>
+      <div class="row">
+        <div style="flex:0 0 160px">
+          <label>Mode</label>
+          <select id="ps-policy">
+            <option value="none">None (monitor)</option>
+            <option value="quarantine">Quarantine</option>
+            <option value="reject">Reject</option>
+          </select>
+        </div>
+        <div style="flex:0 0 160px">
+          <label>Aggregate reports (RUA)</label>
+          <input id="ps-rua" class="mono" value="mailto:dmarc@domainsafepro.com"/>
+          <div class="hint tiny">DMARC aggregate XMLs will be sent here (captured via Email Routing).</div>
+        </div>
+      </div>
+
       <div class="row" style="align-items:center">
-        <button class="btn" id="stRefresh">Refresh status</button>
-        <button class="btn secondary" id="stRun">Run now (dev)</button>
-        <span id="stOk" class="pill mut">—</span>
+        <div style="flex:0 0 140px">
+          <label>Preview TXT (_dmarc)</label>
+          <input id="ps-preview" class="mono" value="v=DMARC1; p=none; adkim=s; aspf=s; rua=mailto:dmarc@domainsafepro.com; pct=100" readonly/>
+        </div>
+        <div style="flex:1">
+          <label>Target domain (apex)</label>
+          <input id="ps-domain" class="mono" placeholder="example.com"/>
+          <div class="hint tiny">Populated automatically from your selected Cloudflare / Route 53 zone.</div>
+        </div>
       </div>
-      <div style="overflow:auto;margin-top:10px">
-        <table class="table" id="stTable">
-          <thead><tr>
-            <th>Domain</th><th>Owner</th><th>SPF</th><th>DMARC</th><th>DKIM s1</th><th>DKIM s2</th><th>Checked at</th>
-          </tr></thead>
-          <tbody></tbody>
-        </table>
+
+      <div class="row">
+        <button class="btn" id="btnPsPreview">Preview</button>
+        <button class="btn" id="btnPsApplyCf">Apply via Cloudflare (uses selected zone)</button>
+        <button class="btn" id="btnPsApplyR53">Apply via Route 53 (uses selected hosted zone)</button>
       </div>
+      <div class="spacer"></div>
+      <pre class="log tiny" id="ps-log">Use Preview, then Apply via CF or R53. For “other DNS”, copy the TXT from Preview.</pre>
     </div>
+  </section>
 
-    <!-- Add Domain -->
-    <div class="card half">
-      <h2>Add Domain</h2>
-      <div class="row">
-        <div><label>Contact email</label><input id="adEmail" placeholder="you@example.com"></div>
-        <div><label>Domain</label><input id="adDomain" placeholder="example.com"></div>
-      </div>
-      <div class="row" style="align-items:center;gap:12px;margin-top:8px">
-        <button class="btn" id="adAdd">Add domain</button>
-        <span class="mut" id="adWait">Waiting…</span>
-      </div>
-      <h3 style="margin-top:16px">Recent domains</h3>
-      <div style="max-height:180px;overflow:auto">
-        <table class="table" id="adRecent">
-          <thead><tr><th>Domain</th><th>Status</th><th>Owner</th><th>Created</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Quick-Codes -->
-    <div class="card halfR">
-      <h2>Quick‑Codes (one‑time DNS)</h2>
-      <p class="tips">Use if you don’t want to connect a provider account. Paste these at your DNS provider and you’re done.</p>
-      <div class="row">
-        <div><label>Domain to secure</label><input id="qcDomain" placeholder="example.com"></div>
-      </div>
-      <div class="row" style="gap:12px;margin-top:8px">
-        <button class="btn" id="qcGen">Generate Quick‑Codes</button>
-        <label class="mut" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="qcExtras"> Show optional extras (MTA‑STS & TLS‑RPT)</label>
-        <button class="btn secondary" id="qcCopy">Copy all</button>
-      </div>
-      <pre class="log" id="qcOut">Enter a domain → Generate.</pre>
-    </div>
-
-    <!-- Verify -->
-    <div class="card half">
-      <h2>Verify Records</h2>
-      <div class="row">
-        <div><label>Domain to check</label><input id="vrDomain" placeholder="example.com"></div>
-      </div>
-      <div class="row" style="gap:12px;margin-top:8px">
-        <button class="btn" id="vrCheck">Check</button>
-      </div>
-      <pre class="log" id="vrOut">Enter a domain → Check.</pre>
-    </div>
-
-    <!-- Connect Cloudflare -->
-    <div class="card halfR">
-      <h2>Connect Cloudflare (one‑click Protect)</h2>
-      <p class="tips">Paste a Cloudflare API Token (Zone:Read + DNS:Edit). Token is used only for this request.</p>
-      <div class="row">
-        <div><label>Cloudflare API Token</label><input id="cfToken" placeholder="paste token here"></div>
-      </div>
-      <div class="row" style="gap:12px;margin-top:8px">
-        <button class="btn" id="cfList">List zones</button>
-        <select id="cfZones"><option value="">— choose a zone —</option></select>
-        <button class="btn ok" id="cfProtect">Protect</button>
-      </div>
-      <pre class="log" id="cfLog">Paste token → List zones → choose zone → Protect.</pre>
-    </div>
-
-    <!-- Connect Route 53 -->
-    <div class="card half">
-      <h2>Connect AWS Route 53 (one‑click Protect)</h2>
-      <p class="tips">Paste an AWS Access Key ID + Secret (IAM user limited to Route 53). Keys are used only for this request.</p>
-      <div class="row">
-        <div><label>AWS Access Key ID</label><input id="r53Key" placeholder="AKIA..."></div>
-        <div><label>AWS Secret Access Key</label><input id="r53Secret" placeholder="********"></div>
-      </div>
-      <div class="row" style="gap:12px;margin-top:8px">
-        <button class="btn" id="r53List">List hosted zones</button>
-        <select id="r53Zones"><option value="">— choose a hosted zone —</option></select>
-        <button class="btn ok" id="r53Protect">Protect</button>
-      </div>
-      <pre class="log" id="r53Log">Paste keys → List hosted zones → choose one → Protect.</pre>
-    </div>
-
-    <!-- DMARC Policy Step‑Up -->
-    <div class="card full">
-      <h2>DMARC Policy Step‑Up (None → Quarantine → Reject)</h2>
-      <p class="tips">Start safe in monitor (<span class="mono">p=none</span>), then raise to <b>quarantine</b> (percentage of mail), finally <b>reject</b>. We write TXT at <span class="mono">_dmarc.&lt;domain&gt;</span>.</p>
-
-      <div class="row" style="align-items:center;gap:18px">
-        <div><label>Mode</label></div>
-        <label><input type="radio" name="ps-policy" value="none"> None (monitor)</label>
-        <label><input type="radio" name="ps-policy" value="quarantine" checked> Quarantine</label>
-        <label><input type="radio" name="ps-policy" value="reject"> Reject</label>
-      </div>
+  <!-- CONTROL SPF -->
+  <section class="grid">
+    <div class="card">
+      <h3>Control SPF (central include for all protected domains)</h3>
+      <p class="desc">Choose senders and update <code>_spf.control.domainsafepro.com</code> once. All protected domains inherit it.</p>
 
       <div class="row">
-        <div><label>Aggregate reports (RUA)</label><input id="ps-rua" value="mailto:dmarc@domainsafepro.com"></div>
-        <div><label>Preview TXT (<span class="mono">_dmarc</span>)</label><textarea id="ps-preview" readonly>v=DMARC1; p=none; adkim=s; aspf=s; rua=mailto:dmarc@domainsafepro.com; pct=100</textarea></div>
-      </div>
-
-      <div class="row">
-        <div><label>Target domain (apex)</label><input id="ps-domain" placeholder="example.com"></div>
-        <div><label>% of mail (pct)</label><input id="ps-pct" type="number" min="1" max="100" value="25"></div>
-      </div>
-
-      <div class="row" style="align-items:center;gap:18px">
-        <div><label>Alignment</label></div>
-        <label><input type="checkbox" id="ps-strict" checked> Strict alignment (adkim=s, aspf=s)</label>
-      </div>
-
-      <div class="row" style="gap:12px;margin-top:8px">
-        <button class="btn secondary" id="psPreviewBtn">Preview</button>
-        <button class="btn" id="psCF">Apply via Cloudflare (uses selected zone)</button>
-        <button class="btn" id="psR53">Apply via Route 53 (uses selected hosted zone)</button>
-        <a class="btn secondary" id="psEval" href="#" target="_blank">Run automation (bookmark)</a>
-      </div>
-      <pre class="log" id="ps-log">Use Preview, then Apply via CF or R53. For “other DNS”, copy the TXT from Preview.</pre>
-      <p class="section-note">Safety: “Protect” never downgrades DMARC. If a stricter policy already exists, we preserve it.</p>
-    </div>
-
-    <!-- Control SPF -->
-    <div class="card full">
-      <h2>Control SPF (central include for all protected domains)</h2>
-      <p class="tips">Choose senders and update <span class="mono">_spf.control.domainsafepro.com</span> once. All protected domains inherit it.</p>
-
-      <div class="row">
-        <div class="half">
-          <label>Senders (include)</label>
-          <div class="row" style="gap:8px">
-            <label><input type="checkbox" class="spfOpt" value="include:_spf.google.com"> Google Workspace</label>
-            <label><input type="checkbox" class="spfOpt" value="include:spf.protection.outlook.com"> Microsoft 365</label>
-            <label><input type="checkbox" class="spfOpt" value="include:sendgrid.net"> SendGrid</label>
-            <label><input type="checkbox" class="spfOpt" value="include:amazonses.com"> Amazon SES</label>
-            <label><input type="checkbox" class="spfOpt" value="include:mailgun.org"> Mailgun</label>
-            <label><input type="checkbox" class="spfOpt" value="include:servers.mcsv.net"> Mailchimp</label>
-            <label><input type="checkbox" class="spfOpt" value="include:spf.mtasv.net"> Postmark</label>
-            <label><input type="checkbox" class="spfOpt" value="include:_spf.sparkpostmail.com"> SparkPost</label>
-            <label><input type="checkbox" class="spfOpt" value="include:zoho.com"> Zoho</label>
-            <label><input type="checkbox" class="spfOpt" value="include:mail.zendesk.com"> Zendesk</label>
-            <label><input type="checkbox" class="spfOpt" value="include:mail.intercom.io"> Intercom</label>
+        <div style="flex:1">
+          <div class="flex">
+            <label><input type="checkbox" class="spf-sel" value="google"/> Google Workspace</label>
+            <label><input type="checkbox" class="spf-sel" value="m365"/> Microsoft 365</label>
+            <label><input type="checkbox" class="spf-sel" value="sendgrid"/> SendGrid</label>
+            <label><input type="checkbox" class="spf-sel" value="ses"/> Amazon SES</label>
+            <label><input type="checkbox" class="spf-sel" value="mailgun"/> Mailgun</label>
+            <label><input type="checkbox" class="spf-sel" value="mailchimp"/> Mailchimp</label>
+            <label><input type="checkbox" class="spf-sel" value="postmark"/> Postmark</label>
+            <label><input type="checkbox" class="spf-sel" value="sparkpost"/> SparkPost</label>
+            <label><input type="checkbox" class="spf-sel" value="zoho"/> Zoho</label>
+            <label><input type="checkbox" class="spf-sel" value="zendesk"/> Zendesk</label>
+            <label><input type="checkbox" class="spf-sel" value="intercom"/> Intercom</label>
           </div>
         </div>
-        <div class="halfR">
-          <label>Preview (TXT <span class="mono">_spf.control.domainsafepro.com</span>)</label>
-          <textarea id="spfPreview" class="mono">v=spf1 ~all</textarea>
+      </div>
+
+      <div class="row">
+        <div><label>Preview (TXT <span class="mono">_spf.control.domainsafepro.com</span>)</label>
+          <input id="spf-preview" class="mono" value="v=spf1 ~all" readonly/>
         </div>
       </div>
 
-      <div class="row" style="margin-top:8px">
-        <div class="half"><label>Cloudflare API Token (Zone:Read + DNS:Edit on domainsafepro.com)</label><input id="spfTok" placeholder="paste token here"></div>
-      </div>
-      <div class="row" style="gap:12px;margin-top:8px">
-        <button class="btn" id="spfLoad">Load current</button>
-        <button class="btn ok" id="spfSave">Update control SPF</button>
-      </div>
-      <pre class="log" id="spfLog">Use “Load current” to see existing value, select senders, then “Update”.</pre>
-    </div>
-
-    <!-- Insights (lightweight scaffolding) -->
-    <div class="card full">
-      <h2>DMARC Insights (beta)</h2>
       <div class="row">
-        <div><label>Domain</label><input id="insDomain" value="domainsafepro.com"></div>
+        <div><label>Cloudflare API Token (Zone:Read + DNS:Edit on <span class="mono">domainsafepro.com</span>)</label>
+          <input id="spf-token" class="mono" type="password" placeholder="paste token here"/>
+        </div>
       </div>
-      <div class="row" style="gap:12px;margin-top:8px">
-        <button class="btn" id="ins7">Load 7‑day</button>
-        <button class="btn" id="ins30">Load 30‑day</button>
+
+      <div class="row">
+        <button class="btn" id="btnSpfLoad">Load current</button>
+        <button class="btn" id="btnSpfUpdate">Update control SPF</button>
       </div>
-      <pre class="log" id="insLog">Use the buttons to query summary windows from the robot. (This is a simple textual summary.)</pre>
+
+      <div class="spacer"></div>
+      <pre class="log tiny" id="spf-log">Use “Load current” to see existing value, select senders, then “Update”.</pre>
     </div>
 
-    <!-- Docs -->
-    <div class="card full">
-      <h2>Docs (short & practical)</h2>
-      <h3>Option A — Quick‑Codes (copy‑paste at your DNS provider)</h3>
-      <ol>
-        <li>Enter your domain in Quick‑Codes → Generate.</li>
-        <li>Copy each required row (use Copy buttons) and paste at your DNS provider (TXT/CNAME records).</li>
-        <li>(Optional) Tick “Show optional extras” and add those too.</li>
-        <li>Go to Verify Records → Check → expect all green.</li>
-      </ol>
-      <p>Platform links: <a href="https://dash.cloudflare.com" target="_blank">Cloudflare Dashboard</a> · <a href="https://console.aws.amazon.com/route53/" target="_blank">AWS Route 53</a></p>
-
-      <h3>Option B — Connect Cloudflare (one‑click)</h3>
-      <ol>
-        <li>Cloudflare → API Tokens → Create Token (Zone:Read + DNS:Edit).</li>
-        <li>Paste token here → List zones → choose zone → Protect.</li>
-        <li>Use Verify to confirm.</li>
-      </ol>
-
-      <h3>Option C — Connect AWS Route 53 (one‑click)</h3>
-      <ol>
-        <li>AWS IAM → create user with Route 53 access (first test).</li>
-        <li>Create access key → paste here → List hosted zones → choose → Protect.</li>
-        <li>Use Verify to confirm.</li>
-      </ol>
-
-      <h3>What the robot sets</h3>
-      <ul>
-        <li>SPF TXT at apex: <span class="mono">v=spf1 include:_spf.control.domainsafepro.com ~all</span></li>
-        <li>DKIM CNAMEs: <span class="mono">s1._domainkey</span> and <span class="mono">s2._domainkey</span> → central keys</li>
-        <li>DMARC TXT at <span class="mono">_dmarc</span>: start in monitor mode (<span class="mono">p=none</span>)</li>
-        <li>Extras (optional): <span class="mono">mta-sts</span> CNAME and <span class="mono">_smtp._tls</span> TXT for TLS reporting</li>
-      </ul>
-      <p>You can tighten DMARC later without touching customer DNS because SPF/DKIM are centrally included.</p>
+    <div class="card">
+      <h3>DMARC Insights (beta)</h3>
+      <p class="desc">Pull fresh aggregate XMLs and show daily alignment summaries (7/30 days).</p>
+      <div class="row">
+        <div style="flex:0 0 200px"><button class="btn" id="btnIngest">Ingest latest 20</button></div>
+        <div style="flex:1">
+          <label>Domain</label>
+          <input id="ins-domain" class="mono" value="domainsafepro.com"/>
+        </div>
+        <div style="flex:0 0 140px; align-self:flex-end">
+          <button class="btn secondary" id="btnLoad7">Load 7‑day</button>
+        </div>
+        <div style="flex:0 0 140px; align-self:flex-end">
+          <button class="btn secondary" id="btnLoad30">Load 30‑day</button>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div id="ins-wrap" class="tiny muted">—</div>
     </div>
+  </section>
 
-  </div>
+  <!-- DOCS -->
+  <section class="card">
+    <h3>Docs (short &amp; practical)</h3>
+    <p class="desc">
+      <strong>Option A — Quick‑Codes (copy‑paste at your DNS provider)</strong><br/>
+      Enter your domain in Quick‑Codes → Generate. Copy each required row and paste at your DNS provider (TXT/CNAME records).  
+      (Optional) tick “Show optional extras” and add those too. Go to Verify → Check → expect all green.
+    </p>
+    <p class="desc">
+      <strong>Option B — Connect Cloudflare (one‑click)</strong><br/>
+      Cloudflare → API Tokens → Create Token (Zone:Read + DNS:Edit). Paste token here → List zones → choose zone → Protect. Use Verify to confirm.
+    </p>
+    <p class="desc">
+      <strong>Option C — Connect AWS Route 53 (one‑click)</strong><br/>
+      AWS IAM → create user with Route 53 (first test). Create access key → paste here → List hosted zones → choose → Protect. Use Verify to confirm.
+    </p>
+    <p class="desc">
+      <strong>What the robot sets</strong><br/>
+      SPF TXT at apex: <span class="mono">v=spf1 include:_spf.control.domainsafepro.com ~all</span><br/>
+      DKIM CNAMEs: <span class="mono">s1._domainkey</span> and <span class="mono">s2._domainkey</span> → central keys<br/>
+      DMARC TXT at <span class="mono">_dmarc</span>: start in monitor mode (<span class="mono">p=none</span>)<br/>
+      Extras (optional): <span class="mono">mta-sts</span> CNAME and <span class="mono">_smtp._tls</span> TXT for TLS reporting
+    </p>
+  </section>
+</main>
 
-  <script>
-    // ─────────────────────────────────────────────────────────────────────
-    // Config — no placeholders: your live Worker and control domain.
-    const API_BASE = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
-    const CONTROL_DOMAIN = "control.domainsafepro.com";
-    const CF_ZONE_ID_DOMAINSafe = "cdef12f697794db4095acd67e555f9e8"; // fallback for control SPF if robot endpoint is unavailable
+<script>
+(() => {
+  // ---- Configuration (no placeholder; your robot base is fixed) ----
+  const API_BASE = 'https://domainsafe-robot.pankajonlinerepository.workers.dev';
 
-    // Remember currently selected zone/hosted zone for Apply buttons
-    let CURRENT_CF = { token: "", zone_id: "", zone_name: "" };
-    let CURRENT_R53 = { access_key_id: "", secret_access_key: "", hosted_zone_id: "", zone_name: "" };
+  // ---- Helpers ----
+  const $ = sel => document.querySelector(sel);
+  const log = (sel, v) => { $(sel).textContent = (typeof v === 'string') ? v : JSON.stringify(v, null, 2); };
+  const copy = (txt) => navigator.clipboard.writeText(txt).catch(()=>{});
+  const qs = (obj) => new URLSearchParams(obj).toString();
 
-    // Helpers
-    const $ = (q) => document.querySelector(q);
-    const log = (el, v) => el.textContent = (typeof v === "string" ? v : JSON.stringify(v, null, 2));
-    const jget = async (url) => (await fetch(url)).json();
-    const jpost = async (url, body) => (await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body||{}) })).json();
+  async function getJSON(url){ const r = await fetch(url); if(!r.ok) throw new Error(await r.text()); return r.json(); }
+  async function postJSON(url, body){
+    const r = await fetch(url,{method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(body)});
+    if(!r.ok) throw new Error(await r.text()); return r.json();
+  }
 
-    // Copy util for Quick-Codes
-    async function copy(text){ try { await navigator.clipboard.writeText(text); } catch {} }
-
-    // ─────────────────────────────────────────────────────────────────────
-    // Status
-    async function loadStatus(){
-      const j = await jget(API_BASE + "/api/status");
-      const tb = $("#stTable tbody"); tb.innerHTML = "";
-      if (!j.ok) { $("#stOk").textContent = "Error"; return; }
-      const rows = j.rows || [];
-      let okCount = 0;
-      for(const r of rows){
-        const tr = document.createElement("tr");
-        const toCell = (v)=>{ const td=document.createElement("td"); td.textContent = (v ?? ""); return td; };
-        tr.appendChild(toCell(r.domain_name));
-        tr.appendChild(toCell(r.email || ""));
-        tr.appendChild(toCell(r.spf_ok ? "OK" : "Needs fix"));
-        tr.appendChild(toCell(r.dmarc_ok ? "OK" : "Needs fix"));
-        tr.appendChild(toCell(r.dkim_s1_ok ? "OK" : "Needs fix"));
-        tr.appendChild(toCell(r.dkim_s2_ok ? "OK" : "Needs fix"));
-        tr.appendChild(toCell(r.checked_at || ""));
-        tb.appendChild(tr);
-        if (r.spf_ok && r.dmarc_ok && r.dkim_s1_ok && r.dkim_s2_ok) okCount++;
+  // ---- Status table ----
+  async function refreshStatus(){
+    try{
+      const s = await getJSON(`${API_BASE}/api/status`);
+      const rows = s.rows || s.results || [];
+      const tbody = $('#statusRows');
+      tbody.innerHTML = '';
+      if (!rows.length) { tbody.innerHTML = `<tr><td colspan="7" class="muted">No rows yet.</td></tr>`; return; }
+      for (const r of rows){
+        const ok = (x)=> x ? `<span class="pill ok">OK</span>` : `<span class="pill bad">Needs fix</span>`;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="mono">${r.domain || r.domain_name}</td>
+          <td class="mono">${r.email || r.owner || ''}</td>
+          <td>${ok(r.spf_ok)}</td>
+          <td>${ok(r.dmarc_ok)}</td>
+          <td>${ok(r.dkim_s1_ok)}</td>
+          <td>${ok(r.dkim_s2_ok)}</td>
+          <td class="mono">${r.checked_at || ''}</td>
+        `;
+        tbody.appendChild(tr);
       }
-      $("#stOk").textContent = rows.length ? (okCount === rows.length ? "OK" : "Some need fix") : "—";
-    }
-    $("#stRefresh").addEventListener("click", loadStatus);
-    $("#stRun").addEventListener("click", async ()=>{ await jpost(API_BASE + "/api/monitor-run"); await loadStatus(); });
+    }catch(e){ $('#statusRows').innerHTML = `<tr><td colspan="7" class="danger tiny">${e}</td></tr>`; }
+  }
+  $('#btnRunMonitor').addEventListener('click', async ()=>{
+    try{ await postJSON(`${API_BASE}/api/monitor-run`,{}); await refreshStatus(); }catch(e){ alert(e); }
+  });
+  $('#btnRunMonitorDev').addEventListener('click', async ()=>{
+    try{ await postJSON(`${API_BASE}/api/monitor-run`,{dev:true}); await refreshStatus(); }catch(e){ alert(e); }
+  });
+  refreshStatus();
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Add Domain
-    async function loadRecent(){
-      const j = await jget(API_BASE + "/api/status");
-      const tb = $("#adRecent tbody"); tb.innerHTML = "";
-      for(const r of (j.rows || [])){
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${r.domain_name}</td><td>${(r.spf_ok&&r.dmarc_ok&&r.dkim_s1_ok&&r.dkim_s2_ok)?"connected":"pending"}</td><td>${r.email||""}</td><td>${r.checked_at||""}</td>`;
-        tb.appendChild(tr);
-      }
-    }
-    $("#adAdd").addEventListener("click", async ()=>{
-      $("#adWait").textContent = "Adding…";
-      const j = await jpost(API_BASE + "/api/domains", {
-        email: $("#adEmail").value.trim(),
-        domain: $("#adDomain").value.trim().toLowerCase()
-      });
-      $("#adWait").textContent = j.ok ? "Added (or already present)." : ("Error: " + (j.error || "failed"));
-      await loadRecent();
-    });
+  // ---- Add domain ----
+  async function refreshRecent(){
+    try{
+      const s = await getJSON(`${API_BASE}/api/domains`);
+      const rows = s.rows || s.domains || [];
+      const html = rows.slice(0,10).map(r =>
+        `<div class="mono">${r.domain_name} <span class="muted">— ${r.status} — ${r.created_at||''}</span></div>`
+      ).join('');
+      $('#recentWrap').innerHTML = html || '—';
+    }catch{ /* ignore */ }
+  }
+  $('#btnAddDomain').addEventListener('click', async ()=>{
+    const email = $('#add-email').value.trim();
+    const domain = $('#add-domain').value.trim().toLowerCase();
+    if(!email || !domain){ return log('#add-log','Please enter email and domain.'); }
+    try{
+      const j = await postJSON(`${API_BASE}/api/domains`, {email, domain});
+      log('#add-log', j);
+      await refreshRecent();
+    }catch(e){ log('#add-log', String(e)); }
+  });
+  refreshRecent();
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Quick‑Codes
-    $("#qcGen").addEventListener("click", async ()=>{
-      const d = $("#qcDomain").value.trim().toLowerCase();
-      if (!d) return log($("#qcOut"), "Enter a domain first.");
-      const j = await jget(API_BASE + "/api/quick-codes?domain=" + encodeURIComponent(d));
-      if (!j.ok) return log($("#qcOut"), j);
-      const wantExtras = $("#qcExtras").checked;
+  // ---- Verify records ----
+  $('#btnVerify').addEventListener('click', async ()=>{
+    const domain = $('#verify-domain').value.trim().toLowerCase();
+    if(!domain) return log('#verify-log','Enter a domain.');
+    try{
+      const j = await getJSON(`${API_BASE}/api/check-quick-codes?domain=${encodeURIComponent(domain)}`);
+      log('#verify-log', j);
+    }catch(e){ log('#verify-log', String(e)); }
+  });
+
+  // ---- Quick‑Codes ----
+  $('#btnQCodes').addEventListener('click', async ()=>{
+    const domain = $('#qc-domain').value.trim().toLowerCase();
+    if(!domain) return $('#qc-results').textContent = 'Enter a domain.';
+    try{
+      const j = await getJSON(`${API_BASE}/api/quick-codes?domain=${encodeURIComponent(domain)}${$('#qc-extras').checked?'&extras=1':''}`);
       const lines = [];
-      for (const r of (j.records||[])) lines.push(`${r.type}\t${r.name}\t${r.value}\t; ${r.purpose||""}`);
-      if (wantExtras) for (const r of (j.extras||[])) lines.push(`${r.type}\t${r.name}\t${r.value}\t; ${r.purpose||""}`);
-      log($("#qcOut"), lines.join("\n"));
-    });
-    $("#qcCopy").addEventListener("click", ()=> copy($("#qcOut").textContent||""));
+      (j.records||[]).forEach(r => lines.push(`${r.type}\t${r.name}\t${r.value}`));
+      if ($('#qc-extras').checked) (j.extras||[]).forEach(r => lines.push(`${r.type}\t${r.name}\t${r.value}`));
+      $('#qc-results').innerHTML = `<pre class="log">${lines.join('\n')||'—'}</pre>`;
+    }catch(e){ $('#qc-results').textContent = String(e); }
+  });
+  $('#btnCopyAll').addEventListener('click', ()=>{
+    const pre = $('#qc-results').querySelector('pre');
+    if (pre) copy(pre.textContent);
+  });
 
-    // Verify
-    $("#vrCheck").addEventListener("click", async ()=>{
-      const d = $("#vrDomain").value.trim().toLowerCase();
-      if (!d) return log($("#vrOut"), "Enter a domain first.");
-      const j = await jget(API_BASE + "/api/check-quick-codes?domain=" + encodeURIComponent(d));
-      log($("#vrOut"), j);
-    });
-
-    // ─────────────────────────────────────────────────────────────────────
-    // Cloudflare Connect
-    $("#cfList").addEventListener("click", async ()=>{
-      CURRENT_CF.token = $("#cfToken").value.trim();
-      const j = await jpost(API_BASE + "/api/cf/list-zones", { token: CURRENT_CF.token });
-      if (!j.ok) return log($("#cfLog"), j);
-      const sel = $("#cfZones"); sel.innerHTML = `<option value="">— choose a zone —</option>`;
-      for (const z of (j.zones || [])){
-        const opt = document.createElement("option");
-        opt.value = z.id; opt.textContent = `${z.name} (${z.status})`;
-        sel.appendChild(opt);
-      }
-      log($("#cfLog"), "Choose a zone, then click Protect.");
-    });
-    $("#cfZones").addEventListener("change", (e)=>{
-      CURRENT_CF.zone_id = e.target.value || "";
-      const label = e.target.options[e.target.selectedIndex]?.textContent || "";
-      CURRENT_CF.zone_name = label.split(" (")[0] || "";
-      // Also prime Step‑Up domain field
-      if (CURRENT_CF.zone_name) $("#ps-domain").value = CURRENT_CF.zone_name;
-    });
-    $("#cfProtect").addEventListener("click", async ()=>{
-      if (!CURRENT_CF.token || !CURRENT_CF.zone_id) return log($("#cfLog"), "Paste token, list zones, choose one, then Protect.");
-      const j = await jpost(API_BASE + "/api/cf/protect", { token: CURRENT_CF.token, zone_id: CURRENT_CF.zone_id });
-      log($("#cfLog"), j);
-      // Also refresh status table
-      await loadStatus();
-    });
-
-    // ─────────────────────────────────────────────────────────────────────
-    // Route 53 Connect
-    $("#r53List").addEventListener("click", async ()=>{
-      CURRENT_R53.access_key_id = $("#r53Key").value.trim();
-      CURRENT_R53.secret_access_key = $("#r53Secret").value.trim();
-      const j = await jpost(API_BASE + "/api/r53/list-zones", {
-        access_key_id: CURRENT_R53.access_key_id,
-        secret_access_key: CURRENT_R53.secret_access_key
+  // ---- Cloudflare connect ----
+  async function cfListZones(){
+    const token = $('#cf-token').value.trim();
+    if(!token) return log('#cf-log','Paste your Cloudflare API token first.');
+    try{
+      const j = await postJSON(`${API_BASE}/api/cf/list-zones`, {token});
+      const z = j.zones || [];
+      const sel = $('#cf-zones'); sel.innerHTML = '<option value="">— choose a zone —</option>';
+      z.forEach(r => {
+        const o = document.createElement('option');
+        o.value = r.id; o.textContent = `${r.name} (${r.status})`; sel.appendChild(o);
       });
-      if (!j.ok) return log($("#r53Log"), j);
-      const sel = $("#r53Zones"); sel.innerHTML = `<option value="">— choose a hosted zone —</option>`;
-      for (const z of (j.zones || [])){
-        const opt = document.createElement("option");
-        opt.value = z.id; opt.textContent = `${z.name}`;
-        sel.appendChild(opt);
-      }
-      log($("#r53Log"), "Choose a hosted zone, then Protect.");
-    });
-    $("#r53Zones").addEventListener("change", (e)=>{
-      CURRENT_R53.hosted_zone_id = e.target.value || "";
-      CURRENT_R53.zone_name = e.target.options[e.target.selectedIndex]?.textContent || "";
-      if (CURRENT_R53.zone_name) $("#ps-domain").value = CURRENT_R53.zone_name.replace(/\.$/,"");
-    });
-    $("#r53Protect").addEventListener("click", async ()=>{
-      if (!CURRENT_R53.access_key_id || !CURRENT_R53.secret_access_key || !CURRENT_R53.hosted_zone_id) return log($("#r53Log"), "Paste keys, list hosted zones, choose one, then Protect.");
-      const j = await jpost(API_BASE + "/api/r53/protect", {
-        access_key_id: CURRENT_R53.access_key_id,
-        secret_access_key: CURRENT_R53.secret_access_key,
-        hosted_zone_id: CURRENT_R53.hosted_zone_id
+      log('#cf-log', {ok:true, zones:z.map(v=>({id:v.id,name:v.name,status:v.status}))});
+    }catch(e){ log('#cf-log', String(e)); }
+  }
+  $('#btnCfList').addEventListener('click', cfListZones);
+
+  $('#btnCfProtect').addEventListener('click', async ()=>{
+    const token = $('#cf-token').value.trim();
+    const zone = $('#cf-zones').value;
+    if(!token || !zone) return log('#cf-log','Paste token and choose a zone.');
+    try{
+      const j = await postJSON(`${API_BASE}/api/cf/protect`, {token, zone_id: zone});
+      log('#cf-log', j);
+      // Try to populate the DMARC target domain for Step-Up
+      const txt = j.apex || (j.results && j.results[0] && j.results[0].name) || '';
+      if (txt) $('#ps-domain').value = txt;
+    }catch(e){ log('#cf-log', String(e)); }
+  });
+
+  // ---- Route 53 connect ----
+  async function r53ListZones(){
+    const key = $('#r53-key').value.trim();
+    const secret = $('#r53-secret').value.trim();
+    if(!key || !secret) return log('#r53-log','Paste AWS key + secret.');
+    try{
+      const j = await postJSON(`${API_BASE}/api/r53/list-zones`, {key, secret});
+      const z = j.zones || [];
+      const sel = $('#r53-zones'); sel.innerHTML = '<option value="">— choose a hosted zone —</option>';
+      z.forEach(r => {
+        const o = document.createElement('option');
+        o.value = r.id; o.textContent = `${r.name} (${r.id})`; sel.appendChild(o);
       });
-      log($("#r53Log"), j);
-      await loadStatus();
-    });
+      log('#r53-log', {ok:true, zones:z});
+    }catch(e){ log('#r53-log', String(e)); }
+  }
+  $('#r53-key').addEventListener('change', r53ListZones);
+  $('#r53-secret').addEventListener('change', r53ListZones);
 
-    // ─────────────────────────────────────────────────────────────────────
-    // DMARC Step‑Up
-    function currentPolicy(){ const r = document.querySelector('input[name="ps-policy"]:checked'); return r ? r.value : "none"; }
-    function buildDmarcString(pct, adkim, aspf){
-      return `v=DMARC1; p=${currentPolicy()}; pct=${pct}; adkim=${adkim}; aspf=${aspf}; rua=${$("#ps-rua").value.trim()||"mailto:dmarc@domainsafepro.com"}; fo=1`;
-    }
-    function updatePreview(){
-      const strict = $("#ps-strict").checked; const adkim = strict ? "s" : "r"; const aspf = strict ? "s" : "r";
-      const pct = Math.max(1, Math.min(100, Number($("#ps-pct").value || 100)));
-      $("#ps-preview").value = buildDmarcString(pct, adkim, aspf);
-    }
-    document.querySelectorAll('input[name="ps-policy"], #ps-pct, #ps-strict, #ps-rua').forEach(e=> e.addEventListener("input", updatePreview));
-    updatePreview();
+  $('#btnR53Protect').addEventListener('click', async ()=>{
+    const key = $('#r53-key').value.trim();
+    const secret = $('#r53-secret').value.trim();
+    const zone = $('#r53-zones').value;
+    if(!key || !secret || !zone) return log('#r53-log','Paste keys and choose a hosted zone.');
+    try{
+      const j = await postJSON(`${API_BASE}/api/r53/protect`, {access_key: key, secret_key: secret, hosted_zone_id: zone});
+      log('#r53-log', j);
+      const txt = j.apex || (j.results && j.results[0] && j.results[0].name) || '';
+      if (txt) $('#ps-domain').value = txt;
+    }catch(e){ log('#r53-log', String(e)); }
+  });
 
-    $("#psPreviewBtn").addEventListener("click", async ()=>{
-      const d = $("#ps-domain").value.trim().toLowerCase();
-      if (!d) return log($("#ps-log"), "Enter a domain (apex) first.");
-      const j = await jget(API_BASE + "/policy/preview?domain=" + encodeURIComponent(d));
-      log($("#ps-log"), j);
-    });
+  // ---- DMARC Step‑Up UI ----
+  function computeDmarcPreview(){
+    const p = $('#ps-policy').value;
+    const rua = $('#ps-rua').value.trim() || 'mailto:dmarc@domainsafepro.com';
+    const base = ['v=DMARC1', `p=${p}`, 'adkim=s', 'aspf=s', `rua=${rua}`];
+    const pct = (p === 'none') ? 100 : 25;
+    if (pct !== 100) base.push(`pct=${pct}`);
+    $('#ps-preview').value = base.join('; ');
+  }
+  computeDmarcPreview();
+  $('#ps-policy').addEventListener('change', computeDmarcPreview);
+  $('#ps-rua').addEventListener('input', computeDmarcPreview);
+  $('#btnPsPreview').addEventListener('click', computeDmarcPreview);
 
-    $("#psCF").addEventListener("click", async ()=>{
-      const domain = $("#ps-domain").value.trim().toLowerCase();
-      if (!domain) return log($("#ps-log"), "Enter domain.");
-      const pct = Math.max(1, Math.min(100, Number($("#ps-pct").value || 25)));
-      const strict = $("#ps-strict").checked; const adkim = strict ? "s":"r"; const aspf = strict ? "s":"r";
-      const token = $("#cfToken").value.trim() || undefined;   // optional; Worker can use its secret
-      const zone_id = CURRENT_CF.zone_id || undefined;         // optional; Worker can infer from ledger
-      const body = { domain, policy: currentPolicy(), pct, adkim, aspf };
-      if (token) body.token = token;
-      if (zone_id) body.zone_id = zone_id;
-      const j = await jpost(API_BASE + "/api/policy/dmarc/cf", body);
-      log($("#ps-log"), j);
-    });
+  $('#btnPsApplyCf').addEventListener('click', async ()=>{
+    const domain = $('#ps-domain').value.trim().toLowerCase();
+    const policy = $('#ps-policy').value;
+    const rua = $('#ps-rua').value.trim() || 'mailto:dmarc@domainsafepro.com';
+    const pct = (policy === 'none') ? 100 : 25;
+    if(!domain) return log('#ps-log','Pick a zone (above) or enter a domain first.');
+    try{
+      const body = {domain, policy, pct, adkim:'s', aspf:'s', rua};
+      const j = await postJSON(`${API_BASE}/api/policy/dmarc/cf`, body);
+      log('#ps-log', j);
+    }catch(e){ log('#ps-log', String(e)); }
+  });
 
-    $("#psR53").addEventListener("click", async ()=>{
-      const domain = $("#ps-domain").value.trim().toLowerCase();
-      const pct = Math.max(1, Math.min(100, Number($("#ps-pct").value || 25)));
-      const strict = $("#ps-strict").checked; const adkim = strict ? "s":"r"; const aspf = strict ? "s":"r";
-      if (!domain || !CURRENT_R53.hosted_zone_id) return log($("#ps-log"), "Choose a Route 53 hosted zone first.");
-      const j = await jpost(API_BASE + "/api/policy/dmarc/r53", {
-        domain, policy: currentPolicy(), pct, adkim, aspf, hosted_zone_id: CURRENT_R53.hosted_zone_id
-      });
-      log($("#ps-log"), j);
-    });
+  $('#btnPsApplyR53').addEventListener('click', async ()=>{
+    const domain = $('#ps-domain').value.trim().toLowerCase();
+    const policy = $('#ps-policy').value;
+    const rua = $('#ps-rua').value.trim() || 'mailto:dmarc@domainsafepro.com';
+    const pct = (policy === 'none') ? 100 : 25;
+    if(!domain) return log('#ps-log','Enter a domain first.');
+    try{
+      const body = {domain, policy, pct, adkim:'s', aspf:'s', rua};
+      const j = await postJSON(`${API_BASE}/api/policy/dmarc/r53`, body);
+      log('#ps-log', j);
+    }catch(e){ log('#ps-log', String(e)); }
+  });
 
-    // Bookmarkable automation run
-    $("#psEval").href = API_BASE + "/policy/evaluate-now";
+  // ---- Control SPF (central) ----
+  const SPF_MAP = {
+    google: 'include:_spf.google.com',
+    m365: 'include:spf.protection.outlook.com',
+    sendgrid: 'include:sendgrid.net',
+    ses: 'include:amazonses.com',
+    mailgun: 'include:mailgun.org',
+    mailchimp: 'include:servers.mcsv.net',
+    postmark: 'include:spf.mtasv.net',
+    sparkpost: 'include:_spf.sparkpostmail.com',
+    zoho: 'include:zoho.com',
+    zendesk: 'include:mail.zendesk.com',
+    intercom: 'include:_spf.intercom.io'
+  };
+  function updateSpfPreview(){
+    const sels = [...document.querySelectorAll('.spf-sel:checked')].map(x => SPF_MAP[x.value]).filter(Boolean);
+    const txt = ['v=spf1', ...sels, '~all'].join(' ');
+    $('#spf-preview').value = txt;
+  }
+  document.querySelectorAll('.spf-sel').forEach(cb => cb.addEventListener('change', updateSpfPreview));
+  updateSpfPreview();
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Control SPF
-    function recomputeSpf(){
-      const opts = [...document.querySelectorAll(".spfOpt:checked")].map(i=>i.value);
-      const parts = ["v=spf1"].concat(opts);
-      parts.push("~all");
-      $("#spfPreview").value = parts.join(" ");
-    }
-    document.querySelectorAll(".spfOpt").forEach(cb=> cb.addEventListener("change", recomputeSpf));
+  $('#btnSpfLoad').addEventListener('click', async ()=>{
+    const token = $('#spf-token').value.trim();
+    if(!token) return log('#spf-log','Paste a Cloudflare API token first.');
+    try{
+      const j = await getJSON(`${API_BASE}/api/cf/control-spf?token=${encodeURIComponent(token)}`);
+      if (j && j.value) $('#spf-preview').value = j.value;
+      log('#spf-log', j);
+    }catch(e){ log('#spf-log', String(e)); }
+  });
 
-    $("#spfLoad").addEventListener("click", async ()=>{
-      const tok = $("#spfTok").value.trim();
-      if (!tok){ log($("#spfLog"), "Paste your Cloudflare API token for domainsafepro.com"); return; }
-      // Try robot endpoint first (preferred)
-      try{
-        const j = await jget(API_BASE + "/api/cf/control-spf?token=" + encodeURIComponent(tok));
-        if (j && j.ok && j.value){ $("#spfPreview").value = j.value; log($("#spfLog"), j); return; }
-        throw new Error("robot endpoint not available");
-      } catch {
-        // Fallback: call CF API directly for TXT _spf.control.domainsafepro.com
-        try{
-          const H = { "Authorization": "Bearer " + tok };
-          const name = "_spf." + CONTROL_DOMAIN;
-          const u = "https://api.cloudflare.com/client/v4/zones/"+CF_ZONE_ID_DOMAINSafe+"/dns_records?type=TXT&name="+encodeURIComponent(name);
-          const res = await fetch(u, { headers: H }).then(r=>r.json());
-          const rec = res?.result?.find(r=>/^v=spf1\b/i.test(r?.content||""));
-          if (rec){ $("#spfPreview").value = rec.content; log($("#spfLog"), {ok:true, value:rec.content}); }
-          else log($("#spfLog"), {ok:false, error:"No SPF record found"});
-        } catch(e){ log($("#spfLog"), {ok:false, error:e.message||String(e)}); }
-      }
-    });
+  $('#btnSpfUpdate').addEventListener('click', async ()=>{
+    const token = $('#spf-token').value.trim();
+    if(!token) return log('#spf-log','Paste a Cloudflare API token first.');
+    const value = $('#spf-preview').value.trim();
+    try{
+      const j = await postJSON(`${API_BASE}/api/cf/control-spf`, {token, value});
+      log('#spf-log', j);
+    }catch(e){ log('#spf-log', String(e)); }
+  });
 
-    $("#spfSave").addEventListener("click", async ()=>{
-      const tok = $("#spfTok").value.trim();
-      if (!tok){ log($("#spfLog"), "Paste your Cloudflare API token for domainsafepro.com"); return; }
-      const value = $("#spfPreview").value.trim() || "v=spf1 ~all";
-      // Try robot endpoint first
-      try{
-        const j = await jpost(API_BASE + "/api/cf/control-spf", { token: tok, value });
-        if (j && j.ok){ log($("#spfLog"), j); return; }
-        throw new Error("robot endpoint not available");
-      } catch {
-        // Fallback: CF API direct upsert
-        try{
-          const name = "_spf." + CONTROL_DOMAIN;
-          const H = { "Authorization":"Bearer "+tok, "content-type":"application/json" };
-          const listU = "https://api.cloudflare.com/client/v4/zones/"+CF_ZONE_ID_DOMAINSafe+"/dns_records?type=TXT&name="+encodeURIComponent(name);
-          const listJ = await fetch(listU, { headers:H }).then(r=>r.json());
-          if (listJ?.result?.length){
-            const id = listJ.result[0].id;
-            const upd = await fetch("https://api.cloudflare.com/client/v4/zones/"+CF_ZONE_ID_DOMAINSafe+"/dns_records/"+id, {
-              method:"PUT", headers:H, body: JSON.stringify({ type:"TXT", name, content:value, ttl:3600 })
-            }).then(r=>r.json());
-            log($("#spfLog"), upd);
-          } else {
-            const crt = await fetch("https://api.cloudflare.com/client/v4/zones/"+CF_ZONE_ID_DOMAINSafe+"/dns_records", {
-              method:"POST", headers:H, body: JSON.stringify({ type:"TXT", name, content:value, ttl:3600 })
-            }).then(r=>r.json());
-            log($("#spfLog"), crt);
-          }
-        } catch(e){ log($("#spfLog"), {ok:false, error:e.message||String(e)}); }
-      }
-    });
+  // ---- Insights (beta) ----
+  $('#btnIngest').addEventListener('click', async ()=>{
+    try{
+      const j = await postJSON(`https://api.domainsafepro.com/api/dmarc/ingest-latest`, {limit:25});
+      $('#ins-wrap').textContent = JSON.stringify(j, null, 2);
+    }catch(e){ $('#ins-wrap').textContent = String(e); }
+  });
+  async function loadRollup(days){
+    const dom = $('#ins-domain').value.trim().toLowerCase();
+    if(!dom) return $('#ins-wrap').textContent = 'Enter a domain first.';
+    try{
+      const j = await getJSON(`${API_BASE}/api/rollup?domain=${encodeURIComponent(dom)}&days=${days}`);
+      $('#ins-wrap').textContent = JSON.stringify(j, null, 2);
+    }catch(e){ $('#ins-wrap').textContent = String(e); }
+  }
+  $('#btnLoad7').addEventListener('click', ()=>loadRollup(7));
+  $('#btnLoad30').addEventListener('click', ()=>loadRollup(30));
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Insights (simple window summaries based on policy preview windows)
-    async function loadWindow(days){
-      const dom = $("#insDomain").value.trim().toLowerCase();
-      if (!dom) return log($("#insLog"), "Enter a domain.");
-      // We don’t have a public summary endpoint; show policy preview + status to keep it simple.
-      const prev = await jget(API_BASE + "/policy/preview?domain="+encodeURIComponent(dom));
-      const st = await jget(API_BASE + "/api/status?domain="+encodeURIComponent(dom));
-      log($("#insLog"), { domain: dom, days, preview: prev, status: st });
-    }
-    $("#ins7").addEventListener("click", ()=> loadWindow(7));
-    $("#ins30").addEventListener("click", ()=> loadWindow(30));
+  // ---- “Check my domain” logic ----
+  $('#btnCheck').addEventListener('click', async ()=>{
+    const dom = $('#chk-domain').value.trim().toLowerCase();
+    if(!dom) return log('#chk-log','Enter a domain first.');
+    try{
+      const status = await getJSON(`${API_BASE}/api/status?domain=${encodeURIComponent(dom)}`);
+      const quick  = await getJSON(`${API_BASE}/api/check-quick-codes?domain=${encodeURIComponent(dom)}`);
+      const dohDMARC = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent('_dmarc.'+dom)}&type=TXT`, {headers:{Accept:'application/dns-json'}}).then(r=>r.json()).catch(()=>null);
+      const dohTLS   = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent('_smtp._tls.'+dom)}&type=TXT`, {headers:{Accept:'application/dns-json'}}).then(r=>r.json()).catch(()=>null);
+      const dohSTS   = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent('mta-sts.'+dom)}&type=CNAME`, {headers:{Accept:'application/dns-json'}}).then(r=>r.json()).catch(()=>null);
 
-    // Initial paint
-    (async function init(){
-      await loadStatus();
-      await loadRecent();
-      recomputeSpf();
-    })();
-  </script>
+      const ansTxt = (ans) => (ans && ans.Answer) ? ans.Answer.map(a=>a.data.replace(/^"|"$/g,'')).join('\n') : '—';
+      const spf = quick?.checks?.spf || {};
+      const dmarc = quick?.checks?.dmarc || {};
+      const dkim = quick?.checks?.dkim || {};
+      const robot = status?.status || status;
+
+      // Score heuristic
+      const score = (dmarc.policy==='reject'?40:(dmarc.policy==='quarantine'?25:10))
+        + (spf.present && spf.includesControl?25:0)
+        + ((dkim.s1?.ok && dkim.s2?.ok)?20:0)
+        + ((dohTLS?.Answer?10:0) + (dohSTS?.Answer?5:0));
+
+      const out = {
+        domain: dom,
+        score: `${Math.min(100, score)}/100`,
+        robot_snapshot: robot,
+        quick_checks: quick?.checks,
+        doh: {
+          _dmarc: ansTxt(dohDMARC),
+          _smtp__tls: ansTxt(dohTLS),
+          mta_sts: ansTxt(dohSTS)
+        },
+        tips: [
+          !dohTLS?.Answer ? 'Add TLS-RPT TXT at _smtp._tls (Quick-Codes → extras).' : null,
+          !dohSTS?.Answer ? 'Add MTA-STS CNAME mta-sts → mta-sts.control.domainsafepro.com (Quick-Codes → extras).' : null,
+          (dmarc.policy!=='reject') ? 'Raise DMARC policy via Step‑Up once alignment stabilizes.' : null
+        ].filter(Boolean)
+      };
+      log('#chk-log', out);
+    }catch(e){ log('#chk-log', String(e)); }
+  });
+
+})();
+</script>
 </body>
 </html>
