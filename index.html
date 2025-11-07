@@ -155,7 +155,7 @@
   <section class="grid">
     <div class="card">
       <h3>Quick‑Codes (one‑time DNS)</h3>
-      <p class="desc">Use if you don’t want to connect a provider account. Paste these at your DNS provider and you’re done.</p>
+    <p class="desc">Use if you don’t want to connect a provider account. Paste these at your DNS provider and you’re done.</p>
       <div class="row">
         <div>
           <label>Domain to secure</label>
@@ -509,7 +509,7 @@
     const secret = $('#r53-secret').value.trim();
     if(!key || !secret) return log('#r53-log','Paste AWS key + secret.');
     try{
-      // Your Robot now supports {key, secret} as well as {access_key_id, secret_access_key}
+      // send the names the Robot expects
       const j = await postJSON(`${API_BASE}/api/r53/list-zones`, { access_key_id: key, secret_access_key: secret });
       const z = j.zones || [];
       const sel = $('#r53-zones'); sel.innerHTML = '<option value="">— choose a hosted zone —</option>';
@@ -529,7 +529,7 @@
     const zone = $('#r53-zones').value;
     if(!key || !secret || !zone) return log('#r53-log','Paste keys and choose a hosted zone.');
     try{
-      // Your Robot now accepts {access_key, secret_key} for /protect
+      // send the names the Robot expects
       const j = await postJSON(`${API_BASE}/api/r53/protect`, { access_key_id: key, secret_access_key: secret, hosted_zone_id: zone });
       log('#r53-log', j);
       const txt = j.apex || (j.results && j.results[0] && j.results[0].name) || '';
