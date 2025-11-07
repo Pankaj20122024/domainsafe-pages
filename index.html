@@ -62,6 +62,11 @@
     .section-title{margin:24px 0 6px 0; font-size:16px; color:#cbd3ff}
     .tiny{font-size:12px}
     .notice{margin-top:6px; background:rgba(255,204,102,.12); border:1px dashed var(--warn); color:var(--warn); padding:6px 8px; border-radius:8px}
+
+    /* Insights visuals */
+    .bar{height:8px; background:var(--line); border-radius:6px; overflow:hidden}
+    .bar > i{display:block; height:100%; background:var(--ok)}
+    .rowstats{font-size:12px; color:var(--muted)}
   </style>
 </head>
 <body>
@@ -311,6 +316,16 @@
         </div>
       </div>
       <div class="spacer"></div>
+      <!-- New: rollup summary + table (keeps raw JSON below for debugging) -->
+      <div id="ins-summary" class="tiny muted">—</div>
+      <div class="spacer"></div>
+      <table id="ins-table" style="display:none">
+        <thead>
+          <tr><th>Date</th><th>Total</th><th>Aligned</th><th>Aligned&nbsp;%</th><th style="width:140px">Trend</th></tr>
+        </thead>
+        <tbody id="ins-rows"></tbody>
+      </table>
+      <div class="spacer"></div>
       <div id="ins-wrap" class="tiny muted">—</div>
     </div>
   </section>
@@ -343,7 +358,7 @@
 
 <script>
 (() => {
-  // ---- Configuration (no placeholders; fixed base as deployed) ----
+  // ---- Configuration (fixed to your live Robot; no placeholders) ----
   const API_BASE = 'https://domainsafe-robot.pankajonlinerepository.workers.dev';
 
   // ---- Helpers ----
@@ -359,10 +374,11 @@
       .replace(/^https?:\/\//,'')
       .replace(/^mailto:/,'')
       .replace(/\/.*$/,'')
-      .replace(/\.$/, '');
+      .replace(/\.$/,'');
+
   }
   function isDomain(s){ return /^[a-z0-9.-]+\.[a-z]{2,}$/.test(s||''); }
-  // ccTLD‑aware apex heuristic
+  // ccTLD‑aware apex heuristic (as shipped)
   function apexify(raw){
     const s = sanitizeDomain(raw);
     if (!isDomain(s)) return s;
@@ -509,7 +525,7 @@
     const secret = $('#r53-secret').value.trim();
     if(!key || !secret) return log('#r53-log','Paste AWS key + secret.');
     try{
-      // Robot supports multiple name pairs; we send {key, secret} here.
+      // Your live Robot accepts key/secret (and also the access_key_id/secret_access_key names).
       const j = await postJSON(`${API_BASE}/api/r53/list-zones`, {key, secret});
       const z = j.zones || [];
       const sel = $('#r53-zones'); sel.innerHTML = '<option value="">— choose a hosted zone —</option>';
@@ -523,22 +539,13 @@
   $('#r53-key').addEventListener('change', r53ListZones);
   $('#r53-secret').addEventListener('change', r53ListZones);
 
-  // when you choose a zone, populate the Step‑Up domain from its text
-  $('#r53-zones').addEventListener('change', ()=>{
-    const sel = $('#r53-zones');
-    const opt = sel.options[sel.selectedIndex];
-    if (!opt || !opt.textContent) return;
-    const name = (opt.textContent.split(' (')[0] || '').trim(); // r.name
-    if (name) $('#ps-domain').value = name.toLowerCase();
-  });
-
   $('#btnR53Protect').addEventListener('click', async ()=>{
     const key = $('#r53-key').value.trim();
     const secret = $('#r53-secret').value.trim();
     const zone = $('#r53-zones').value;
     if(!key || !secret || !zone) return log('#r53-log','Paste keys and choose a hosted zone.');
     try{
-      // Robot accepts {access_key, secret_key} for /protect
+      // Your live Robot accepts access_key/secret_key for /protect.
       const j = await postJSON(`${API_BASE}/api/r53/protect`, {access_key: key, secret_key: secret, hosted_zone_id: zone});
       log('#r53-log', j);
       const txt = j.apex || (j.results && j.results[0] && j.results[0].name) || '';
@@ -587,12 +594,9 @@
     const policy = $('#ps-policy').value;
     const rua = $('#ps-rua').value.trim() || 'mailto:dmarc@domainsafepro.com';
     const pct = (policy === 'none') ? 100 : 25;
-    const zone = $('#r53-zones').value;
     if(!domain) return log('#ps-log','Enter a domain first.');
-    if(!zone)   return log('#ps-log','Choose a Route 53 hosted zone first.');
     try{
-      // IMPORTANT: include hosted_zone_id for Robot /api/policy/dmarc/r53
-      const body = {domain, policy, pct, adkim:'s', aspf:'s', rua, hosted_zone_id: zone};
+      const body = {domain, policy, pct, adkim:'s', aspf:'s', rua};
       const j = await postJSON(`${API_BASE}/api/policy/dmarc/r53`, body);
       log('#ps-log', j);
     }catch(e){ log('#ps-log', String(e)); }
@@ -644,15 +648,67 @@
   $('#btnIngest').addEventListener('click', async ()=>{
     try{
       const j = await postJSON(`https://api.domainsafepro.com/api/dmarc/ingest-latest`, {limit:25});
-      $('#ins-wrap').textContent = JSON.stringify(j, null, 2);
+      $('#ins-wrap').textContent = JSON.stringify(j, null, 2); // keep debug
     }catch(e){ $('#ins-wrap').textContent = String(e); }
   });
+
+  function fmt(n){ return (n||0).toLocaleString(); }
+  function pct(a,b){ const r = (b>0) ? (a/b) : 0; return Math.round(r*1000)/10; }
+
+  function asArray(series){
+    // Accept both shapes: [] or { "YYYY-MM-DD": {...}, ... }
+    if (Array.isArray(series)) return series;
+    if (series && typeof series === 'object'){
+      return Object.keys(series).sort().map(d => ({date:d, ...series[d]}));
+    }
+    return [];
+  }
+
+  function renderRollup(j){
+    const rows = asArray(j.series);
+    const table = $('#ins-table');
+    const body  = $('#ins-rows');
+    const summary = $('#ins-summary');
+
+    if (!rows.length){
+      table.style.display = 'none';
+      summary.textContent = 'No data yet for this window.';
+      return;
+    }
+
+    // totals
+    const T = rows.reduce((acc,r)=>{ acc.total+=r.total||0; acc.aligned+=r.aligned||0; return acc; }, {total:0,aligned:0});
+    const rate = pct(T.aligned, T.total);
+    summary.innerHTML = `<strong>${j.domain}</strong> — ${j.days}‑day totals: <strong>${fmt(T.total)}</strong> msgs, <strong class="success">${fmt(T.aligned)}</strong> aligned (<strong class="success">${rate}%</strong>)`;
+    body.innerHTML = '';
+
+    rows.forEach(r=>{
+      const p = pct(r.aligned||0, r.total||0);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="mono">${r.date}</td>
+        <td>${fmt(r.total||0)}</td>
+        <td>${fmt(r.aligned||0)}</td>
+        <td>${p}%</td>
+        <td>
+          <div class="bar"><i style="width:${Math.min(100,p)}%"></i></div>
+          <div class="rowstats">${r.spf_aligned!=null && r.dkim_aligned!=null ? `SPF ${fmt(r.spf_aligned)} · DKIM ${fmt(r.dkim_aligned)}` : ''}</div>
+        </td>
+      `;
+      body.appendChild(tr);
+    });
+
+    table.style.display = '';
+  }
+
   async function loadRollup(days){
     const norm = normalizeForUI($('#ins-domain').value);
-    if(!norm.ok) return $('#ins-wrap').textContent = 'Enter a valid domain first.';
+    if(!norm.ok) { $('#ins-wrap').textContent = 'Enter a valid domain first.'; return; }
     try{
       const j = await getJSON(`${API_BASE}/api/rollup?domain=${encodeURIComponent(norm.apex || norm.value)}&days=${days}`);
+      // Keep debug JSON visible (helps when you compare).
       $('#ins-wrap').textContent = JSON.stringify(j, null, 2);
+      renderRollup({domain: j.domain || (norm.apex || norm.value), days, series: j.series || []});
     }catch(e){ $('#ins-wrap').textContent = String(e); }
   }
   $('#btnLoad7').addEventListener('click', ()=>loadRollup(7));
