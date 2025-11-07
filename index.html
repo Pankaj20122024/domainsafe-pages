@@ -22,7 +22,9 @@
     main{max-width:1100px; margin:0 auto; padding:24px 16px 48px}
     .grid{display:grid; grid-template-columns:1fr; gap:16px}
     @media(min-width:980px){ .grid{grid-template-columns:1fr 1fr} }
-    .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px}
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px;
+    }
     .card h3{margin:0 0 8px 0; font-size:18px}
     .desc{color:var(--muted); font-size:13px; margin:0 0 10px 0}
     label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px}
@@ -184,7 +186,7 @@
       </div>
       <div class="spacer"></div>
       <pre class="log tiny" id="cf-log">Paste token → List zones → choose zone → Protect.</pre>
-      <p class="hint">Safety: “Protect” is for first‑time onboarding; it starts DMARC at <code>p=none</code>. Policy changes later should use <strong>Step‑Up</strong> below (or automation).</p>
+      <p class="hint">Safety: “Protect” is for first‑time onboarding; it starts DMARC at <code>p=none</code>. Policy changes later should use **Step‑Up** below (or automation).</p>
     </div>
   </section>
 
@@ -341,7 +343,7 @@
 
 <script>
 (() => {
-  // ---- Configuration (fixed base; no placeholders) ----
+  // ---- Configuration (no placeholders; fixed base) ----
   const API_BASE = 'https://domainsafe-robot.pankajonlinerepository.workers.dev';
 
   // ---- Helpers ----
@@ -357,10 +359,10 @@
       .replace(/^https?:\/\//,'')
       .replace(/^mailto:/,'')
       .replace(/\/.*$/,'')
-      .replace(/\.$/,'' );
+      .replace(/\.$/,'');
   }
   function isDomain(s){ return /^[a-z0-9.-]+\.[a-z]{2,}$/.test(s||''); }
-  // ccTLD-aware apex heuristic
+  // ccTLD‑aware apex heuristic
   function apexify(raw){
     const s = sanitizeDomain(raw);
     if (!isDomain(s)) return s;
@@ -501,12 +503,13 @@
     }catch(e){ log('#cf-log', String(e)); }
   });
 
-  // ---- Route 53 connect (fixed param names) ----
+  // ---- Route 53 connect ----
   async function r53ListZones(){
     const key = $('#r53-key').value.trim();
     const secret = $('#r53-secret').value.trim();
     if(!key || !secret) return log('#r53-log','Paste AWS key + secret.');
     try{
+      // send the names the Robot expects
       const j = await postJSON(`${API_BASE}/api/r53/list-zones`, {access_key_id: key, secret_access_key: secret});
       const z = j.zones || [];
       const sel = $('#r53-zones'); sel.innerHTML = '<option value="">— choose a hosted zone —</option>';
@@ -660,6 +663,7 @@
       const dkim = quick?.checks?.dkim || {};
       const robot = status?.status || status;
 
+      // Score heuristic
       let score = (dmarc.policy==='reject'?40:(dmarc.policy==='quarantine'?25:10))
         + (spf.present && spf.includesControl?25:0)
         + ((dkim.s1?.ok && dkim.s2?.ok)?20:0)
