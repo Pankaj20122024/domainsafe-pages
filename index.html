@@ -155,7 +155,7 @@
   <section class="grid">
     <div class="card">
       <h3>Quick‑Codes (one‑time DNS)</h3>
-    <p class="desc">Use if you don’t want to connect a provider account. Paste these at your DNS provider and you’re done.</p>
+      <p class="desc">Use if you don’t want to connect a provider account. Paste these at your DNS provider and you’re done.</p>
       <div class="row">
         <div>
           <label>Domain to secure</label>
@@ -186,7 +186,7 @@
       </div>
       <div class="spacer"></div>
       <pre class="log tiny" id="cf-log">Paste token → List zones → choose zone → Protect.</pre>
-      <p class="hint">Safety: “Protect” is for first‑time onboarding; it starts DMARC at <code>p=none</code>. Policy changes later should use **Step‑Up** below (or automation).</p>
+      <p class="hint">Safety: “Protect” is for first‑time onboarding; it starts DMARC at <code>p=none</code>. Policy changes later should use <strong>Step‑Up</strong> below (or automation).</p>
     </div>
   </section>
 
@@ -343,7 +343,7 @@
 
 <script>
 (() => {
-  // ---- Configuration (no placeholders; fixed base as in your file) ----
+  // ---- Configuration (no placeholders; fixed base as deployed) ----
   const API_BASE = 'https://domainsafe-robot.pankajonlinerepository.workers.dev';
 
   // ---- Helpers ----
@@ -359,10 +359,10 @@
       .replace(/^https?:\/\//,'')
       .replace(/^mailto:/,'')
       .replace(/\/.*$/,'')
-      .replace(/\.$/,'');
+      .replace(/\.$/, '');
   }
   function isDomain(s){ return /^[a-z0-9.-]+\.[a-z]{2,}$/.test(s||''); }
-  // ccTLD‑aware apex heuristic (mirrors Robot ingest’s approach)
+  // ccTLD‑aware apex heuristic
   function apexify(raw){
     const s = sanitizeDomain(raw);
     if (!isDomain(s)) return s;
@@ -509,8 +509,8 @@
     const secret = $('#r53-secret').value.trim();
     if(!key || !secret) return log('#r53-log','Paste AWS key + secret.');
     try{
-      // send the names the Robot expects
-      const j = await postJSON(`${API_BASE}/api/r53/list-zones`, { access_key_id: key, secret_access_key: secret });
+      // Robot supports multiple name pairs; we send {key, secret} here.
+      const j = await postJSON(`${API_BASE}/api/r53/list-zones`, {key, secret});
       const z = j.zones || [];
       const sel = $('#r53-zones'); sel.innerHTML = '<option value="">— choose a hosted zone —</option>';
       z.forEach(r => {
@@ -523,14 +523,23 @@
   $('#r53-key').addEventListener('change', r53ListZones);
   $('#r53-secret').addEventListener('change', r53ListZones);
 
+  // when you choose a zone, populate the Step‑Up domain from its text
+  $('#r53-zones').addEventListener('change', ()=>{
+    const sel = $('#r53-zones');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.textContent) return;
+    const name = (opt.textContent.split(' (')[0] || '').trim(); // r.name
+    if (name) $('#ps-domain').value = name.toLowerCase();
+  });
+
   $('#btnR53Protect').addEventListener('click', async ()=>{
     const key = $('#r53-key').value.trim();
     const secret = $('#r53-secret').value.trim();
     const zone = $('#r53-zones').value;
     if(!key || !secret || !zone) return log('#r53-log','Paste keys and choose a hosted zone.');
     try{
-      // send the names the Robot expects
-      const j = await postJSON(`${API_BASE}/api/r53/protect`, { access_key_id: key, secret_access_key: secret, hosted_zone_id: zone });
+      // Robot accepts {access_key, secret_key} for /protect
+      const j = await postJSON(`${API_BASE}/api/r53/protect`, {access_key: key, secret_key: secret, hosted_zone_id: zone});
       log('#r53-log', j);
       const txt = j.apex || (j.results && j.results[0] && j.results[0].name) || '';
       if (txt) $('#ps-domain').value = txt;
@@ -578,9 +587,12 @@
     const policy = $('#ps-policy').value;
     const rua = $('#ps-rua').value.trim() || 'mailto:dmarc@domainsafepro.com';
     const pct = (policy === 'none') ? 100 : 25;
+    const zone = $('#r53-zones').value;
     if(!domain) return log('#ps-log','Enter a domain first.');
+    if(!zone)   return log('#ps-log','Choose a Route 53 hosted zone first.');
     try{
-      const body = {domain, policy, pct, adkim:'s', aspf:'s', rua};
+      // IMPORTANT: include hosted_zone_id for Robot /api/policy/dmarc/r53
+      const body = {domain, policy, pct, adkim:'s', aspf:'s', rua, hosted_zone_id: zone};
       const j = await postJSON(`${API_BASE}/api/policy/dmarc/r53`, body);
       log('#ps-log', j);
     }catch(e){ log('#ps-log', String(e)); }
