@@ -72,9 +72,24 @@
     .bar{height:8px; background:var(--line); border-radius:6px; overflow:hidden}
     .bar > i{display:block; height:100%; background:var(--ok)}
     .rowstats{font-size:12px; color:var(--muted)}
-  </style>
+  
+    .veil{position:fixed;inset:0;background:radial-gradient(circle at top,rgba(98,117,255,.18),transparent 55%),#050717;display:flex;align-items:center;justify-content:center;padding:24px;z-index:50;}
+    .veil.hidden{display:none;}
+    .veil-card{max-width:480px;width:100%;background:var(--card);border-radius:18px;padding:24px 24px 28px;box-shadow:0 18px 45px rgba(0,0,0,.75);border:1px solid var(--line);}
+    .veil-card h2{margin:10px 0 8px;font-size:22px;}
+    .veil-card p{margin:0 0 4px;}
+</style>
 </head>
 <body>
+<div class="veil" id="login-veil">
+  <div class="veil-card">
+    <div class="pill tiny">DomainSafePro Console</div>
+    <h2>Sign in to manage your domain</h2>
+    <p class="muted">Use your Google account to connect domains, turn protection on, and view reports.</p>
+    <button class="btn" id="veil-login-btn" type="button">Sign in with Google</button>
+    <p class="tiny muted" style="margin-top:10px">You’ll be redirected back here after signing in.</p>
+  </div>
+</div>
 <header>
   <h1>DomainSafe is live ✅ <span class="muted">Step‑Up UI + Apex‑Guard</span></h1>
   <div class="tag">Status, Quick‑Codes, Verify, one‑click Connect, DMARC Policy Step‑Up, Control SPF, Insights. The robot keeps watch daily.</div>
@@ -484,21 +499,55 @@ async function fetchCurrentUser(){
     return null;
   }
 }
-function initAuthBar(){
-  const bar = document.getElementById("auth-bar");
-  const btn = document.getElementById("auth-login-btn");
+let DSP_USER = null;
+
+function startGoogleLogin(){
+  const loginUrl = AUTH_API + "/auth/google/start";
+  window.location.href = loginUrl;
+}
+
+function applyAuthState(user){
+  DSP_USER = (user && user.email) ? user : null;
   const label = document.getElementById("auth-status-label");
-  if (!bar || !btn || !label) return;
-  btn.addEventListener("click", function(){
-    const loginUrl = AUTH_API + "/auth/google/start";
-    window.location.href = loginUrl;
-  });
-  fetchCurrentUser().then(function(user){
-    if (user && user.email){
-      label.textContent = "Signed in as " + user.email;
+  const veil = document.getElementById("login-veil");
+  if (label){
+    if (DSP_USER && DSP_USER.email){
+      label.textContent = "Signed in as " + DSP_USER.email;
     } else {
       label.textContent = "Not signed in";
     }
+  }
+  if (veil){
+    if (DSP_USER && DSP_USER.email){
+      veil.classList.add("hidden");
+    } else {
+      veil.classList.remove("hidden");
+    }
+  }
+  if (DSP_USER && DSP_USER.email){
+    try{ loadStatus(); }catch(_e){}
+  }
+}
+
+function initAuthBar(){
+  const bar = document.getElementById("auth-bar");
+  const btn = document.getElementById("auth-login-btn");
+  const veilBtn = document.getElementById("veil-login-btn");
+  if (!bar) return;
+  if (btn){
+    btn.addEventListener("click", function(ev){
+      ev.preventDefault();
+      startGoogleLogin();
+    });
+  }
+  if (veilBtn){
+    veilBtn.addEventListener("click", function(ev){
+      ev.preventDefault();
+      startGoogleLogin();
+    });
+  }
+  fetchCurrentUser().then(function(user){
+    applyAuthState(user);
   });
 }
 initAuthBar();
@@ -542,7 +591,6 @@ $("#btnMonitor").addEventListener("click", async ()=>{
   try{ await post(`${ROBOT_API}/api/monitor-run`, {}); }catch(e){ /* ignore */ }
   loadStatus();
 });
-loadStatus();
 
 /* ====== CHECK (fun status via /api/check-score; optional legacy debug) ====== */
 function badgeHtml(label, state, detail){
