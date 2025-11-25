@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>DomainSafePro – Console</title>
-  <meta name="description" content="Manage your domain protection, verify records, and configure email authentication."/>
+  <title>DomainSafePro - Setup Your Protection</title>
+  <meta name="description" content="Set up email authentication for your domain. Get your DNS records and verify your protection status."/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@600&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
@@ -42,6 +42,8 @@
   --shadow-color: rgba(0,0,0,0.3);
   --glass-bg: rgba(20,20,23,0.55);
   --glass-border: rgba(255,255,255,0.12);
+  --highlight-bg: rgba(90,129,255,0.08);
+  --highlight-border: rgba(90,129,255,0.3);
 }
 
 [data-theme="light"] {
@@ -61,6 +63,8 @@
   --shadow-color: rgba(0,0,0,0.08);
   --glass-bg: rgba(255,255,255,0.6);
   --glass-border: rgba(0,0,0,0.08);
+  --highlight-bg: rgba(74,117,255,0.06);
+  --highlight-border: rgba(74,117,255,0.25);
 }
 
 /* ========== BASE ========== */
@@ -233,7 +237,11 @@ header {
   filter: brightness(1.05);
 }
 
-/* Small buttons */
+.btn.large {
+  padding: 16px 32px;
+  font-size: 16px;
+}
+
 .btn-sm {
   padding: 8px 16px;
   font-size: 13px;
@@ -301,15 +309,39 @@ main {
 }
 #app-main { display: none; }
 
+/* Welcome message */
+.welcome-banner {
+  text-align: center;
+  padding: 32px 20px;
+  margin-bottom: 24px;
+}
+.welcome-banner h1 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+.welcome-banner p {
+  font-size: 16px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
 /* Section titles */
 .section-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--fg-muted);
   font-weight: 600;
   margin-bottom: 16px;
+  margin-top: 32px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border);
   font-family: var(--font-sans);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title:first-of-type { margin-top: 0; }
+.section-title .icon {
+  font-size: 1.2rem;
 }
 
 /* ========== GRID ========== */
@@ -345,16 +377,27 @@ main {
   align-items: center;
   gap: 10px;
 }
-.card h3 .icon {
-  width: 24px;
-  height: 24px;
-  opacity: 0.7;
+.card h3 .card-icon {
+  font-size: 1.3rem;
 }
 .card .desc {
   color: var(--fg-muted);
   font-size: 14px;
   margin: 0 0 16px 0;
-  line-height: 1.5;
+  line-height: 1.6;
+}
+
+/* HIGHLIGHTED CARD (for primary actions) */
+.card.highlight {
+  border: 2px solid var(--highlight-border);
+  background: var(--highlight-bg);
+  box-shadow: 0 8px 32px var(--shadow-color), 0 0 0 1px var(--highlight-border);
+}
+.card.highlight:hover {
+  border-color: var(--brand);
+}
+.card.highlight h3 {
+  color: var(--brand);
 }
 
 /* ========== FORM ELEMENTS ========== */
@@ -426,6 +469,88 @@ select {
   opacity: 0.5;
 }
 
+/* ========== VERIFICATION RESULTS (Human-readable) ========== */
+.verify-results {
+  margin-top: 16px;
+}
+.verify-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+}
+.verify-item:last-child { margin-bottom: 0; }
+.verify-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.verify-icon.pass {
+  background: rgba(103,232,163,0.15);
+  color: var(--ok);
+}
+.verify-icon.fail {
+  background: rgba(255,122,122,0.15);
+  color: var(--danger);
+}
+.verify-icon.warn {
+  background: rgba(255,211,106,0.12);
+  color: var(--warn);
+}
+.verify-content {
+  flex: 1;
+}
+.verify-label {
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: 2px;
+}
+.verify-status {
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+.verify-status.pass { color: var(--ok); }
+.verify-status.fail { color: var(--danger); }
+
+/* Overall status banner */
+.verify-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+.verify-summary.all-pass {
+  background: rgba(103,232,163,0.1);
+  border: 1px solid rgba(103,232,163,0.3);
+}
+.verify-summary.has-issues {
+  background: rgba(255,211,106,0.1);
+  border: 1px solid rgba(255,211,106,0.3);
+}
+.verify-summary-icon {
+  font-size: 28px;
+}
+.verify-summary-text h4 {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  margin: 0 0 2px 0;
+}
+.verify-summary-text p {
+  font-size: 13px;
+  margin: 0;
+}
+
 /* ========== TABLES ========== */
 .table-wrap {
   overflow-x: auto;
@@ -453,7 +578,7 @@ th {
 }
 td { color: var(--fg-muted); }
 
-/* Mobile table → card stack */
+/* Mobile table to card stack */
 @media (max-width: 700px) {
   .table-wrap { margin: 0; padding: 0; }
   table, thead, tbody, th, td, tr { display: block; }
@@ -689,6 +814,7 @@ details > div {
 .qc-cards {
   display: grid;
   gap: 12px;
+  margin-top: 16px;
 }
 .qc-card {
   background: var(--bg-input);
@@ -700,7 +826,7 @@ details > div {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .qc-type {
   padding: 4px 10px;
@@ -712,9 +838,13 @@ details > div {
 }
 .qc-type.txt { background: rgba(138,122,255,0.2); color: var(--brand-accent); }
 .qc-type.cname { background: rgba(90,129,255,0.2); color: var(--brand); }
-.qc-purpose { font-size: 13px; color: var(--fg-muted); }
+.qc-purpose {
+  font-size: 14px;
+  color: var(--fg);
+  font-weight: 600;
+}
 .qc-field {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .qc-field:last-child { margin-bottom: 0; }
 .qc-label {
@@ -722,7 +852,7 @@ details > div {
   color: var(--fg-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 .qc-value {
   display: flex;
@@ -732,18 +862,17 @@ details > div {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  word-break: break-all;
 }
 .qc-value code {
   flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  word-break: break-all;
+  color: var(--fg);
 }
 .copy-btn {
   flex-shrink: 0;
-  padding: 6px 10px;
+  padding: 6px 12px;
   font-size: 12px;
   border-radius: var(--radius-sm);
   background: var(--brand);
@@ -756,6 +885,52 @@ details > div {
 .copy-btn:hover { filter: brightness(1.1); }
 .copy-btn.copied {
   background: var(--ok);
+}
+
+/* ========== ADMIN SECTION ========== */
+.admin-section {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 2px solid var(--border);
+}
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.admin-header h2 {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  background: rgba(255,211,106,0.15);
+  color: var(--warn);
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.admin-toggle {
+  font-size: 13px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.admin-toggle:hover { color: var(--fg); }
+.admin-content {
+  display: none;
+}
+.admin-content.visible {
+  display: block;
 }
 
 /* ========== UTILITIES ========== */
@@ -799,6 +974,43 @@ details > div {
   font-size: 13px;
 }
 
+/* ========== STEP INDICATORS ========== */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--bg-input);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.step-number {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+.step.completed .step-number {
+  background: var(--ok);
+}
+.step-arrow {
+  color: var(--fg-muted);
+  font-size: 18px;
+}
+
 /* ========== MOBILE OPTIMIZATIONS ========== */
 @media (max-width: 640px) {
   header { padding: 12px 16px; }
@@ -808,6 +1020,7 @@ details > div {
   .card { padding: 18px 16px; }
   .card h3 { font-size: 1.1rem; }
   .btn { padding: 10px 18px; font-size: 13px; }
+  .btn.large { padding: 14px 24px; font-size: 15px; }
   .row > div { flex: 1 1 100%; }
   .row > div.narrow { flex: 1 1 100%; }
   .row > div.action { width: 100%; }
@@ -815,12 +1028,15 @@ details > div {
   .btn-row .btn { width: 100%; }
   .login-card { padding: 24px 20px; }
   .login-card h2 { font-size: 1.5rem; }
+  .welcome-banner h1 { font-size: 1.5rem; }
+  .steps { gap: 6px; }
+  .step { padding: 6px 10px; font-size: 12px; }
 }
 
 /* Touch-friendly tap targets */
 @media (max-width: 768px) {
   input, select, textarea {
-    font-size: 16px; /* Prevents iOS zoom */
+    font-size: 16px;
     min-height: 48px;
   }
   .btn { min-height: 48px; }
@@ -833,6 +1049,13 @@ details > div {
 }
 .card {
   animation: fadeIn 0.4s ease;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(90,129,255,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(90,129,255,0); }
+}
+.card.highlight {
+  animation: fadeIn 0.4s ease, pulse 2s ease-in-out 3;
 }
 
 /* ========== FOOTER ========== */
@@ -855,7 +1078,7 @@ details > div {
   <div class="header-inner">
     <div class="brand">
       <span class="brand-text">DomainSafePro</span>
-      <span class="header-tag">Console — Connect, verify, and protect your domains</span>
+      <span class="header-tag">Setup and manage your email protection</span>
     </div>
     <div class="auth-bar" id="auth-bar">
       <span id="auth-status-label">Not signed in</span>
@@ -871,429 +1094,438 @@ details > div {
 <!-- Login hero (shown when not signed in) -->
 <section id="login-section">
   <div class="login-card">
-    <div class="eyebrow">DomainSafePro Console</div>
+    <div class="eyebrow">DomainSafePro</div>
     <h2>Welcome Back</h2>
-    <p>Sign in with your Google account to manage your domains, configure protection, and view reports.</p>
+    <p>Sign in with your Google account to set up protection for your domain and manage your email security.</p>
     <button class="btn" type="button" id="login-hero-btn">Sign in with Google</button>
-    <div class="tiny">You'll be redirected back here after signing in.</div>
+    <div class="tiny">You will be redirected back here after signing in.</div>
   </div>
 </section>
 
 <!-- Main app (hidden until authed) -->
 <main id="app-main">
 
-  <!-- STATUS + QUICK CHECK -->
-  <div class="section-title">🛡️ Domain Health</div>
-  <section class="grid">
-    <div class="card">
-      <h3>Connected Domains</h3>
-      <p class="desc">Your domains under monitoring. The robot checks SPF, DKIM, and DMARC health daily.</p>
-      <div class="btn-row">
-        <button class="btn btn-sm" id="btnStatus">Refresh Status</button>
-        <button class="btn btn-sm secondary" id="btnMonitor">Run Monitor Now</button>
-      </div>
-      <div class="mt-md table-wrap">
-        <table id="statusTable">
-          <thead>
-            <tr>
-              <th>Domain</th>
-              <th>Owner</th>
-              <th>SPF</th>
-              <th>DMARC</th>
-              <th>DKIM s1</th>
-              <th>DKIM s2</th>
-              <th>Checked</th>
-            </tr>
-          </thead>
-          <tbody id="statusRows">
-            <tr><td colspan="7" class="muted">Sign in to see your connected domains.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <!-- Welcome banner -->
+  <div class="welcome-banner">
+    <h1>Set Up Your Domain Protection</h1>
+    <p>Follow the steps below to secure your email. Most customers complete setup in under 5 minutes.</p>
+  </div>
 
-    <div class="card">
-      <h3>Check Any Domain</h3>
-      <p class="desc">Instant protection check — no tokens required. Enter any domain to see its email security status.</p>
+  <!-- Step indicator -->
+  <div class="steps">
+    <div class="step" id="step1-indicator">
+      <span class="step-number">1</span>
+      <span>Get Your Codes</span>
+    </div>
+    <span class="step-arrow">→</span>
+    <div class="step" id="step2-indicator">
+      <span class="step-number">2</span>
+      <span>Add to DNS</span>
+    </div>
+    <span class="step-arrow">→</span>
+    <div class="step" id="step3-indicator">
+      <span class="step-number">3</span>
+      <span>Verify Setup</span>
+    </div>
+  </div>
+
+  <!-- STEP 1: GET YOUR CODES (Primary action, highlighted) -->
+  <section class="grid full">
+    <div class="card highlight">
+      <h3><span class="card-icon">📋</span> Step 1: Get Your DNS Records</h3>
+      <p class="desc">Enter your domain below and we will generate the DNS records you need. Then copy each record and add it at your domain registrar (like GoDaddy, Namecheap, or Cloudflare).</p>
+      
       <div class="row">
         <div>
-          <label for="chk-domain">Domain to check</label>
-          <input id="chk-domain" class="mono" placeholder="example.com" autocapitalize="off" autocorrect="off" spellcheck="false"/>
-          <div class="notice hidden" id="chk-notice"></div>
-          <div class="tiny danger hidden" id="chk-error"></div>
-        </div>
-        <div class="action">
-          <button class="btn" id="btnCheck">Check Now</button>
-        </div>
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="chk-exact"/>
-        <label for="chk-exact" style="margin:0">Treat as typed (no apex normalization)</label>
-      </div>
-      <div class="checkbox-row">
-        <input type="checkbox" id="chk-legacy"/>
-        <label for="chk-legacy" style="margin:0">Show legacy debug output</label>
-      </div>
-
-      <div id="checkOut" class="mt-md hidden">
-        <div class="kvs">
-          <div>Score</div>
-          <div>
-            <div class="meter"><i id="scoreBar"></i></div>
-            <div class="tiny muted mt-sm" id="scoreLbl">0/100</div>
-          </div>
-
-          <div>Protection</div>
-          <div class="badges" id="badgeRow"></div>
-
-          <div>DMARC Policy</div>
-          <div class="tiny" id="resRow">—</div>
-
-          <div>DNS Records</div>
-          <div class="tiny">
-            <details>
-              <summary>View raw DNS lookups</summary>
-              <div>
-                <div class="mb-sm"><strong>_dmarc</strong></div>
-                <div id="dohDMARC" class="log tiny"></div>
-                <div class="mb-sm mt-md"><strong>_smtp._tls</strong></div>
-                <div id="dohTLS" class="log tiny"></div>
-                <div class="mb-sm mt-md"><strong>mta-sts</strong></div>
-                <div id="dohSTS" class="log tiny"></div>
-              </div>
-            </details>
-          </div>
-
-          <div>Tips</div>
-          <div id="tips" class="tiny">—</div>
-
-          <div>Raw JSON</div>
-          <div>
-            <details>
-              <summary>View API response</summary>
-              <div><pre id="checkRaw" class="log tiny">—</pre></div>
-            </details>
-          </div>
-        </div>
-      </div>
-
-      <div id="legacyOut" class="hidden mt-md">
-        <details>
-          <summary>Legacy debug output</summary>
-          <div><pre id="legacyRaw" class="log tiny">—</pre></div>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- ONBOARD / ADD DOMAIN + VERIFY -->
-  <div class="section-title">➕ Add & Verify Domains</div>
-  <section class="grid">
-    <div class="card">
-      <h3>Add New Domain</h3>
-      <p class="desc">Register a domain with the robot. We'll start monitoring its email security automatically.</p>
-      <div class="row">
-        <div>
-          <label for="add-email">Contact email</label>
-          <input id="add-email" class="mono" placeholder="owner@example.com" type="email"/>
-        </div>
-        <div>
-          <label for="add-domain">Domain</label>
-          <input id="add-domain" class="mono" placeholder="example.com" autocapitalize="off"/>
-          <div class="notice hidden" id="add-notice"></div>
-        </div>
-      </div>
-      <div class="btn-row">
-        <button class="btn" id="btnAdd">Add Domain</button>
-      </div>
-      <pre class="log mt-md" id="add-log">Sign in, then add a domain.</pre>
-
-      <details class="mt-md">
-        <summary>Recent domains</summary>
-        <div id="recentWrap" class="tiny muted">Sign in to see your domains.</div>
-      </details>
-    </div>
-
-    <div class="card">
-      <h3>Verify Records</h3>
-      <p class="desc">Check if your domain's DNS records are correctly configured for central control.</p>
-      <div class="row">
-        <div>
-          <label for="verify-domain">Domain to verify</label>
-          <input id="verify-domain" class="mono" placeholder="example.com" autocapitalize="off"/>
-          <div class="notice hidden" id="verify-notice"></div>
-        </div>
-        <div class="action">
-          <button class="btn" id="btnVerify">Verify</button>
-        </div>
-      </div>
-      <pre class="log mt-md" id="verify-log">Enter a domain → Verify.</pre>
-    </div>
-  </section>
-
-  <!-- QUICK CODES + CLOUDFLARE -->
-  <div class="section-title">⚡ Quick Setup</div>
-  <section class="grid">
-    <div class="card">
-      <h3>Quick-Codes</h3>
-      <p class="desc">Get DNS records to copy & paste at your provider. No API tokens needed — works with any registrar.</p>
-      <div class="row">
-        <div>
-          <label for="qc-domain">Domain to secure</label>
-          <input id="qc-domain" class="mono" placeholder="example.com" autocapitalize="off"/>
+          <label for="qc-domain">Your domain name</label>
+          <input id="qc-domain" class="mono" placeholder="yourdomain.com" autocapitalize="off" autocorrect="off" spellcheck="false"/>
           <div class="notice hidden" id="qc-notice"></div>
         </div>
         <div class="action">
-          <button class="btn" id="btnQCodes">Generate Codes</button>
+          <button class="btn large" id="btnQCodes">Generate My Records</button>
         </div>
       </div>
+      
       <div class="checkbox-row">
         <input type="checkbox" id="qc-extras"/>
-        <label for="qc-extras" style="margin:0">Include MTA-STS & TLS-RPT (optional)</label>
+        <label for="qc-extras" style="margin:0">Include advanced security records (MTA-STS and TLS reporting)</label>
       </div>
-      <div id="qc-results" class="mt-md tiny muted">Enter a domain → Generate.</div>
-      <div class="btn-row">
-        <button class="btn ghost btn-sm" id="btnCopyAll">Copy All Records</button>
+
+      <div id="qc-results" class="hidden"></div>
+      
+      <div id="qc-actions" class="btn-row hidden">
+        <button class="btn secondary btn-sm" id="btnCopyAll">Copy All as Text</button>
       </div>
     </div>
+  </section>
 
+  <!-- STEP 2: Instructions -->
+  <section class="grid full">
     <div class="card">
-      <h3>Cloudflare (One-Click)</h3>
-      <p class="desc">Connect with a Cloudflare API token for automatic protection. Requires Zone:Read + DNS:Edit permissions.</p>
-      <div class="row">
-        <div>
-          <label for="cf-token">Cloudflare API Token</label>
-          <input id="cf-token" class="mono" type="password" placeholder="Paste your token"/>
-        </div>
-        <div class="action">
-          <button class="btn secondary btn-sm" id="btnCfList">List Zones</button>
-        </div>
+      <h3><span class="card-icon">📝</span> Step 2: Add Records to Your DNS</h3>
+      <p class="desc">Log in to your domain registrar and add each record from Step 1. Here is what to look for:</p>
+      
+      <div class="docs-content">
+        <strong>Where to add these records</strong>
+        <p>Go to your domain registrar (the company where you bought your domain) and find the DNS settings. Common places include: "DNS Management", "DNS Records", or "Zone Editor".</p>
+        
+        <strong>Adding TXT records</strong>
+        <p>For TXT records, create a new record with the "Host" (or "Name") and "Value" exactly as shown. The Host field is usually just the prefix like <code>_dmarc</code>, not the full domain.</p>
+        
+        <strong>Adding CNAME records</strong>
+        <p>For CNAME records, the "Points to" or "Value" field should be the target address we provide. Some registrars add your domain automatically, so just enter the prefix.</p>
+        
+        <strong>When will it work?</strong>
+        <p>DNS changes can take a few minutes to a few hours to spread across the internet. If verification fails at first, wait 15 minutes and try again.</p>
       </div>
-      <div class="row">
-        <div>
-          <label for="cf-zones">Select Zone</label>
-          <select id="cf-zones"><option value="">— choose a zone —</option></select>
-        </div>
-        <div class="action">
-          <button class="btn warn btn-sm" id="btnCfProtect">Protect</button>
-        </div>
-      </div>
-      <pre class="log mt-md tiny" id="cf-log">Paste token → List zones → Protect.</pre>
+    </div>
+  </section>
 
-      <details class="mt-md">
-        <summary>Control SPF Management</summary>
+  <!-- STEP 3: VERIFY SETUP (Highlighted) -->
+  <section class="grid full">
+    <div class="card highlight">
+      <h3><span class="card-icon">✅</span> Step 3: Verify Your Setup</h3>
+      <p class="desc">After adding your DNS records, enter your domain below to confirm everything is working. We will check each record and tell you if anything needs attention.</p>
+      
+      <div class="row">
         <div>
-          <div class="row">
-            <button class="btn secondary btn-sm" id="btnSpfLoad">Load Current</button>
-            <button class="btn secondary btn-sm" id="btnSpfUpdate">Update SPF</button>
-          </div>
-          <div class="row mt-sm">
-            <div>
-              <label for="spf-value">SPF Value</label>
-              <textarea id="spf-value" class="mono" spellcheck="false" rows="3"></textarea>
-            </div>
-          </div>
+          <label for="verify-domain">Domain to verify</label>
+          <input id="verify-domain" class="mono" placeholder="yourdomain.com" autocapitalize="off" autocorrect="off" spellcheck="false"/>
+          <div class="notice hidden" id="verify-notice"></div>
+        </div>
+        <div class="action">
+          <button class="btn large" id="btnVerify">Verify My Setup</button>
+        </div>
+      </div>
+      
+      <div id="verify-results" class="verify-results hidden"></div>
+      
+      <details class="hidden" id="verify-details">
+        <summary>View technical details</summary>
+        <div>
+          <pre id="verify-log" class="log tiny">Waiting for verification...</pre>
         </div>
       </details>
     </div>
   </section>
 
-  <!-- ROUTE 53 + POLICY STEP-UP -->
-  <div class="section-title">🔧 Advanced Configuration</div>
-  <section class="grid">
-    <div class="card">
-      <h3>AWS Route 53 (One-Click)</h3>
-      <p class="desc">Connect with AWS IAM credentials for automatic protection. Requires Route 53 permissions.</p>
-      <div class="row">
-        <div>
-          <label for="r53-ak">AWS Access Key ID</label>
-          <input id="r53-ak" class="mono" placeholder="AKIA…"/>
-        </div>
-        <div>
-          <label for="r53-sk">AWS Secret Access Key</label>
-          <input id="r53-sk" class="mono" type="password" placeholder="Secret key"/>
-        </div>
-      </div>
-      <div class="row">
-        <div>
-          <label for="r53-zones">Hosted Zone</label>
-          <select id="r53-zones"><option value="">— choose a hosted zone —</option></select>
-        </div>
-        <div class="action">
-          <button class="btn warn btn-sm" id="btnR53Protect">Protect</button>
-        </div>
-      </div>
-      <pre class="log mt-md tiny" id="r53-log">Paste keys → Zone auto-loads → Protect.</pre>
-    </div>
-
-    <div class="card">
-      <h3>DMARC Policy Step-Up</h3>
-      <p class="desc">Graduate from monitoring to enforcement. Start with <code>none</code>, then move to <code>quarantine</code>, and finally <code>reject</code>.</p>
-      <div class="row">
-        <div>
-          <label for="pol-domain">Domain</label>
-          <input id="pol-domain" class="mono" placeholder="example.com"/>
-        </div>
-        <div class="narrow">
-          <label for="pol-policy">Policy</label>
-          <select id="pol-policy">
-            <option>none</option>
-            <option>quarantine</option>
-            <option>reject</option>
-          </select>
-        </div>
-        <div class="narrow">
-          <label for="pol-pct">PCT</label>
-          <input id="pol-pct" type="number" min="1" max="100" value="100"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="narrow">
-          <label for="pol-adkim">adkim</label>
-          <select id="pol-adkim"><option>s</option><option>r</option></select>
-        </div>
-        <div class="narrow">
-          <label for="pol-aspf">aspf</label>
-          <select id="pol-aspf"><option>s</option><option>r</option></select>
-        </div>
-        <div>
-          <label for="pol-rua">rua</label>
-          <input id="pol-rua" value="mailto:dmarc@domainsafepro.com"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="narrow">
-          <label for="pol-fo">fo</label>
-          <input id="pol-fo" value="1"/>
-        </div>
-        <div>
-          <label for="pol-sp">sp (subdomain policy)</label>
-          <input id="pol-sp" placeholder="Optional"/>
-        </div>
-      </div>
-      <div class="btn-row">
-        <button class="btn secondary btn-sm" id="btnPolPreview">Preview</button>
-        <button class="btn btn-sm" id="btnApplyCf">Apply via Cloudflare</button>
-        <button class="btn btn-sm" id="btnApplyR53">Apply via Route 53</button>
-        <button class="btn ghost btn-sm" id="btnEvaluateNow">Evaluate Engine</button>
-      </div>
-      <pre id="pol-out" class="log mt-md tiny">Preview first, then apply.</pre>
-    </div>
-  </section>
-
-  <!-- CONTROL SPF BUILDER + INSIGHTS -->
-  <div class="section-title">📊 Central Control & Insights</div>
-  <section class="grid">
-    <div class="card">
-      <h3>Central SPF Manager</h3>
-      <p class="desc">Manage <code>_spf.control.domainsafepro.com</code>. All protected domains inherit these senders.</p>
-
-      <div class="spf-grid">
-        <label><input type="checkbox" class="spf-sel" value="google"/> Google Workspace</label>
-        <label><input type="checkbox" class="spf-sel" value="m365"/> Microsoft 365</label>
-        <label><input type="checkbox" class="spf-sel" value="sendgrid"/> SendGrid</label>
-        <label><input type="checkbox" class="spf-sel" value="ses"/> Amazon SES</label>
-        <label><input type="checkbox" class="spf-sel" value="mailgun"/> Mailgun</label>
-        <label><input type="checkbox" class="spf-sel" value="mailchimp"/> Mailchimp</label>
-        <label><input type="checkbox" class="spf-sel" value="postmark"/> Postmark</label>
-        <label><input type="checkbox" class="spf-sel" value="sparkpost"/> SparkPost</label>
-        <label><input type="checkbox" class="spf-sel" value="zoho"/> Zoho</label>
-        <label><input type="checkbox" class="spf-sel" value="zendesk"/> Zendesk</label>
-        <label><input type="checkbox" class="spf-sel" value="intercom"/> Intercom</label>
-      </div>
-
-      <div class="row">
-        <div>
-          <label for="spf-preview">Generated SPF Record</label>
-          <input id="spf-preview" class="mono" value="v=spf1 ~all" readonly/>
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label for="spf-token">Cloudflare API Token (for domainsafepro.com)</label>
-          <input id="spf-token" class="mono" type="password" placeholder="Paste token"/>
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn secondary btn-sm" id="btnSpfLoad2">Load Current</button>
-        <button class="btn btn-sm" id="btnSpfUpdate2">Update Central SPF</button>
-      </div>
-      <pre class="log mt-md tiny" id="spf-log2">Select senders → Update.</pre>
-    </div>
-
-    <div class="card">
-      <h3>DMARC Insights</h3>
-      <p class="desc">View aggregate report data — daily alignment rates over 7 or 30 days.</p>
-      <div class="row">
-        <div class="narrow">
-          <button class="btn secondary btn-sm" id="btnIngest">Ingest Latest</button>
-        </div>
-        <div>
-          <label for="ins-domain">Domain</label>
-          <input id="ins-domain" class="mono" value="domainsafepro.com"/>
-        </div>
-        <div class="action">
-          <button class="btn secondary btn-sm" id="btnLoad7">7 Days</button>
-        </div>
-        <div class="action">
-          <button class="btn secondary btn-sm" id="btnLoad30">30 Days</button>
-        </div>
-      </div>
-      <div id="ins-summary" class="mt-md tiny muted">—</div>
-      <div class="mt-md table-wrap">
-        <table id="ins-table" class="hidden">
-          <thead>
-            <tr><th>Date</th><th>Total</th><th>Aligned</th><th>Rate</th><th>Trend</th></tr>
-          </thead>
-          <tbody id="ins-rows"></tbody>
-        </table>
-      </div>
-      <pre id="ins-wrap" class="log mt-md tiny hidden">—</pre>
-    </div>
-  </section>
-
-  <!-- ALERTS -->
+  <!-- HELP SECTION -->
   <section class="grid full">
     <div class="card">
-      <h3>Alerts & Notifications</h3>
-      <p class="desc">Test Slack integration and manage alert queue.</p>
-      <div class="btn-row">
-        <button class="btn btn-sm" id="btnAlertTest">Send Test Alert</button>
-        <button class="btn secondary btn-sm" id="btnAlertFlush">Flush Queue</button>
-      </div>
-      <pre class="log mt-md tiny" id="alerts-out">—</pre>
-    </div>
-  </section>
-
-  <!-- DOCS -->
-  <section class="grid full">
-    <div class="card">
-      <h3>Quick Reference</h3>
+      <h3><span class="card-icon">💡</span> Need Help?</h3>
       <div class="docs-content">
-        <strong>Option A — Quick-Codes (Copy & Paste)</strong>
-        <p>Enter your domain in Quick-Codes → Generate. Copy each record and paste at your DNS provider. Verify → Check to confirm (all should be green).</p>
-
-        <strong>Option B — Cloudflare (One-Click)</strong>
-        <p>Create a Cloudflare API Token (Zone:Read + DNS:Edit). Paste here → List Zones → Select → Protect. Use Verify to confirm.</p>
-
-        <strong>Option C — AWS Route 53 (One-Click)</strong>
-        <p>Create IAM user with Route 53 access. Paste keys → Select hosted zone → Protect. Use Verify to confirm.</p>
-
-        <strong>What Gets Configured</strong>
-        <p>
-          <span class="mono">SPF</span> — <code>v=spf1 include:_spf.control.domainsafepro.com ~all</code><br>
-          <span class="mono">DKIM</span> — <code>s1._domainkey</code> and <code>s2._domainkey</code> CNAMEs to central keys<br>
-          <span class="mono">DMARC</span> — Starts in monitor mode (<code>p=none</code>), step up when ready<br>
-          <span class="mono">Extras</span> — MTA-STS CNAME and TLS-RPT TXT for enhanced security
-        </p>
+        <strong>Not sure which DNS provider you use?</strong>
+        <p>Check the confirmation email from when you bought your domain, or look at your domain's WHOIS record. Common providers include GoDaddy, Namecheap, Google Domains, and Cloudflare.</p>
+        
+        <strong>Verification keeps failing?</strong>
+        <p>DNS changes can take up to 48 hours to fully propagate, though most complete within an hour. Make sure you copied the records exactly as shown, including any underscores or periods.</p>
+        
+        <strong>Want automatic setup instead?</strong>
+        <p>If your domain is managed by Cloudflare or AWS Route 53, we can configure everything automatically. See the "Automatic Setup" section in Admin Tools below.</p>
       </div>
     </div>
   </section>
+
+  <!-- ============================================================ -->
+  <!-- ADMIN / OWNER SECTION (Collapsible) -->
+  <!-- ============================================================ -->
+  <div class="admin-section">
+    <div class="admin-header">
+      <h2><span>🔧</span> Admin Tools <span class="admin-badge">Owner Only</span></h2>
+      <div class="admin-toggle" id="admin-toggle" onclick="toggleAdmin()">
+        <span id="admin-toggle-text">Show admin tools</span>
+        <span id="admin-toggle-icon">▼</span>
+      </div>
+    </div>
+
+    <div class="admin-content" id="admin-content">
+
+      <!-- DOMAIN STATUS -->
+      <div class="section-title"><span class="icon">📊</span> Connected Domains</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Domain Health Dashboard</h3>
+          <p class="desc">All domains under your account with their current protection status. The robot checks these automatically every day.</p>
+          <div class="btn-row">
+            <button class="btn btn-sm" id="btnStatus">Refresh Status</button>
+            <button class="btn btn-sm secondary" id="btnMonitor">Run Check Now</button>
+          </div>
+          <div class="mt-md table-wrap">
+            <table id="statusTable">
+              <thead>
+                <tr>
+                  <th>Domain</th>
+                  <th>Owner</th>
+                  <th>SPF</th>
+                  <th>DMARC</th>
+                  <th>DKIM s1</th>
+                  <th>DKIM s2</th>
+                  <th>Checked</th>
+                </tr>
+              </thead>
+              <tbody id="statusRows">
+                <tr><td colspan="7" class="muted">Loading domain status...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADD DOMAIN -->
+      <div class="section-title"><span class="icon">➕</span> Register Domain</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Add Domain to Monitoring</h3>
+          <p class="desc">Register a new domain with the robot. We will start tracking its email security status automatically.</p>
+          <div class="row">
+            <div>
+              <label for="add-email">Contact email for this domain</label>
+              <input id="add-email" class="mono" placeholder="owner@example.com" type="email"/>
+            </div>
+            <div>
+              <label for="add-domain">Domain name</label>
+              <input id="add-domain" class="mono" placeholder="example.com" autocapitalize="off"/>
+              <div class="notice hidden" id="add-notice"></div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn" id="btnAdd">Add Domain</button>
+          </div>
+          <pre class="log mt-md" id="add-log">Enter domain details above.</pre>
+
+          <details class="mt-md">
+            <summary>View registered domains</summary>
+            <div id="recentWrap" class="tiny muted">Loading...</div>
+          </details>
+        </div>
+      </section>
+
+      <!-- AUTOMATIC SETUP -->
+      <div class="section-title"><span class="icon">⚡</span> Automatic Setup</div>
+      <section class="grid">
+        <div class="card">
+          <h3>Cloudflare Integration</h3>
+          <p class="desc">If your DNS is managed by Cloudflare, we can configure all records automatically. You will need an API token with Zone Read and DNS Edit permissions.</p>
+          <div class="row">
+            <div>
+              <label for="cf-token">Cloudflare API Token</label>
+              <input id="cf-token" class="mono" type="password" placeholder="Paste your API token"/>
+            </div>
+            <div class="action">
+              <button class="btn secondary btn-sm" id="btnCfList">Load Zones</button>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="cf-zones">Select your domain</label>
+              <select id="cf-zones"><option value="">Select a zone after loading</option></select>
+            </div>
+            <div class="action">
+              <button class="btn warn btn-sm" id="btnCfProtect">Protect Domain</button>
+            </div>
+          </div>
+          <pre class="log mt-md tiny" id="cf-log">Paste token, then click Load Zones.</pre>
+
+          <details class="mt-md">
+            <summary>Manage Control SPF</summary>
+            <div>
+              <div class="row">
+                <button class="btn secondary btn-sm" id="btnSpfLoad">Load Current Value</button>
+                <button class="btn secondary btn-sm" id="btnSpfUpdate">Update Value</button>
+              </div>
+              <div class="row mt-sm">
+                <div>
+                  <label for="spf-value">SPF Record Value</label>
+                  <textarea id="spf-value" class="mono" spellcheck="false" rows="3"></textarea>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <div class="card">
+          <h3>AWS Route 53 Integration</h3>
+          <p class="desc">If your DNS is managed by AWS Route 53, we can configure all records automatically. You will need IAM credentials with Route 53 access.</p>
+          <div class="row">
+            <div>
+              <label for="r53-ak">Access Key ID</label>
+              <input id="r53-ak" class="mono" placeholder="AKIA..."/>
+            </div>
+            <div>
+              <label for="r53-sk">Secret Access Key</label>
+              <input id="r53-sk" class="mono" type="password" placeholder="Your secret key"/>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="r53-zones">Hosted Zone</label>
+              <select id="r53-zones"><option value="">Enter credentials to load zones</option></select>
+            </div>
+            <div class="action">
+              <button class="btn warn btn-sm" id="btnR53Protect">Protect Domain</button>
+            </div>
+          </div>
+          <pre class="log mt-md tiny" id="r53-log">Enter credentials to load zones automatically.</pre>
+        </div>
+      </section>
+
+      <!-- POLICY MANAGEMENT -->
+      <div class="section-title"><span class="icon">🛡️</span> DMARC Policy Management</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Policy Step-Up</h3>
+          <p class="desc">Gradually strengthen your DMARC policy. Start with "none" to monitor, move to "quarantine" to test, then "reject" for full protection.</p>
+          <div class="row">
+            <div>
+              <label for="pol-domain">Domain</label>
+              <input id="pol-domain" class="mono" placeholder="example.com"/>
+            </div>
+            <div class="narrow">
+              <label for="pol-policy">Policy</label>
+              <select id="pol-policy">
+                <option value="none">none (monitor)</option>
+                <option value="quarantine">quarantine (spam)</option>
+                <option value="reject">reject (block)</option>
+              </select>
+            </div>
+            <div class="narrow">
+              <label for="pol-pct">Percentage</label>
+              <input id="pol-pct" type="number" min="1" max="100" value="100"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="narrow">
+              <label for="pol-adkim">DKIM Alignment</label>
+              <select id="pol-adkim"><option value="s">strict</option><option value="r">relaxed</option></select>
+            </div>
+            <div class="narrow">
+              <label for="pol-aspf">SPF Alignment</label>
+              <select id="pol-aspf"><option value="s">strict</option><option value="r">relaxed</option></select>
+            </div>
+            <div>
+              <label for="pol-rua">Report Address</label>
+              <input id="pol-rua" value="mailto:dmarc@domainsafepro.com"/>
+            </div>
+          </div>
+          <div class="row">
+            <div class="narrow">
+              <label for="pol-fo">Failure Options</label>
+              <input id="pol-fo" value="1"/>
+            </div>
+            <div>
+              <label for="pol-sp">Subdomain Policy (optional)</label>
+              <input id="pol-sp" placeholder="Leave blank to inherit"/>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn secondary btn-sm" id="btnPolPreview">Preview Record</button>
+            <button class="btn btn-sm" id="btnApplyCf">Apply via Cloudflare</button>
+            <button class="btn btn-sm" id="btnApplyR53">Apply via Route 53</button>
+            <button class="btn ghost btn-sm" id="btnEvaluateNow">Run Policy Engine</button>
+          </div>
+          <pre id="pol-out" class="log mt-md tiny">Preview your policy record before applying.</pre>
+        </div>
+      </section>
+
+      <!-- CENTRAL SPF -->
+      <div class="section-title"><span class="icon">📧</span> Central SPF Management</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Authorized Senders</h3>
+          <p class="desc">Select which email services are authorized to send on behalf of protected domains. Changes apply to all domains using central control.</p>
+
+          <div class="spf-grid">
+            <label><input type="checkbox" class="spf-sel" value="google"/> Google Workspace</label>
+            <label><input type="checkbox" class="spf-sel" value="m365"/> Microsoft 365</label>
+            <label><input type="checkbox" class="spf-sel" value="sendgrid"/> SendGrid</label>
+            <label><input type="checkbox" class="spf-sel" value="ses"/> Amazon SES</label>
+            <label><input type="checkbox" class="spf-sel" value="mailgun"/> Mailgun</label>
+            <label><input type="checkbox" class="spf-sel" value="mailchimp"/> Mailchimp</label>
+            <label><input type="checkbox" class="spf-sel" value="postmark"/> Postmark</label>
+            <label><input type="checkbox" class="spf-sel" value="sparkpost"/> SparkPost</label>
+            <label><input type="checkbox" class="spf-sel" value="zoho"/> Zoho</label>
+            <label><input type="checkbox" class="spf-sel" value="zendesk"/> Zendesk</label>
+            <label><input type="checkbox" class="spf-sel" value="intercom"/> Intercom</label>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="spf-preview">Generated SPF Record</label>
+              <input id="spf-preview" class="mono" value="v=spf1 ~all" readonly/>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="spf-token">Cloudflare API Token (for domainsafepro.com zone)</label>
+              <input id="spf-token" class="mono" type="password" placeholder="Token with DNS edit access"/>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn secondary btn-sm" id="btnSpfLoad2">Load Current</button>
+            <button class="btn btn-sm" id="btnSpfUpdate2">Update Central SPF</button>
+          </div>
+          <pre class="log mt-md tiny" id="spf-log2">Select authorized senders, then update.</pre>
+        </div>
+      </section>
+
+      <!-- INSIGHTS -->
+      <div class="section-title"><span class="icon">📈</span> DMARC Reports</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Alignment Insights</h3>
+          <p class="desc">View aggregate report data showing how many emails passed authentication checks over the past 7 or 30 days.</p>
+          <div class="row">
+            <div class="narrow">
+              <button class="btn secondary btn-sm" id="btnIngest">Ingest Reports</button>
+            </div>
+            <div>
+              <label for="ins-domain">Domain</label>
+              <input id="ins-domain" class="mono" value="domainsafepro.com"/>
+            </div>
+            <div class="action">
+              <button class="btn secondary btn-sm" id="btnLoad7">7 Days</button>
+            </div>
+            <div class="action">
+              <button class="btn secondary btn-sm" id="btnLoad30">30 Days</button>
+            </div>
+          </div>
+          <div id="ins-summary" class="mt-md tiny muted">Select a time range to view data.</div>
+          <div class="mt-md table-wrap">
+            <table id="ins-table" class="hidden">
+              <thead>
+                <tr><th>Date</th><th>Total</th><th>Aligned</th><th>Rate</th><th>Trend</th></tr>
+              </thead>
+              <tbody id="ins-rows"></tbody>
+            </table>
+          </div>
+          <details class="mt-md">
+            <summary>View raw data</summary>
+            <div><pre id="ins-wrap" class="log tiny">No data loaded.</pre></div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ALERTS -->
+      <div class="section-title"><span class="icon">🔔</span> Notifications</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Alert Management</h3>
+          <p class="desc">Test your Slack integration and manage queued notifications.</p>
+          <div class="btn-row">
+            <button class="btn btn-sm" id="btnAlertTest">Send Test Alert</button>
+            <button class="btn secondary btn-sm" id="btnAlertFlush">Flush Queue</button>
+          </div>
+          <pre class="log mt-md tiny" id="alerts-out">Ready to send alerts.</pre>
+        </div>
+      </section>
+
+    </div><!-- /admin-content -->
+  </div><!-- /admin-section -->
 
   <footer class="console-footer">
-    <a href="https://domainsafepro.com" target="_blank">DomainSafePro</a> — Email Authentication on Autopilot
+    <a href="https://domainsafepro.com" target="_blank">DomainSafePro</a> | Email Authentication on Autopilot
   </footer>
 
 </main>
@@ -1314,18 +1546,41 @@ function toggleTheme() {
   } catch(e){}
 })();
 
-/* ====== Real endpoints (no placeholders) ====== */
+/* ====== Admin Toggle ====== */
+function toggleAdmin() {
+  const content = document.getElementById('admin-content');
+  const text = document.getElementById('admin-toggle-text');
+  const icon = document.getElementById('admin-toggle-icon');
+  if (content.classList.contains('visible')) {
+    content.classList.remove('visible');
+    text.textContent = 'Show admin tools';
+    icon.textContent = '▼';
+  } else {
+    content.classList.add('visible');
+    text.textContent = 'Hide admin tools';
+    icon.textContent = '▲';
+  }
+}
+
+/* ====== Real endpoints ====== */
 const ROBOT_API = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 const DMARC_API = "https://api.domainsafepro.com";
 const AUTH_API  = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 
 /* ====== Tiny helpers ====== */
-const $ = sel => document.querySelector(sel);
-const $$ = sel => document.querySelectorAll(sel);
-const logEl = (sel, v) => { const el = $(sel); if (!el) return; el.textContent = (typeof v === "string") ? v : JSON.stringify(v, null, 2); };
-const copy = txt => { if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(()=>{}); };
-const show = el => { if (el) el.classList.remove('hidden'); };
-const hide = el => { if (el) el.classList.add('hidden'); };
+const $ = function(sel) { return document.querySelector(sel); };
+const $$ = function(sel) { return document.querySelectorAll(sel); };
+const logEl = function(sel, v) { 
+  const el = $(sel); 
+  if (!el) return; 
+  el.textContent = (typeof v === "string") ? v : JSON.stringify(v, null, 2); 
+};
+const copy = function(txt) { 
+  if (navigator.clipboard) return navigator.clipboard.writeText(txt).catch(function(){}); 
+  return Promise.resolve();
+};
+const show = function(el) { if (el) el.classList.remove('hidden'); };
+const hide = function(el) { if (el) el.classList.add('hidden'); };
 
 function sanitizeDomain(raw){
   return (raw||"").trim().toLowerCase()
@@ -1338,7 +1593,7 @@ function isValidHostname(raw){
   const s = sanitizeDomain(raw);
   if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(s)) return false;
   const labels = s.split(".");
-  return labels.every(lbl => lbl.length>0 && lbl.length<=63 && /^[a-z0-9-]+$/i.test(lbl));
+  return labels.every(function(lbl) { return lbl.length>0 && lbl.length<=63 && /^[a-z0-9-]+$/i.test(lbl); });
 }
 function isDomain(s){ return /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(s||""); }
 function apexify(raw){
@@ -1356,7 +1611,7 @@ function normalizeForUI(raw, noticeEl, errorEl, opts){
   const typed = sanitizeDomain(raw);
   if (!isValidHostname(typed)){
     if (errorEl){
-      errorEl.textContent = "Invalid hostname: use letters, digits and hyphens only; no underscores; no trailing dot.";
+      errorEl.textContent = "Please enter a valid domain name (like yourdomain.com)";
       show(errorEl);
     }
     if (noticeEl) hide(noticeEl);
@@ -1364,21 +1619,21 @@ function normalizeForUI(raw, noticeEl, errorEl, opts){
   }
   if (errorEl) hide(errorEl);
   const apex = apexify(typed);
-  let value = apex, changed = false;
-  if (options.allowExact && $("#chk-exact") && $("#chk-exact").checked){
+  var value = apex, changed = false;
+  if (options.allowExact){
     value = typed;
   } else if (typed !== apex){
     changed = true;
   }
   if (noticeEl){
     if (changed){
-      noticeEl.innerHTML = 'Using apex <span class="mono">'+apex+'</span> (from <span class="mono">'+typed+'</span>).';
+      noticeEl.innerHTML = 'We will protect the root domain <span class="mono">'+apex+'</span> to cover all subdomains.';
       show(noticeEl);
     } else {
       hide(noticeEl);
     }
   }
-  return { ok:true, value, apex, changed, typed };
+  return { ok:true, value:value, apex:apex, changed:changed, typed:typed };
 }
 
 /* ====== HTTP helpers ====== */
@@ -1389,7 +1644,7 @@ async function get(url){
     headers:{ "accept":"application/json" }
   });
   const t = await r.text();
-  let j = null;
+  var j = null;
   try{ j = t ? JSON.parse(t) : null; }catch(e){}
   if (!r.ok){
     const msg = (j && j.error) ? j.error : t || ("HTTP "+r.status);
@@ -1405,7 +1660,7 @@ async function post(url, body){
     body: JSON.stringify(body || {})
   });
   const t = await r.text();
-  let j = null;
+  var j = null;
   try{ j = t ? JSON.parse(t) : null; }catch(e){}
   if (!r.ok){
     const msg = (j && j.error) ? j.error : t || ("HTTP "+r.status);
@@ -1423,7 +1678,7 @@ async function fetchCurrentUser(){
       headers:{ "accept":"application/json" }
     });
     const t = await r.text();
-    let j = null;
+    var j = null;
     try{ j = t ? JSON.parse(t) : null; }catch(e){ return null; }
     if (!r.ok || !j || j.ok === false || !j.user || !j.user.email) return null;
     return j.user;
@@ -1445,14 +1700,14 @@ function showAuthedUI(user){
   }
   if (loginBtn) {
     loginBtn.textContent = "Sign out";
-    loginBtn.onclick = () => {
+    loginBtn.onclick = function() {
       document.body.classList.remove("authed");
       showLoggedOutUI();
     };
   }
   const statusRows = $("#statusRows");
   if (statusRows){
-    statusRows.innerHTML = '<tr><td colspan="7" class="muted">Loading…</td></tr>';
+    statusRows.innerHTML = '<tr><td colspan="7" class="muted">Loading...</td></tr>';
   }
   loadStatus();
   refreshRecent();
@@ -1474,7 +1729,7 @@ function showLoggedOutUI(){
   const recent = $("#recentWrap");
   if (recent) recent.textContent = "Sign in to see your domains.";
   const addLog = $("#add-log");
-  if (addLog) addLog.textContent = "Sign in, then add a domain.";
+  if (addLog) addLog.textContent = "Enter domain details above.";
 }
 
 async function initAuth(){
@@ -1491,23 +1746,23 @@ async function initAuth(){
 /* ====== STATUS & MONITOR ====== */
 function pill(ok){
   return ok
-    ? '<span class="pill ok">✓ OK</span>'
-    : '<span class="pill bad">✗ Fix</span>';
+    ? '<span class="pill ok">OK</span>'
+    : '<span class="pill bad">Needs setup</span>';
 }
 
 async function loadStatus(){
   const tb = $("#statusRows");
   if (!tb) return;
-  tb.innerHTML = '<tr><td colspan="7" class="muted">Loading…</td></tr>';
+  tb.innerHTML = '<tr><td colspan="7" class="muted">Loading...</td></tr>';
   try{
     const j = await get(ROBOT_API + "/api/status");
     const rows = (j && j.rows) ? j.rows : [];
     if (!rows.length){
-      tb.innerHTML = '<tr><td colspan="7" class="muted">No domains connected yet. Add a domain below to get started.</td></tr>';
+      tb.innerHTML = '<tr><td colspan="7" class="muted">No domains registered yet. Add your first domain above.</td></tr>';
       return;
     }
-    tb.innerHTML = rows.map(r => (
-      '<tr>' +
+    tb.innerHTML = rows.map(function(r) {
+      return '<tr>' +
         '<td data-label="Domain" class="mono">'+(r.domain_name||"")+'</td>' +
         '<td data-label="Owner" class="mono tiny">'+(r.email||"")+'</td>' +
         '<td data-label="SPF">'+pill(r.spf_ok)+'</td>' +
@@ -1515,90 +1770,239 @@ async function loadStatus(){
         '<td data-label="DKIM s1">'+pill(r.dkim_s1_ok)+'</td>' +
         '<td data-label="DKIM s2">'+pill(r.dkim_s2_ok)+'</td>' +
         '<td data-label="Checked" class="tiny muted">'+(r.checked_at||"")+'</td>' +
-      '</tr>'
-    )).join("");
+      '</tr>';
+    }).join("");
   }catch(e){
-    tb.innerHTML = '<tr><td colspan="7" class="tiny danger">Error loading status: '+String(e).slice(0,240)+'</td></tr>';
+    tb.innerHTML = '<tr><td colspan="7" class="tiny danger">Could not load status. Please try again.</td></tr>';
   }
 }
 $("#btnStatus").addEventListener("click", loadStatus);
-$("#btnMonitor").addEventListener("click", async ()=>{
+$("#btnMonitor").addEventListener("click", async function(){
   try{ await post(ROBOT_API + "/api/monitor-run", {}); }catch(e){}
   loadStatus();
 });
 
-/* ====== CHECK (score + badges) ====== */
-function badgeHtml(label, state, detail){
-  let cls="bad", icon="✗";
-  if (state===true || state==="ok"){ cls="ok"; icon="✓"; }
-  else if (state==="warn"){ cls="warn"; icon="⚠"; }
-  const extra = detail ? ' <span class="tiny muted">'+detail+'</span>' : "";
-  return '<span class="badge '+cls+'">'+icon+" "+label+extra+"</span>";
+/* ====== QUICK-CODES (Customer-facing) ====== */
+function renderQuickCodes(records, extras) {
+  const container = $("#qc-results");
+  if (!records || records.length === 0) {
+    container.innerHTML = '<p class="muted">No records to display.</p>';
+    show(container);
+    return;
+  }
+
+  function getPurpose(name) {
+    if (name.includes('_domainkey')) {
+      return name.startsWith('s1') ? 'Email Signature Key 1 (DKIM)' : 'Email Signature Key 2 (DKIM)';
+    }
+    if (name === '_dmarc' || name.startsWith('_dmarc.')) return 'Email Policy (DMARC)';
+    if (name === '@' || name === '') return 'Email Sender Authorization (SPF)';
+    if (name === '_smtp._tls') return 'Transport Security Reporting';
+    if (name === 'mta-sts') return 'Mail Transfer Security';
+    return 'DNS Record';
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function createCard(r) {
+    const typeClass = r.type.toLowerCase() === 'txt' ? 'txt' : 'cname';
+    const purpose = getPurpose(r.name);
+    const displayName = r.name === '@' ? '@ (root domain)' : escapeHtml(r.name);
+    const escapedName = escapeHtml(r.name);
+    const escapedValue = escapeHtml(r.value);
+    
+    return '<div class="qc-card">' +
+      '<div class="qc-card-header">' +
+        '<span class="qc-type ' + typeClass + '">' + escapeHtml(r.type) + '</span>' +
+        '<span class="qc-purpose">' + purpose + '</span>' +
+      '</div>' +
+      '<div class="qc-field">' +
+        '<div class="qc-label">Host / Name</div>' +
+        '<div class="qc-value">' +
+          '<code>' + displayName + '</code>' +
+          '<button class="copy-btn" data-copy="' + escapedName + '">Copy</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="qc-field">' +
+        '<div class="qc-label">Value / Points To</div>' +
+        '<div class="qc-value">' +
+          '<code>' + escapedValue + '</code>' +
+          '<button class="copy-btn" data-copy="' + escapedValue + '">Copy</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  var html = '<div class="qc-cards">';
+  records.forEach(function(r) { html += createCard(r); });
+  if (extras && extras.length > 0) {
+    html += '<div class="mt-md mb-sm"><strong class="tiny muted">ADVANCED SECURITY (OPTIONAL)</strong></div>';
+    extras.forEach(function(r) { html += createCard(r); });
+  }
+  html += '</div>';
+
+  container.innerHTML = html;
+  show(container);
+  show($("#qc-actions"));
+  
+  // Add click handlers for copy buttons
+  container.querySelectorAll('.copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const text = this.getAttribute('data-copy');
+      const button = this;
+      copy(text).then(function() {
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+        setTimeout(function() {
+          button.textContent = 'Copy';
+          button.classList.remove('copied');
+        }, 2000);
+      });
+    });
+  });
+  
+  $("#step1-indicator").classList.add("completed");
 }
 
-$("#btnCheck").addEventListener("click", async ()=>{
-  const norm = normalizeForUI($("#chk-domain").value, $("#chk-notice"), $("#chk-error"), {allowExact:true});
-  if (!norm.ok) return;
-  const dom = norm.value;
+$("#btnQCodes").addEventListener("click", async function(){
+  const norm = normalizeForUI($("#qc-domain").value, $("#qc-notice"), null);
+  if (!norm.ok){
+    hide($("#qc-results"));
+    hide($("#qc-actions"));
+    return;
+  }
   try{
-    const exact = ($("#chk-exact") && $("#chk-exact").checked) ? "&exact=1" : "";
-    const j = await get(ROBOT_API + "/api/check-score?domain=" + encodeURIComponent(dom) + exact);
-
-    const pct = Math.max(0, Math.min(100, Number(j.score || 0)));
-    $("#scoreBar").style.width = pct + "%";
-    $("#scoreLbl").textContent = pct + "/100";
-
-    const b = j.badges || {};
-    const dm = (b.dmarc||"").toString();
-    $("#badgeRow").innerHTML = [
-      badgeHtml("SPF", b.spf===true, b.spf ? "include:_spf.control" : "missing include"),
-      badgeHtml("DKIM", b.dkim===true, b.dkim ? "s1+s2 → control OK" : "selectors not to control"),
-      badgeHtml("DMARC", !!dm, dm ? "p="+dm : "missing"),
-      badgeHtml("TLS‑RPT", b.extras && b.extras.tlsrpt===true),
-      badgeHtml("MTA‑STS", b.extras && b.extras.mtasts===true)
-    ].join(" ");
-
-    const res = j.dmarc_resolution || {};
-    const origin = res.origin || "—";
-    const applied = res.appliedPolicy || res.policy || "—";
-    const sp = (res.sp || "").toString();
-    $("#resRow").innerHTML = 'Origin: <strong>'+origin+'</strong>' + (sp ? ' (apex sp='+sp+')' : '') + ' · Applied: <strong>'+applied+'</strong>';
-
-    $("#dohDMARC").textContent = (j.doh && j.doh._dmarc) || "—";
-    $("#dohTLS").textContent   = (j.doh && j.doh._smtp__tls) || "—";
-    $("#dohSTS").textContent   = (j.doh && j.doh.mta_sts) || "—";
-
-    $("#tips").innerHTML = (j.tips || []).map(t => '<div class="notice info tiny">'+t+'</div>').join("") || "—";
-    $("#checkRaw").textContent = JSON.stringify(j, null, 2);
-    show($("#checkOut"));
-
-    if ($("#chk-legacy").checked){
-      const status = await get(ROBOT_API + "/api/status?domain=" + encodeURIComponent(dom));
-      const quick  = await get(ROBOT_API + "/api/check-quick-codes?domain=" + encodeURIComponent(dom));
-      const dohDMARC = await fetch("https://cloudflare-dns.com/dns-query?name="+encodeURIComponent("_dmarc."+dom)+"&type=TXT",{headers:{Accept:"application/dns-json"}}).then(r=>r.json()).catch(()=>null);
-      const dohTLS   = await fetch("https://cloudflare-dns.com/dns-query?name="+encodeURIComponent("_smtp._tls."+dom)+"&type=TXT",{headers:{Accept:"application/dns-json"}}).then(r=>r.json()).catch(()=>null);
-      const dohSTS   = await fetch("https://cloudflare-dns.com/dns-query?name="+encodeURIComponent("mta-sts."+dom)+"&type=CNAME",{headers:{Accept:"application/dns-json"}}).then(r=>r.json()).catch(()=>null);
-      const ansTxt = a => (a && a.Answer) ? a.Answer.map(x=>String(x.data).replace(/^"|"$/g,"")).join("\n") : "—";
-      const legacy = {
-        domain: dom,
-        robot_status: status && (status.status || status),
-        quick_checks: quick && quick.checks,
-        doh:{
-          _dmarc: ansTxt(dohDMARC),
-          _smtp__tls: ansTxt(dohTLS),
-          mta_sts: ansTxt(dohSTS)
-        }
-      };
-      $("#legacyRaw").textContent = JSON.stringify(legacy, null, 2);
-      show($("#legacyOut"));
-    } else {
-      hide($("#legacyOut"));
-    }
-
+    const extras = ($("#qc-extras").checked ? "&extras=1" : "");
+    const j = await get(ROBOT_API + "/api/quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value) + extras);
+    renderQuickCodes(j.records || [], j.extras || []);
+    
+    $("#verify-domain").value = norm.apex || norm.value;
   }catch(e){
-    $("#checkRaw").textContent = "Error: " + String(e);
-    show($("#checkOut"));
-    hide($("#legacyOut"));
+    $("#qc-results").innerHTML = '<p class="danger">Could not generate records: ' + String(e).slice(0,100) + '</p>';
+    show($("#qc-results"));
+  }
+});
+
+$("#btnCopyAll").addEventListener("click", function(){
+  const cards = $$("#qc-results .qc-card");
+  if (!cards.length) return;
+  
+  var text = "";
+  cards.forEach(function(card) {
+    const typeEl = card.querySelector('.qc-type');
+    const codeEls = card.querySelectorAll('.qc-value code');
+    const type = typeEl ? typeEl.textContent : '';
+    const name = codeEls[0] ? codeEls[0].textContent : '';
+    const value = codeEls[1] ? codeEls[1].textContent : '';
+    text += type + "\t" + name + "\t" + value + "\n";
+  });
+  
+  copy(text).then(function() {
+    const btn = $("#btnCopyAll");
+    const oldText = btn.textContent;
+    btn.textContent = "Copied to clipboard!";
+    setTimeout(function() { btn.textContent = oldText; }, 2000);
+  });
+});
+
+/* ====== VERIFY (Human-readable output) ====== */
+function renderVerifyResults(data) {
+  const container = $("#verify-results");
+  const detailsEl = $("#verify-details");
+  
+  const checks = data.checks || {};
+  const items = [];
+  
+  const spfOk = checks.spf && checks.spf.present && checks.spf.includes_control;
+  items.push({
+    label: 'SPF (Sender Authorization)',
+    pass: spfOk,
+    status: spfOk 
+      ? 'Your SPF record is configured correctly and includes our central control.'
+      : checks.spf && checks.spf.present 
+        ? 'SPF record found, but it does not include our central control yet.'
+        : 'No SPF record found. Add the TXT record from Step 1.'
+  });
+  
+  const dkimOk = checks.dkim && checks.dkim.s1 && checks.dkim.s1.present && checks.dkim.s1.points_to_control;
+  items.push({
+    label: 'DKIM (Email Signatures)',
+    pass: dkimOk,
+    status: dkimOk
+      ? 'Your DKIM records are configured correctly and point to our signing keys.'
+      : checks.dkim && checks.dkim.s1 && checks.dkim.s1.present
+        ? 'DKIM record found, but it does not point to our control keys yet.'
+        : 'No DKIM records found. Add the CNAME records from Step 1.'
+  });
+  
+  const dmarcOk = checks.dmarc && checks.dmarc.present;
+  items.push({
+    label: 'DMARC (Email Policy)',
+    pass: dmarcOk,
+    status: dmarcOk
+      ? 'Your DMARC policy is active. Policy: ' + (checks.dmarc.policy || 'none')
+      : 'No DMARC record found. Add the TXT record from Step 1.'
+  });
+  
+  const allPass = items.every(function(i) { return i.pass; });
+  const passCount = items.filter(function(i) { return i.pass; }).length;
+  
+  var summaryHtml = '';
+  if (allPass) {
+    summaryHtml = '<div class="verify-summary all-pass">' +
+      '<span class="verify-summary-icon">🎉</span>' +
+      '<div class="verify-summary-text">' +
+        '<h4>Your domain is protected!</h4>' +
+        '<p>All email authentication records are configured correctly.</p>' +
+      '</div>' +
+    '</div>';
+    $("#step3-indicator").classList.add("completed");
+  } else {
+    summaryHtml = '<div class="verify-summary has-issues">' +
+      '<span class="verify-summary-icon">⚠️</span>' +
+      '<div class="verify-summary-text">' +
+        '<h4>' + passCount + ' of ' + items.length + ' checks passed</h4>' +
+        '<p>Some records still need to be added. See details below.</p>' +
+      '</div>' +
+    '</div>';
+  }
+  
+  var itemsHtml = items.map(function(item) {
+    return '<div class="verify-item">' +
+      '<div class="verify-icon ' + (item.pass ? 'pass' : 'fail') + '">' + (item.pass ? '✓' : '✗') + '</div>' +
+      '<div class="verify-content">' +
+        '<div class="verify-label">' + item.label + '</div>' +
+        '<div class="verify-status ' + (item.pass ? 'pass' : 'fail') + '">' + item.status + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  
+  container.innerHTML = summaryHtml + itemsHtml;
+  show(container);
+  
+  logEl("#verify-log", data);
+  show(detailsEl);
+}
+
+$("#btnVerify").addEventListener("click", async function(){
+  const norm = normalizeForUI($("#verify-domain").value, $("#verify-notice"), null);
+  if (!norm.ok){
+    hide($("#verify-results"));
+    hide($("#verify-details"));
+    return;
+  }
+  
+  $("#verify-results").innerHTML = '<div class="verify-summary has-issues"><span class="verify-summary-icon">⏳</span><div class="verify-summary-text"><h4>Checking your domain...</h4><p>This may take a few seconds while we query DNS servers.</p></div></div>';
+  show($("#verify-results"));
+  
+  try{
+    const j = await get(ROBOT_API + "/api/check-quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value));
+    renderVerifyResults(j);
+  }catch(e){
+    $("#verify-results").innerHTML = '<div class="verify-summary has-issues"><span class="verify-summary-icon">❌</span><div class="verify-summary-text"><h4>Could not verify domain</h4><p>' + String(e).slice(0,150) + '</p></div></div>';
+    show($("#verify-results"));
   }
 });
 
@@ -1610,22 +2014,22 @@ async function refreshRecent(){
     const j = await get(ROBOT_API + "/api/domains");
     const rows = (j && (j.domains || j.rows)) ? (j.domains || j.rows) : [];
     if (!rows.length){
-      wrap.textContent = "No domains connected yet for this account.";
+      wrap.textContent = "No domains registered yet.";
       return;
     }
-    wrap.innerHTML = rows.slice(0,10).map(r =>
-      '<div class="mono" style="margin-bottom:6px">'+(r.domain_name || "")+' <span class="muted">— '+(r.status || "")+(r.created_at ? " — "+r.created_at : "")+'</span></div>'
-    ).join("");
+    wrap.innerHTML = rows.slice(0,10).map(function(r) {
+      return '<div class="mono" style="margin-bottom:6px">'+(r.domain_name || "")+' <span class="muted">| '+(r.status || "")+(r.created_at ? " | "+r.created_at : "")+'</span></div>';
+    }).join("");
   }catch(e){
-    wrap.textContent = "Unable to load domains: " + String(e).slice(0,200);
+    wrap.textContent = "Could not load domains.";
   }
 }
 
-$("#btnAdd").addEventListener("click", async ()=>{
+$("#btnAdd").addEventListener("click", async function(){
   const norm = normalizeForUI($("#add-domain").value, $("#add-notice"), null);
   const email = ($("#add-email").value || "").trim();
   if (!email || !norm.ok){
-    $("#add-log").textContent = "Please enter a valid email and domain.";
+    $("#add-log").textContent = "Please enter a valid email and domain name.";
     return;
   }
   try{
@@ -1640,94 +2044,53 @@ $("#btnAdd").addEventListener("click", async ()=>{
   }
 });
 
-/* ====== VERIFY ====== */
-$("#btnVerify").addEventListener("click", async ()=>{
-  const norm = normalizeForUI($("#verify-domain").value, $("#verify-notice"), null);
-  if (!norm.ok){
-    logEl("#verify-log","Enter a valid domain.");
-    return;
-  }
-  try{
-    const j = await get(ROBOT_API + "/api/check-quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value));
-    logEl("#verify-log", j);
-  }catch(e){
-    logEl("#verify-log", String(e));
-  }
-});
-
-/* ====== QUICK-CODES ====== */
-$("#btnQCodes").addEventListener("click", async ()=>{
-  const norm = normalizeForUI($("#qc-domain").value, $("#qc-notice"), null);
-  if (!norm.ok){
-    $("#qc-results").textContent = "Enter a valid domain.";
-    return;
-  }
-  try{
-    const extras = ($("#qc-extras").checked ? "&extras=1" : "");
-    const j = await get(ROBOT_API + "/api/quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value) + extras);
-    const lines = [];
-    (j.records || []).forEach(r => lines.push(r.type+"\t"+r.name+"\t"+r.value));
-    (j.extras || []).forEach(r => lines.push(r.type+"\t"+r.name+"\t"+r.value));
-    $("#qc-results").innerHTML = '<pre class="log">'+(lines.join("\n") || "—")+'</pre>';
-  }catch(e){
-    $("#qc-results").textContent = String(e);
-  }
-});
-
-$("#btnCopyAll").addEventListener("click", ()=>{
-  const pre = $("#qc-results").querySelector("pre");
-  if (pre) {
-    copy(pre.textContent);
-    const btn = $("#btnCopyAll");
-    const oldText = btn.textContent;
-    btn.textContent = "Copied!";
-    setTimeout(() => { btn.textContent = oldText; }, 2000);
-  }
-});
-
 /* ====== CLOUDFLARE ====== */
-$("#btnCfList").addEventListener("click", async ()=>{
+$("#btnCfList").addEventListener("click", async function(){
   const token = ($("#cf-token").value || "").trim();
   if (!token){
-    logEl("#cf-log","Paste your Cloudflare API token first.");
+    logEl("#cf-log","Please paste your Cloudflare API token first.");
     return;
   }
   try{
-    const j = await post(ROBOT_API + "/api/cf/list-zones", { token });
+    const j = await post(ROBOT_API + "/api/cf/list-zones", { token: token });
     const sel = $("#cf-zones");
-    sel.innerHTML = '<option value="">— choose a zone —</option>';
-    (j.zones || []).forEach(z => {
+    sel.innerHTML = '<option value="">Select your domain</option>';
+    (j.zones || []).forEach(function(z) {
       const o = document.createElement("option");
       o.value = z.id;
       o.textContent = z.name + " (" + (z.status || "") + ")";
       sel.appendChild(o);
     });
-    logEl("#cf-log",{ok:true,zones:(j.zones || []).map(z=>({id:z.id,name:z.name,status:z.status}))});
+    logEl("#cf-log","Loaded " + (j.zones || []).length + " zones. Select your domain above.");
   }catch(e){
     logEl("#cf-log", String(e));
   }
 });
 
-$("#btnCfProtect").addEventListener("click", async ()=>{
+$("#btnCfProtect").addEventListener("click", async function(){
   const token = ($("#cf-token").value || "").trim();
   const zone_id = $("#cf-zones").value;
   if (!token || !zone_id){
-    logEl("#cf-log","Paste token and choose a zone.");
+    logEl("#cf-log","Please load zones and select a domain first.");
     return;
   }
   try{
-    const j = await post(ROBOT_API + "/api/cf/protect", { token, zone_id });
+    const j = await post(ROBOT_API + "/api/cf/protect", { token: token, zone_id: zone_id });
     logEl("#cf-log", j);
-    if (j.apex) $("#pol-domain").value = j.apex;
+    if (j.apex) {
+      $("#pol-domain").value = j.apex;
+      $("#qc-domain").value = j.apex;
+      $("#verify-domain").value = j.apex;
+    }
   }catch(e){
     logEl("#cf-log", String(e));
   }
 });
 
-$("#btnSpfLoad").addEventListener("click", async ()=>{
+$("#btnSpfLoad").addEventListener("click", async function(){
   const token = ($("#cf-token").value || "").trim();
   if (!token){
-    logEl("#cf-log","Paste a Cloudflare API token first.");
+    logEl("#cf-log","Please paste your Cloudflare API token first.");
     return;
   }
   try{
@@ -1739,15 +2102,15 @@ $("#btnSpfLoad").addEventListener("click", async ()=>{
   }
 });
 
-$("#btnSpfUpdate").addEventListener("click", async ()=>{
+$("#btnSpfUpdate").addEventListener("click", async function(){
   const token = ($("#cf-token").value || "").trim();
   const value = ($("#spf-value").value || "").trim();
   if (!token){
-    logEl("#cf-log","Paste a Cloudflare API token first.");
+    logEl("#cf-log","Please paste your Cloudflare API token first.");
     return;
   }
   try{
-    const j = await post(ROBOT_API + "/api/cf/control-spf", { token, value });
+    const j = await post(ROBOT_API + "/api/cf/control-spf", { token: token, value: value });
     logEl("#cf-log", j);
   }catch(e){
     logEl("#cf-log", String(e));
@@ -1760,16 +2123,16 @@ async function r53ListZonesIfReady(){
   const secret_access_key = ($("#r53-sk").value || "").trim();
   if (!access_key_id || !secret_access_key) return;
   try{
-    const j = await post(ROBOT_API + "/api/r53/list-zones", { access_key_id, secret_access_key });
+    const j = await post(ROBOT_API + "/api/r53/list-zones", { access_key_id: access_key_id, secret_access_key: secret_access_key });
     const sel = $("#r53-zones");
-    sel.innerHTML = '<option value="">— choose a hosted zone —</option>';
-    (j.zones || []).forEach(z => {
+    sel.innerHTML = '<option value="">Select your hosted zone</option>';
+    (j.zones || []).forEach(function(z) {
       const o = document.createElement("option");
       o.value = z.id;
       o.textContent = z.name + " (" + z.id + ")";
       sel.appendChild(o);
     });
-    logEl("#r53-log",{ok:true,zones:j.zones});
+    logEl("#r53-log","Loaded " + (j.zones || []).length + " hosted zones.");
   }catch(e){
     logEl("#r53-log", String(e));
   }
@@ -1777,28 +2140,32 @@ async function r53ListZonesIfReady(){
 $("#r53-ak").addEventListener("change", r53ListZonesIfReady);
 $("#r53-sk").addEventListener("change", r53ListZonesIfReady);
 
-$("#btnR53Protect").addEventListener("click", async ()=>{
+$("#btnR53Protect").addEventListener("click", async function(){
   const access_key_id = ($("#r53-ak").value || "").trim();
   const secret_access_key = ($("#r53-sk").value || "").trim();
   const hosted_zone_id = $("#r53-zones").value;
   if (!access_key_id || !secret_access_key || !hosted_zone_id){
-    logEl("#r53-log","Paste keys and pick a hosted zone.");
+    logEl("#r53-log","Please enter credentials and select a hosted zone.");
     return;
   }
   try{
-    const j = await post(ROBOT_API + "/api/r53/protect", { access_key_id, secret_access_key, hosted_zone_id });
+    const j = await post(ROBOT_API + "/api/r53/protect", { access_key_id: access_key_id, secret_access_key: secret_access_key, hosted_zone_id: hosted_zone_id });
     logEl("#r53-log", j);
-    if (j.apex) $("#pol-domain").value = j.apex;
+    if (j.apex) {
+      $("#pol-domain").value = j.apex;
+      $("#qc-domain").value = j.apex;
+      $("#verify-domain").value = j.apex;
+    }
   }catch(e){
     logEl("#r53-log", String(e));
   }
 });
 
 /* ====== POLICY STEP-UP ====== */
-$("#btnPolPreview").addEventListener("click", async ()=>{
+$("#btnPolPreview").addEventListener("click", async function(){
   const d = ($("#pol-domain").value || "").trim();
   if (!d){
-    logEl("#pol-out","Enter a domain first.");
+    logEl("#pol-out","Please enter a domain first.");
     return;
   }
   try{
@@ -1809,7 +2176,7 @@ $("#btnPolPreview").addEventListener("click", async ()=>{
   }
 });
 
-$("#btnApplyCf").addEventListener("click", async ()=>{
+$("#btnApplyCf").addEventListener("click", async function(){
   const body = {
     domain: ($("#pol-domain").value || "").trim(),
     policy: $("#pol-policy").value,
@@ -1821,7 +2188,7 @@ $("#btnApplyCf").addEventListener("click", async ()=>{
     sp:    (($("#pol-sp").value || "").trim() || null)
   };
   if (!body.domain){
-    logEl("#pol-out","Enter a domain first.");
+    logEl("#pol-out","Please enter a domain first.");
     return;
   }
   try{
@@ -1832,7 +2199,7 @@ $("#btnApplyCf").addEventListener("click", async ()=>{
   }
 });
 
-$("#btnApplyR53").addEventListener("click", async ()=>{
+$("#btnApplyR53").addEventListener("click", async function(){
   const body = {
     domain: ($("#pol-domain").value || "").trim(),
     policy: $("#pol-policy").value,
@@ -1845,11 +2212,11 @@ $("#btnApplyR53").addEventListener("click", async ()=>{
     hosted_zone_id: ($("#r53-zones").value || "").trim()
   };
   if (!body.domain){
-    logEl("#pol-out","Enter a domain first.");
+    logEl("#pol-out","Please enter a domain first.");
     return;
   }
   if (!body.hosted_zone_id){
-    logEl("#pol-out","Pick a Route 53 hosted zone (above).");
+    logEl("#pol-out","Please select a Route 53 hosted zone first.");
     return;
   }
   try{
@@ -1860,7 +2227,7 @@ $("#btnApplyR53").addEventListener("click", async ()=>{
   }
 });
 
-$("#btnEvaluateNow").addEventListener("click", async ()=>{
+$("#btnEvaluateNow").addEventListener("click", async function(){
   try{
     const j = await get(ROBOT_API + "/policy/evaluate-now");
     logEl("#pol-out", j);
@@ -1870,7 +2237,7 @@ $("#btnEvaluateNow").addEventListener("click", async ()=>{
 });
 
 /* ====== CONTROL SPF BUILDER ====== */
-const SPF_MAP = {
+var SPF_MAP = {
   google:"include:_spf.google.com",
   m365:"include:spf.protection.outlook.com",
   sendgrid:"include:sendgrid.net",
@@ -1885,19 +2252,25 @@ const SPF_MAP = {
 };
 
 function updateSpfPreview(){
-  const sels = Array.from(document.querySelectorAll(".spf-sel:checked"))
-    .map(cb => SPF_MAP[cb.value])
-    .filter(Boolean);
-  const txt = ["v=spf1"].concat(sels).concat(["~all"]).join(" ");
-  const out = $("#spf-preview");
+  var sels = [];
+  document.querySelectorAll(".spf-sel:checked").forEach(function(cb) {
+    if (SPF_MAP[cb.value]) sels.push(SPF_MAP[cb.value]);
+  });
+  var parts = ["v=spf1"];
+  parts = parts.concat(sels);
+  parts.push("~all");
+  var txt = parts.join(" ");
+  var out = $("#spf-preview");
   if (out) out.value = txt;
 }
-document.querySelectorAll(".spf-sel").forEach(cb => cb.addEventListener("change", updateSpfPreview));
+document.querySelectorAll(".spf-sel").forEach(function(cb) { 
+  cb.addEventListener("change", updateSpfPreview); 
+});
 
-$("#btnSpfLoad2").addEventListener("click", async ()=>{
+$("#btnSpfLoad2").addEventListener("click", async function(){
   const tok = ($("#spf-token").value || "").trim();
   if (!tok){
-    logEl("#spf-log2","Paste a Cloudflare API token first.");
+    logEl("#spf-log2","Please paste your Cloudflare API token first.");
     return;
   }
   try{
@@ -1909,11 +2282,11 @@ $("#btnSpfLoad2").addEventListener("click", async ()=>{
   }
 });
 
-$("#btnSpfUpdate2").addEventListener("click", async ()=>{
+$("#btnSpfUpdate2").addEventListener("click", async function(){
   const tok = ($("#spf-token").value || "").trim();
   const val = ($("#spf-preview").value || "").trim();
   if (!tok){
-    logEl("#spf-log2","Paste a Cloudflare API token first.");
+    logEl("#spf-log2","Please paste your Cloudflare API token first.");
     return;
   }
   try{
@@ -1926,42 +2299,46 @@ $("#btnSpfUpdate2").addEventListener("click", async ()=>{
 
 /* ====== INSIGHTS ====== */
 function fmt(n){ return (n || 0).toLocaleString(); }
-function pct(a,b){ const r = (b>0) ? (a/b) : 0; return Math.round(r*1000)/10; }
+function pct(a,b){ var r = (b>0) ? (a/b) : 0; return Math.round(r*1000)/10; }
 function asArray(series){
   if (Array.isArray(series)) return series;
   if (series && typeof series === "object"){
-    return Object.keys(series).sort().map(d => Object.assign({date:d}, series[d]));
+    return Object.keys(series).sort().map(function(d) { 
+      var obj = {date:d}; 
+      for(var k in series[d]) obj[k] = series[d][k];
+      return obj;
+    });
   }
   return [];
 }
 function renderRollup(j){
-  const rows = asArray(j.series);
-  const table = $("#ins-table");
-  const body  = $("#ins-rows");
-  const summary = $("#ins-summary");
+  var rows = asArray(j.series);
+  var table = $("#ins-table");
+  var body  = $("#ins-rows");
+  var summary = $("#ins-summary");
   if (!rows.length){
     hide(table);
-    summary.textContent = "No data yet for this window.";
+    summary.textContent = "No data available for this time range.";
     return;
   }
-  const totals = rows.reduce((acc,r)=>{
+  var totals = rows.reduce(function(acc,r){
     acc.total += r.total || 0;
     acc.aligned += r.aligned || 0;
     return acc;
   }, {total:0,aligned:0});
-  const rate = pct(totals.aligned, totals.total);
-  summary.innerHTML = "<strong>"+j.domain+"</strong> — "+j.days+"‑day totals: <strong>"+fmt(totals.total)+"</strong> msgs, <strong style=\"color:var(--ok)\">"+fmt(totals.aligned)+"</strong> aligned (<strong style=\"color:var(--ok)\">"+rate+"%</strong>)";
+  var rate = pct(totals.aligned, totals.total);
+  summary.innerHTML = "<strong>"+j.domain+"</strong> over "+j.days+" days: <strong>"+fmt(totals.total)+"</strong> emails, <strong style=\"color:var(--ok)\">"+fmt(totals.aligned)+"</strong> passed authentication (<strong style=\"color:var(--ok)\">"+rate+"%</strong>)";
   body.innerHTML = "";
-  rows.forEach(r=>{
-    const p = pct(r.aligned || 0, r.total || 0);
-    const tr = document.createElement("tr");
+  rows.forEach(function(r){
+    var p = pct(r.aligned || 0, r.total || 0);
+    var tr = document.createElement("tr");
     tr.innerHTML =
       '<td data-label="Date" class="mono">'+r.date+'</td>'+
       '<td data-label="Total">'+fmt(r.total || 0)+'</td>'+
       '<td data-label="Aligned">'+fmt(r.aligned || 0)+'</td>'+
       '<td data-label="Rate">'+p+'%</td>'+
       '<td data-label="Trend"><div class="bar"><i style="width:'+Math.min(100,p)+'%"></i></div><div class="tiny muted" style="margin-top:4px">'+
-      (r.spf_aligned!=null && r.dkim_aligned!=null ? ("SPF "+fmt(r.spf_aligned)+" · DKIM "+fmt(r.dkim_aligned)) : "")+
+      (r.spf_aligned!=null && r.dkim_aligned!=null ? ("SPF "+fmt(r.spf_aligned)+" / DKIM "+fmt(r.dkim_aligned)) : "")+
       '</div></td>';
     body.appendChild(tr);
   });
@@ -1969,41 +2346,36 @@ function renderRollup(j){
 }
 
 async function loadRoll(days){
-  const norm = normalizeForUI($("#ins-domain").value, null, null);
+  var norm = normalizeForUI($("#ins-domain").value, null, null);
   if (!norm.ok){
-    $("#ins-wrap").textContent = "Enter a valid domain first.";
-    show($("#ins-wrap"));
+    $("#ins-wrap").textContent = "Please enter a valid domain.";
     return;
   }
   try{
-    const j = await get(ROBOT_API + "/api/rollup?domain=" + encodeURIComponent(norm.apex || norm.value) + "&days=" + days);
+    var j = await get(ROBOT_API + "/api/rollup?domain=" + encodeURIComponent(norm.apex || norm.value) + "&days=" + days);
     $("#ins-wrap").textContent = JSON.stringify(j, null, 2);
-    show($("#ins-wrap"));
     renderRollup({domain: j.domain || (norm.apex || norm.value), days: days, series: j.series || []});
   }catch(e){
     $("#ins-wrap").textContent = String(e);
-    show($("#ins-wrap"));
   }
 }
 
-$("#btnLoad7").addEventListener("click", ()=>loadRoll(7));
-$("#btnLoad30").addEventListener("click", ()=>loadRoll(30));
+$("#btnLoad7").addEventListener("click", function(){ loadRoll(7); });
+$("#btnLoad30").addEventListener("click", function(){ loadRoll(30); });
 
-$("#btnIngest").addEventListener("click", async ()=>{
+$("#btnIngest").addEventListener("click", async function(){
   try{
-    const j = await post(DMARC_API + "/api/dmarc/ingest-latest", {limit:25});
+    var j = await post(DMARC_API + "/api/dmarc/ingest-latest", {limit:25});
     $("#ins-wrap").textContent = JSON.stringify(j, null, 2);
-    show($("#ins-wrap"));
   }catch(e){
     $("#ins-wrap").textContent = String(e);
-    show($("#ins-wrap"));
   }
 });
 
 /* ====== ALERTS ====== */
-$("#btnAlertTest").addEventListener("click", async ()=>{
+$("#btnAlertTest").addEventListener("click", async function(){
   try{
-    const j = await post(ROBOT_API + "/alerts/test", {
+    var j = await post(ROBOT_API + "/alerts/test", {
       domain:"slawitness.com",
       title:"Test alert",
       message:"This is a test from DomainSafe UI."
@@ -2014,9 +2386,9 @@ $("#btnAlertTest").addEventListener("click", async ()=>{
   }
 });
 
-$("#btnAlertFlush").addEventListener("click", async ()=>{
+$("#btnAlertFlush").addEventListener("click", async function(){
   try{
-    const j = await post(ROBOT_API + "/alerts/flush", {});
+    var j = await post(ROBOT_API + "/alerts/flush", {});
     logEl("#alerts-out", j);
   }catch(e){
     logEl("#alerts-out", String(e));
