@@ -1165,6 +1165,12 @@ details > div {
   <!-- ========== CLOUDFLARE SETUP FLOW ========== -->
   <div id="setup-cloudflare" class="setup-section">
     <section class="grid full">
+      <div class="card" style="padding: 12px 20px;">
+        <button class="btn ghost btn-sm" onclick="selectRoute(null)">← Back to Setup Options</button>
+      </div>
+    </section>
+
+    <section class="grid full">
       <div class="card highlight">
         <h3><span class="card-icon">☁️</span> Connect Your Cloudflare Account</h3>
         <p class="desc">Paste your Cloudflare API token below and we will automatically configure all your email security records. You need a token with "Zone Read" and "DNS Edit" permissions.</p>
@@ -1205,18 +1211,16 @@ details > div {
         </details>
       </div>
     </section>
-
-    <section class="grid full">
-      <div class="card">
-        <div class="btn-row" style="margin-top:0">
-          <button class="btn ghost btn-sm" onclick="selectRoute(null)">← Choose Different Method</button>
-        </div>
-      </div>
-    </section>
   </div>
 
   <!-- ========== ROUTE 53 SETUP FLOW ========== -->
   <div id="setup-route53" class="setup-section">
+    <section class="grid full">
+      <div class="card" style="padding: 12px 20px;">
+        <button class="btn ghost btn-sm" onclick="selectRoute(null)">← Back to Setup Options</button>
+      </div>
+    </section>
+
     <section class="grid full">
       <div class="card highlight">
         <h3><span class="card-icon">🔶</span> Connect Your AWS Account</h3>
@@ -1258,18 +1262,16 @@ details > div {
         </details>
       </div>
     </section>
-
-    <section class="grid full">
-      <div class="card">
-        <div class="btn-row" style="margin-top:0">
-          <button class="btn ghost btn-sm" onclick="selectRoute(null)">← Choose Different Method</button>
-        </div>
-      </div>
-    </section>
   </div>
 
   <!-- ========== MANUAL DNS SETUP FLOW ========== -->
   <div id="setup-manual" class="setup-section">
+    <section class="grid full">
+      <div class="card" style="padding: 12px 20px;">
+        <button class="btn ghost btn-sm" onclick="selectRoute(null)">← Back to Setup Options</button>
+      </div>
+    </section>
+
     <!-- STEP 1: GET YOUR CODES -->
     <section class="grid full">
       <div class="card highlight">
@@ -1318,14 +1320,6 @@ details > div {
           
           <strong>When will it work?</strong>
           <p>DNS changes can take a few minutes to a few hours to spread across the internet. If verification fails at first, wait 15 minutes and try again.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="grid full">
-      <div class="card">
-        <div class="btn-row" style="margin-top:0">
-          <button class="btn ghost btn-sm" onclick="selectRoute(null)">← Choose Different Method</button>
         </div>
       </div>
     </section>
@@ -1383,7 +1377,7 @@ details > div {
   <!-- ============================================================ -->
   <div class="admin-section">
     <div class="admin-header">
-      <h2><span>🔧</span> Admin Tools <span class="admin-badge">Owner Only</span></h2>
+      <h2><span>🔧</span> Admin Tools</h2>
       <div class="admin-toggle" id="admin-toggle" onclick="toggleAdmin()">
         <span id="admin-toggle-text">Show admin tools</span>
         <span id="admin-toggle-icon">▼</span>
