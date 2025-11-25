@@ -953,6 +953,25 @@ details > div {
   display: block;
 }
 
+/* Simple back navigation */
+.back-nav {
+  margin-bottom: 16px;
+}
+.btn-back {
+  background: none;
+  border: none;
+  color: var(--fg-muted);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 0;
+  font-family: var(--font-sans);
+  transition: color var(--fast-transition);
+}
+.btn-back:hover {
+  color: var(--fg);
+}
+
 /* ========== ADMIN SECTION ========== */
 .admin-section {
   margin-top: 40px;
@@ -1164,11 +1183,9 @@ details > div {
 
   <!-- ========== CLOUDFLARE SETUP FLOW ========== -->
   <div id="setup-cloudflare" class="setup-section">
-    <section class="grid full">
-      <div class="card" style="padding: 12px 20px;">
-        <button class="btn ghost btn-sm" onclick="selectRoute(null)">← Back to Setup Options</button>
-      </div>
-    </section>
+    <div class="back-nav">
+      <button class="btn-back" onclick="selectRoute(null)">← Back</button>
+    </div>
 
     <section class="grid full">
       <div class="card highlight">
@@ -1215,11 +1232,9 @@ details > div {
 
   <!-- ========== ROUTE 53 SETUP FLOW ========== -->
   <div id="setup-route53" class="setup-section">
-    <section class="grid full">
-      <div class="card" style="padding: 12px 20px;">
-        <button class="btn ghost btn-sm" onclick="selectRoute(null)">← Back to Setup Options</button>
-      </div>
-    </section>
+    <div class="back-nav">
+      <button class="btn-back" onclick="selectRoute(null)">← Back</button>
+    </div>
 
     <section class="grid full">
       <div class="card highlight">
@@ -1266,11 +1281,9 @@ details > div {
 
   <!-- ========== MANUAL DNS SETUP FLOW ========== -->
   <div id="setup-manual" class="setup-section">
-    <section class="grid full">
-      <div class="card" style="padding: 12px 20px;">
-        <button class="btn ghost btn-sm" onclick="selectRoute(null)">← Back to Setup Options</button>
-      </div>
-    </section>
+    <div class="back-nav">
+      <button class="btn-back" onclick="selectRoute(null)">← Back</button>
+    </div>
 
     <!-- STEP 1: GET YOUR CODES -->
     <section class="grid full">
@@ -1443,174 +1456,6 @@ details > div {
             <summary>View registered domains</summary>
             <div id="recentWrap" class="tiny muted">Loading...</div>
           </details>
-        </div>
-      </section>
-
-      <!-- POLICY MANAGEMENT -->
-      <div class="section-title"><span class="icon">🛡️</span> DMARC Policy Management</div>
-      <section class="grid full">
-        <div class="card">
-          <h3>Policy Step-Up</h3>
-          <p class="desc">Gradually strengthen your DMARC policy. Start with "none" to monitor, move to "quarantine" to test, then "reject" for full protection.</p>
-          <div class="row">
-            <div>
-              <label for="pol-domain">Domain</label>
-              <input id="pol-domain" class="mono" placeholder="example.com"/>
-            </div>
-            <div class="narrow">
-              <label for="pol-policy">Policy</label>
-              <select id="pol-policy">
-                <option value="none">none (monitor)</option>
-                <option value="quarantine">quarantine (spam)</option>
-                <option value="reject">reject (block)</option>
-              </select>
-            </div>
-            <div class="narrow">
-              <label for="pol-pct">Percentage</label>
-              <input id="pol-pct" type="number" min="1" max="100" value="100"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="narrow">
-              <label for="pol-adkim">DKIM Alignment</label>
-              <select id="pol-adkim"><option value="s">strict</option><option value="r">relaxed</option></select>
-            </div>
-            <div class="narrow">
-              <label for="pol-aspf">SPF Alignment</label>
-              <select id="pol-aspf"><option value="s">strict</option><option value="r">relaxed</option></select>
-            </div>
-            <div>
-              <label for="pol-rua">Report Address</label>
-              <input id="pol-rua" value="mailto:dmarc@domainsafepro.com"/>
-            </div>
-          </div>
-          <div class="row">
-            <div class="narrow">
-              <label for="pol-fo">Failure Options</label>
-              <input id="pol-fo" value="1"/>
-            </div>
-            <div>
-              <label for="pol-sp">Subdomain Policy (optional)</label>
-              <input id="pol-sp" placeholder="Leave blank to inherit"/>
-            </div>
-          </div>
-          <div class="btn-row">
-            <button class="btn secondary btn-sm" id="btnPolPreview">Preview Record</button>
-            <button class="btn btn-sm" id="btnApplyCf">Apply via Cloudflare</button>
-            <button class="btn btn-sm" id="btnApplyR53">Apply via Route 53</button>
-            <button class="btn ghost btn-sm" id="btnEvaluateNow">Run Policy Engine</button>
-          </div>
-          <pre id="pol-out" class="log mt-md tiny">Preview your policy record before applying.</pre>
-        </div>
-      </section>
-
-      <!-- CENTRAL SPF -->
-      <div class="section-title"><span class="icon">📧</span> Central SPF Management</div>
-      <section class="grid full">
-        <div class="card">
-          <h3>Authorized Senders</h3>
-          <p class="desc">Select which email services are authorized to send on behalf of protected domains. Changes apply to all domains using central control.</p>
-
-          <div class="spf-grid">
-            <label><input type="checkbox" class="spf-sel" value="google"/> Google Workspace</label>
-            <label><input type="checkbox" class="spf-sel" value="m365"/> Microsoft 365</label>
-            <label><input type="checkbox" class="spf-sel" value="sendgrid"/> SendGrid</label>
-            <label><input type="checkbox" class="spf-sel" value="ses"/> Amazon SES</label>
-            <label><input type="checkbox" class="spf-sel" value="mailgun"/> Mailgun</label>
-            <label><input type="checkbox" class="spf-sel" value="mailchimp"/> Mailchimp</label>
-            <label><input type="checkbox" class="spf-sel" value="postmark"/> Postmark</label>
-            <label><input type="checkbox" class="spf-sel" value="sparkpost"/> SparkPost</label>
-            <label><input type="checkbox" class="spf-sel" value="zoho"/> Zoho</label>
-            <label><input type="checkbox" class="spf-sel" value="zendesk"/> Zendesk</label>
-            <label><input type="checkbox" class="spf-sel" value="intercom"/> Intercom</label>
-          </div>
-
-          <div class="row">
-            <div>
-              <label for="spf-preview">Generated SPF Record</label>
-              <input id="spf-preview" class="mono" value="v=spf1 ~all" readonly/>
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label for="spf-token">Cloudflare API Token (for domainsafepro.com zone)</label>
-              <input id="spf-token" class="mono" type="password" placeholder="Token with DNS edit access"/>
-            </div>
-          </div>
-
-          <div class="btn-row">
-            <button class="btn secondary btn-sm" id="btnSpfLoad2">Load Current</button>
-            <button class="btn btn-sm" id="btnSpfUpdate2">Update Central SPF</button>
-          </div>
-          <pre class="log mt-md tiny" id="spf-log2">Select authorized senders, then update.</pre>
-
-          <details class="mt-md">
-            <summary>Manage Control SPF (Cloudflare)</summary>
-            <div>
-              <div class="row">
-                <button class="btn secondary btn-sm" id="btnSpfLoad">Load Current Value</button>
-                <button class="btn secondary btn-sm" id="btnSpfUpdate">Update Value</button>
-              </div>
-              <div class="row mt-sm">
-                <div>
-                  <label for="spf-value">SPF Record Value</label>
-                  <textarea id="spf-value" class="mono" spellcheck="false" rows="3"></textarea>
-                </div>
-              </div>
-            </div>
-          </details>
-        </div>
-      </section>
-
-      <!-- INSIGHTS -->
-      <div class="section-title"><span class="icon">📈</span> DMARC Reports</div>
-      <section class="grid full">
-        <div class="card">
-          <h3>Alignment Insights</h3>
-          <p class="desc">View aggregate report data showing how many emails passed authentication checks over the past 7 or 30 days.</p>
-          <div class="row">
-            <div class="narrow">
-              <button class="btn secondary btn-sm" id="btnIngest">Ingest Reports</button>
-            </div>
-            <div>
-              <label for="ins-domain">Domain</label>
-              <input id="ins-domain" class="mono" value="domainsafepro.com"/>
-            </div>
-            <div class="action">
-              <button class="btn secondary btn-sm" id="btnLoad7">7 Days</button>
-            </div>
-            <div class="action">
-              <button class="btn secondary btn-sm" id="btnLoad30">30 Days</button>
-            </div>
-          </div>
-          <div id="ins-summary" class="mt-md tiny muted">Select a time range to view data.</div>
-          <div class="mt-md table-wrap">
-            <table id="ins-table" class="hidden">
-              <thead>
-                <tr><th>Date</th><th>Total</th><th>Aligned</th><th>Rate</th><th>Trend</th></tr>
-              </thead>
-              <tbody id="ins-rows"></tbody>
-            </table>
-          </div>
-          <details class="mt-md">
-            <summary>View raw data</summary>
-            <div><pre id="ins-wrap" class="log tiny">No data loaded.</pre></div>
-          </details>
-        </div>
-      </section>
-
-      <!-- ALERTS -->
-      <div class="section-title"><span class="icon">🔔</span> Notifications</div>
-      <section class="grid full">
-        <div class="card">
-          <h3>Alert Management</h3>
-          <p class="desc">Test your Slack integration and manage queued notifications.</p>
-          <div class="btn-row">
-            <button class="btn btn-sm" id="btnAlertTest">Send Test Alert</button>
-            <button class="btn secondary btn-sm" id="btnAlertFlush">Flush Queue</button>
-          </div>
-          <pre class="log mt-md tiny" id="alerts-out">Ready to send alerts.</pre>
         </div>
       </section>
 
@@ -2230,39 +2075,8 @@ $("#btnCfProtect").addEventListener("click", async function(){
     var j = await post(ROBOT_API + "/api/cf/protect", { token: token, zone_id: zone_id });
     logEl("#cf-log", j);
     if (j.apex) {
-      $("#pol-domain").value = j.apex;
       $("#verify-domain").value = j.apex;
     }
-  }catch(e){
-    logEl("#cf-log", String(e));
-  }
-});
-
-$("#btnSpfLoad").addEventListener("click", async function(){
-  var token = ($("#cf-token").value || "").trim();
-  if (!token){
-    logEl("#cf-log","Please paste your Cloudflare API token first.");
-    return;
-  }
-  try{
-    var j = await get(ROBOT_API + "/api/cf/control-spf?token=" + encodeURIComponent(token));
-    $("#spf-value").value = j.value || "";
-    logEl("#cf-log", j);
-  }catch(e){
-    logEl("#cf-log", String(e));
-  }
-});
-
-$("#btnSpfUpdate").addEventListener("click", async function(){
-  var token = ($("#cf-token").value || "").trim();
-  var value = ($("#spf-value").value || "").trim();
-  if (!token){
-    logEl("#cf-log","Please paste your Cloudflare API token first.");
-    return;
-  }
-  try{
-    var j = await post(ROBOT_API + "/api/cf/control-spf", { token: token, value: value });
-    logEl("#cf-log", j);
   }catch(e){
     logEl("#cf-log", String(e));
   }
@@ -2303,7 +2117,6 @@ $("#btnR53Protect").addEventListener("click", async function(){
     var j = await post(ROBOT_API + "/api/r53/protect", { access_key_id: access_key_id, secret_access_key: secret_access_key, hosted_zone_id: hosted_zone_id });
     logEl("#r53-log", j);
     if (j.apex) {
-      $("#pol-domain").value = j.apex;
       $("#verify-domain").value = j.apex;
     }
   }catch(e){
@@ -2311,242 +2124,7 @@ $("#btnR53Protect").addEventListener("click", async function(){
   }
 });
 
-/* ====== POLICY STEP-UP ====== */
-$("#btnPolPreview").addEventListener("click", async function(){
-  var d = ($("#pol-domain").value || "").trim();
-  if (!d){
-    logEl("#pol-out","Please enter a domain first.");
-    return;
-  }
-  try{
-    var j = await get(ROBOT_API + "/policy/preview?domain=" + encodeURIComponent(d));
-    logEl("#pol-out", j);
-  }catch(e){
-    logEl("#pol-out", String(e));
-  }
-});
-
-$("#btnApplyCf").addEventListener("click", async function(){
-  var body = {
-    domain: ($("#pol-domain").value || "").trim(),
-    policy: $("#pol-policy").value,
-    pct: Number($("#pol-pct").value || 100),
-    adkim: $("#pol-adkim").value,
-    aspf:  $("#pol-aspf").value,
-    rua:   ($("#pol-rua").value || "").trim(),
-    fo:    ($("#pol-fo").value || "").trim(),
-    sp:    (($("#pol-sp").value || "").trim() || null)
-  };
-  if (!body.domain){
-    logEl("#pol-out","Please enter a domain first.");
-    return;
-  }
-  try{
-    var j = await post(ROBOT_API + "/api/policy/dmarc/cf", body);
-    logEl("#pol-out", j);
-  }catch(e){
-    logEl("#pol-out", String(e));
-  }
-});
-
-$("#btnApplyR53").addEventListener("click", async function(){
-  var body = {
-    domain: ($("#pol-domain").value || "").trim(),
-    policy: $("#pol-policy").value,
-    pct: Number($("#pol-pct").value || 100),
-    adkim: $("#pol-adkim").value,
-    aspf:  $("#pol-aspf").value,
-    rua:   ($("#pol-rua").value || "").trim(),
-    fo:    ($("#pol-fo").value || "").trim(),
-    sp:    (($("#pol-sp").value || "").trim() || null),
-    hosted_zone_id: ($("#r53-zones").value || "").trim()
-  };
-  if (!body.domain){
-    logEl("#pol-out","Please enter a domain first.");
-    return;
-  }
-  if (!body.hosted_zone_id){
-    logEl("#pol-out","Please select a Route 53 hosted zone first.");
-    return;
-  }
-  try{
-    var j = await post(ROBOT_API + "/api/policy/dmarc/r53", body);
-    logEl("#pol-out", j);
-  }catch(e){
-    logEl("#pol-out", String(e));
-  }
-});
-
-$("#btnEvaluateNow").addEventListener("click", async function(){
-  try{
-    var j = await get(ROBOT_API + "/policy/evaluate-now");
-    logEl("#pol-out", j);
-  }catch(e){
-    logEl("#pol-out", String(e));
-  }
-});
-
-/* ====== CONTROL SPF BUILDER ====== */
-var SPF_MAP = {
-  google:"include:_spf.google.com",
-  m365:"include:spf.protection.outlook.com",
-  sendgrid:"include:sendgrid.net",
-  ses:"include:amazonses.com",
-  mailgun:"include:mailgun.org",
-  mailchimp:"include:servers.mcsv.net",
-  postmark:"include:spf.mtasv.net",
-  sparkpost:"include:_spf.sparkpostmail.com",
-  zoho:"include:zoho.com",
-  zendesk:"include:mail.zendesk.com",
-  intercom:"include:_spf.intercom.io"
-};
-
-function updateSpfPreview(){
-  var sels = [];
-  document.querySelectorAll(".spf-sel:checked").forEach(function(cb) {
-    if (SPF_MAP[cb.value]) sels.push(SPF_MAP[cb.value]);
-  });
-  var parts = ["v=spf1"];
-  parts = parts.concat(sels);
-  parts.push("~all");
-  var txt = parts.join(" ");
-  var out = $("#spf-preview");
-  if (out) out.value = txt;
-}
-document.querySelectorAll(".spf-sel").forEach(function(cb) { 
-  cb.addEventListener("change", updateSpfPreview); 
-});
-
-$("#btnSpfLoad2").addEventListener("click", async function(){
-  var tok = ($("#spf-token").value || "").trim();
-  if (!tok){
-    logEl("#spf-log2","Please paste your Cloudflare API token first.");
-    return;
-  }
-  try{
-    var j = await get(ROBOT_API + "/api/cf/control-spf?token=" + encodeURIComponent(tok));
-    if (j.value) $("#spf-preview").value = j.value;
-    logEl("#spf-log2", j);
-  }catch(e){
-    logEl("#spf-log2", String(e));
-  }
-});
-
-$("#btnSpfUpdate2").addEventListener("click", async function(){
-  var tok = ($("#spf-token").value || "").trim();
-  var val = ($("#spf-preview").value || "").trim();
-  if (!tok){
-    logEl("#spf-log2","Please paste your Cloudflare API token first.");
-    return;
-  }
-  try{
-    var j = await post(ROBOT_API + "/api/cf/control-spf", { token: tok, value: val });
-    logEl("#spf-log2", j);
-  }catch(e){
-    logEl("#spf-log2", String(e));
-  }
-});
-
-/* ====== INSIGHTS ====== */
-function fmt(n){ return (n || 0).toLocaleString(); }
-function pct(a,b){ var r = (b>0) ? (a/b) : 0; return Math.round(r*1000)/10; }
-function asArray(series){
-  if (Array.isArray(series)) return series;
-  if (series && typeof series === "object"){
-    return Object.keys(series).sort().map(function(d) { 
-      var obj = {date:d}; 
-      for(var k in series[d]) obj[k] = series[d][k];
-      return obj;
-    });
-  }
-  return [];
-}
-function renderRollup(j){
-  var rows = asArray(j.series);
-  var table = $("#ins-table");
-  var body  = $("#ins-rows");
-  var summary = $("#ins-summary");
-  if (!rows.length){
-    hide(table);
-    summary.textContent = "No data available for this time range.";
-    return;
-  }
-  var totals = rows.reduce(function(acc,r){
-    acc.total += r.total || 0;
-    acc.aligned += r.aligned || 0;
-    return acc;
-  }, {total:0,aligned:0});
-  var rate = pct(totals.aligned, totals.total);
-  summary.innerHTML = "<strong>"+j.domain+"</strong> over "+j.days+" days: <strong>"+fmt(totals.total)+"</strong> emails, <strong style=\"color:var(--ok)\">"+fmt(totals.aligned)+"</strong> passed authentication (<strong style=\"color:var(--ok)\">"+rate+"%</strong>)";
-  body.innerHTML = "";
-  rows.forEach(function(r){
-    var p = pct(r.aligned || 0, r.total || 0);
-    var tr = document.createElement("tr");
-    tr.innerHTML =
-      '<td data-label="Date" class="mono">'+r.date+'</td>'+
-      '<td data-label="Total">'+fmt(r.total || 0)+'</td>'+
-      '<td data-label="Aligned">'+fmt(r.aligned || 0)+'</td>'+
-      '<td data-label="Rate">'+p+'%</td>'+
-      '<td data-label="Trend"><div class="bar"><i style="width:'+Math.min(100,p)+'%"></i></div><div class="tiny muted" style="margin-top:4px">'+
-      (r.spf_aligned!=null && r.dkim_aligned!=null ? ("SPF "+fmt(r.spf_aligned)+" / DKIM "+fmt(r.dkim_aligned)) : "")+
-      '</div></td>';
-    body.appendChild(tr);
-  });
-  show(table);
-}
-
-async function loadRoll(days){
-  var norm = normalizeForUI($("#ins-domain").value, null, null);
-  if (!norm.ok){
-    $("#ins-wrap").textContent = "Please enter a valid domain.";
-    return;
-  }
-  try{
-    var j = await get(ROBOT_API + "/api/rollup?domain=" + encodeURIComponent(norm.apex || norm.value) + "&days=" + days);
-    $("#ins-wrap").textContent = JSON.stringify(j, null, 2);
-    renderRollup({domain: j.domain || (norm.apex || norm.value), days: days, series: j.series || []});
-  }catch(e){
-    $("#ins-wrap").textContent = String(e);
-  }
-}
-
-$("#btnLoad7").addEventListener("click", function(){ loadRoll(7); });
-$("#btnLoad30").addEventListener("click", function(){ loadRoll(30); });
-
-$("#btnIngest").addEventListener("click", async function(){
-  try{
-    var j = await post(DMARC_API + "/api/dmarc/ingest-latest", {limit:25});
-    $("#ins-wrap").textContent = JSON.stringify(j, null, 2);
-  }catch(e){
-    $("#ins-wrap").textContent = String(e);
-  }
-});
-
-/* ====== ALERTS ====== */
-$("#btnAlertTest").addEventListener("click", async function(){
-  try{
-    var j = await post(ROBOT_API + "/alerts/test", {
-      domain:"slawitness.com",
-      title:"Test alert",
-      message:"This is a test from DomainSafe UI."
-    });
-    logEl("#alerts-out", j);
-  }catch(e){
-    logEl("#alerts-out", String(e));
-  }
-});
-
-$("#btnAlertFlush").addEventListener("click", async function(){
-  try{
-    var j = await post(ROBOT_API + "/alerts/flush", {});
-    logEl("#alerts-out", j);
-  }catch(e){
-    logEl("#alerts-out", String(e));
-  }
-});
-
 /* ====== Bootstrap ====== */
-updateSpfPreview();
 initAuth();
 </script>
 </body>
