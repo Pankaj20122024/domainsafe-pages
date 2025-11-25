@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>DomainSafe — Status • Quick‑Codes • Step‑Up</title>
+  <title>DomainSafe — Console • Status • Quick‑Codes • Step‑Up</title>
   <style>
     :root{
       --bg:#0f1221; --fg:#e8ebff; --muted:#a7b1e6; --card:#14183a; --line:#2a3470;
@@ -13,86 +13,203 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
-      background:var(--bg); color:var(--fg); line-height:1.45;
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
+      background:radial-gradient(circle at top,#181c3b 0,#0b0e1a 55%,#050611 100%);
+      color:var(--fg);
+      line-height:1.45;
     }
-    header{padding:28px 20px 8px; border-bottom:1px solid var(--line)}
-    header h1{margin:0 0 6px 0; font-size:22px}
+    header{
+      padding:24px 20px 10px;
+      border-bottom:1px solid var(--line);
+      background:rgba(5,7,20,0.92);
+      backdrop-filter:blur(18px);
+      position:sticky;
+      top:0;
+      z-index:20;
+    }
+    header h1{
+      margin:0 0 4px 0;
+      font-size:22px;
+      letter-spacing:0.01em;
+    }
     header .tag{color:var(--muted); font-size:13px}
-    .auth-bar{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .auth-bar{
+      margin-top:8px;
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
     .auth-bar .left{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .auth-bar .right{font-size:12px;color:var(--muted)}
-    .btn-auth{padding:6px 10px;font-size:12px;border-radius:999px}
-    main{max-width:1150px; margin:0 auto; padding:24px 16px 56px}
+    .btn-auth{padding:6px 12px;font-size:12px;border-radius:999px}
+
+    /* Login hero (shown before auth) */
+    #login-section{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px 16px 32px;
+    }
+    .login-card{
+      width:100%;
+      max-width:520px;
+      background:var(--card);
+      border-radius:18px;
+      border:1px solid var(--line);
+      padding:22px 20px 22px;
+      box-shadow:0 22px 55px rgba(0,0,0,0.65);
+    }
+    .login-card .eyebrow{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      margin-bottom:4px;
+    }
+    .login-card h2{
+      margin:0 0 8px 0;
+      font-size:24px;
+    }
+    .login-card p{
+      margin:0 0 14px 0;
+      font-size:14px;
+      color:var(--muted);
+    }
+    .login-card .btn{
+      padding:10px 18px;
+      font-size:14px;
+      border-radius:999px;
+    }
+    .login-card .tiny{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    /* Main console */
+    main{
+      max-width:1150px;
+      margin:0 auto;
+      padding:24px 16px 56px;
+    }
+    #app-main{display:none;}
+
+    body.authed #login-section{display:none;}
+    body.authed #app-main{display:block;}
+
     .grid{display:grid; grid-template-columns:1fr; gap:16px}
     @media(min-width:1040px){ .grid{grid-template-columns:1fr 1fr} }
-    .card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:16px;
+    }
     .card h3{margin:0 0 8px 0; font-size:18px}
     .desc{color:var(--muted); font-size:13px; margin:0 0 10px 0}
     label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px}
     input,select,textarea{
-      width:100%; padding:10px 12px; background:#0f1533; border:1px solid var(--line); color:var(--fg);
-      border-radius:8px; outline:none;
+      width:100%;
+      padding:10px 12px;
+      background:#0f1533;
+      border:1px solid var(--line);
+      color:var(--fg);
+      border-radius:8px;
+      outline:none;
     }
     textarea{min-height:100px}
     .row{display:flex; gap:10px; flex-wrap:wrap}
     .row > div{flex:1 1 220px}
     .btn{
-      appearance:none; border:1px solid var(--btn); background:var(--btn);
-      color:#fff; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600;
+      appearance:none;
+      border:1px solid var(--btn);
+      background:var(--btn);
+      color:#fff;
+      padding:10px 14px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
     }
     .btn.secondary{background:var(--btn2); border-color:var(--btn2)}
     .btn.ghost{background:transparent; color:var(--fg); border-color:var(--line)}
-    .btn.warn{background:linear-gradient(180deg,#f7c74e,#d8a823); border-color:#d8a823; color:#100a00}
+    .btn.warn{
+      background:linear-gradient(180deg,#f7c74e,#d8a823);
+      border-color:#d8a823;
+      color:#100a00;
+    }
     .btn:disabled{opacity:0.6; cursor:not-allowed}
-    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
-    .log{white-space:pre-wrap; font-family:ui-monospace, Menlo, Monaco, Consolas, monospace;
-         background:var(--mono); border:1px solid var(--line); border-radius:8px; padding:10px; font-size:13px}
+    .mono{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+    }
+    .log{
+      white-space:pre-wrap;
+      font-family:ui-monospace,Menlo,Monaco,Consolas,monospace;
+      background:var(--mono);
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:10px;
+      font-size:13px
+    }
     table{width:100%; border-collapse:collapse; font-size:14px}
     th,td{border-bottom:1px solid var(--line); padding:8px 6px; text-align:left}
     th{color:#c7d0ff; font-weight:600}
-    .pill{display:inline-block; padding:3px 8px; border-radius:999px; font-size:12px}
+    .pill{
+      display:inline-block;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:12px
+    }
     .ok{background:rgba(61,220,151,.15); color:var(--ok); border:1px solid rgba(61,220,151,.4)}
     .bad{background:rgba(255,107,107,.15); color:var(--bad); border:1px solid rgba(255,107,107,.35)}
     .warn{background:rgba(255,204,102,.12); color:var(--warn); border:1px solid rgba(255,204,102,.35)}
     .hint{font-size:12px; color:var(--muted)}
     .tiny{font-size:12px}
     .muted{color:var(--muted)}
-    .notice{margin-top:6px; background:rgba(255,204,102,.12); border:1px dashed var(--warn); color:var(--warn); padding:6px 8px; border-radius:8px}
+    .notice{
+      margin-top:6px;
+      background:rgba(255,204,102,.12);
+      border:1px dashed var(--warn);
+      color:var(--warn);
+      padding:6px 8px;
+      border-radius:8px
+    }
     .danger{color:#ff9f9f}
     .kvs{display:grid; grid-template-columns: 160px 1fr; gap:8px 12px}
-    .meter{ height:12px; border-radius:999px; background:#0b1028; border:1px solid #1c2559; overflow:hidden; max-width:320px }
-    .meter > i{ display:block; height:100%; background:linear-gradient(90deg,#ff6d6d,#ffcc66,#3ddc97); width:0% }
+    .meter{
+      height:12px;
+      border-radius:999px;
+      background:#0b1028;
+      border:1px solid #1c2559;
+      overflow:hidden;
+      max-width:320px
+    }
+    .meter > i{display:block; height:100%; background:linear-gradient(90deg,#ff6d6d,#ffcc66,#3ddc97); width:0%}
     .badges{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
-    .badge{display:inline-flex; align-items:center; gap:6px; padding:6px 8px; border-radius:999px; border:1px solid var(--line); background:#0f1533; font-weight:600}
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#0f1533;
+      font-weight:600
+    }
     .badge.ok{border-color:#1e8f62}
     .badge.warn{border-color:#a1893a}
     .badge.bad{border-color:#a04444}
-    /* Insights mini‑bars */
     .bar{height:8px; background:var(--line); border-radius:6px; overflow:hidden}
     .bar > i{display:block; height:100%; background:var(--ok)}
     .rowstats{font-size:12px; color:var(--muted)}
-  
-    .veil{position:fixed;inset:0;background:radial-gradient(circle at top,rgba(98,117,255,.18),transparent 55%),#050717;display:flex;align-items:center;justify-content:center;padding:24px;z-index:50;}
-    .veil.hidden{display:none;}
-    .veil-card{max-width:480px;width:100%;background:var(--card);border-radius:18px;padding:24px 24px 28px;box-shadow:0 18px 45px rgba(0,0,0,.75);border:1px solid var(--line);}
-    .veil-card h2{margin:10px 0 8px;font-size:22px;}
-    .veil-card p{margin:0 0 4px;}
-</style>
+  </style>
 </head>
 <body>
-<div class="veil" id="login-veil">
-  <div class="veil-card">
-    <div class="pill tiny">DomainSafePro Console</div>
-    <h2>Sign in to manage your domain</h2>
-    <p class="muted">Use your Google account to connect domains, turn protection on, and view reports.</p>
-    <button class="btn" id="veil-login-btn" type="button">Sign in with Google</button>
-    <p class="tiny muted" style="margin-top:10px">You’ll be redirected back here after signing in.</p>
-  </div>
-</div>
 <header>
-  <h1>DomainSafe is live ✅ <span class="muted">Step‑Up UI + Apex‑Guard</span></h1>
-  <div class="tag">Status, Quick‑Codes, Verify, one‑click Connect, DMARC Policy Step‑Up, Control SPF, Insights. The robot keeps watch daily.</div>
+  <h1>DomainSafePro Console <span class="muted">• Step‑Up UI + Apex‑Guard</span></h1>
+  <div class="tag">Connect domains, verify records, one‑click Protect, DMARC Policy Step‑Up, and Insights. The robot keeps watch daily.</div>
   <div class="auth-bar" id="auth-bar">
     <div class="left">
       <button class="btn secondary btn-auth" id="auth-login-btn" type="button">Sign in with Google</button>
@@ -101,7 +218,19 @@
   </div>
 </header>
 
-<main>
+<!-- Login hero (shown when not signed in) -->
+<section id="login-section">
+  <div class="login-card">
+    <div class="eyebrow">DomainSafePro Console</div>
+    <h2>Sign in to manage your domain</h2>
+    <p>Use your Google account to connect domains, turn protection on, and view reports.</p>
+    <button class="btn secondary" type="button" id="login-hero-btn">Sign in with Google</button>
+    <div class="tiny">You’ll be redirected back here after signing in.</div>
+  </div>
+</section>
+
+<!-- Main app (hidden until authed) -->
+<main id="app-main">
 
   <!-- STATUS + QUICK CHECK -->
   <section class="grid">
@@ -117,7 +246,7 @@
         <thead>
           <tr><th>Domain</th><th>Owner</th><th>SPF</th><th>DMARC</th><th>DKIM s1</th><th>DKIM s2</th><th>Checked at</th></tr>
         </thead>
-        <tbody id="statusRows"><tr><td colspan="7" class="muted">Loading…</td></tr></tbody>
+        <tbody id="statusRows"><tr><td colspan="7" class="muted">Sign in to see your connected domains.</td></tr></tbody>
       </table>
     </div>
 
@@ -194,10 +323,10 @@
       <div style="height:6px"></div>
       <button class="btn" id="btnAdd">Add domain</button>
       <div style="height:6px"></div>
-      <pre class="log" id="add-log">Waiting…</pre>
+      <pre class="log" id="add-log">Sign in, then add a domain.</pre>
 
       <h4 class="tiny" style="margin-top:10px;color:#c7d0ff">Recent domains</h4>
-      <div id="recentWrap" class="tiny muted">—</div>
+      <div id="recentWrap" class="tiny muted">Sign in to see your domains.</div>
     </div>
 
     <div class="card">
@@ -421,32 +550,28 @@
 <script>
 /* ====== Real endpoints (no placeholders) ====== */
 const ROBOT_API = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
-const DMARC_API = "https://api.domainsafepro.com"; // used only for ingest button
-
-const AUTH_API = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
+const DMARC_API = "https://api.domainsafepro.com";
+const AUTH_API  = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 
 /* ====== Tiny helpers ====== */
 const $ = sel => document.querySelector(sel);
-const logEl = (sel, v) => { $(sel).textContent = (typeof v === 'string') ? v : JSON.stringify(v, null, 2); };
-const qs  = o => new URLSearchParams(o).toString();
-const copy = txt => navigator.clipboard?.writeText(txt).catch(()=>{});
+const logEl = (sel, v) => { const el = $(sel); if (!el) return; el.textContent = (typeof v === "string") ? v : JSON.stringify(v, null, 2); };
+const copy = txt => { if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(()=>{}); };
 
 function sanitizeDomain(raw){
-  return (raw||'').trim().toLowerCase()
-    .replace(/^https?:\/\//,'')
-    .replace(/^mailto:/,'')
-    .replace(/\/.*$/,'')
-    .replace(/\.$/,'');
+  return (raw||"").trim().toLowerCase()
+    .replace(/^https?:\/\//,"")
+    .replace(/^mailto:/,"")
+    .replace(/\/.*$/,"")
+    .replace(/\.$/,"");
 }
-// strict label test (no underscores, no empty labels, <=63 chars/label)
 function isValidHostname(raw){
   const s = sanitizeDomain(raw);
   if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(s)) return false;
-  const labels = s.split('.');
+  const labels = s.split(".");
   return labels.every(lbl => lbl.length>0 && lbl.length<=63 && /^[a-z0-9-]+$/i.test(lbl));
 }
-function isDomain(s){ return /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(s||''); }
-// Apex heuristic (multi-label ccTLDs)
+function isDomain(s){ return /^[a-z0-9.-]+\.[a-z]{2,}$/i.test(s||""); }
 function apexify(raw){
   const s = sanitizeDomain(raw);
   if (!isDomain(s)) return s;
@@ -457,204 +582,230 @@ function apexify(raw){
   const tail3 = parts.slice(-3).join(".");
   return cc2.has(tail2) ? tail3 : tail2;
 }
-function normalizeForUI(raw, noticeEl, errorEl, {allowExact=false}={}){
+function normalizeForUI(raw, noticeEl, errorEl, opts){
+  const options = opts || {};
   const typed = sanitizeDomain(raw);
-  // hard errors for malformed hostnames
   if (!isValidHostname(typed)){
-    if (errorEl){ errorEl.textContent = "Invalid hostname: use letters, digits and hyphens only; no underscores; no trailing dot."; errorEl.style.display=''; }
-    if (noticeEl) noticeEl.style.display='none';
-    return { ok:false, value: typed, apex:'', changed:false };
+    if (errorEl){
+      errorEl.textContent = "Invalid hostname: use letters, digits and hyphens only; no underscores; no trailing dot.";
+      errorEl.style.display = "";
+    }
+    if (noticeEl) noticeEl.style.display = "none";
+    return { ok:false, value:typed, apex:"", changed:false };
   }
-  if (errorEl) errorEl.style.display='none';
+  if (errorEl) errorEl.style.display = "none";
   const apex = apexify(typed);
   let value = apex, changed = false;
-  if (allowExact && $('#chk-exact')?.checked){ value = typed; }
-  else if (typed !== apex){ changed = true; }
+  if (options.allowExact && $("#chk-exact") && $("#chk-exact").checked){
+    value = typed;
+  } else if (typed !== apex){
+    changed = true;
+  }
   if (noticeEl){
     if (changed){
-      noticeEl.innerHTML = `Using apex <span class="mono">${apex}</span> (from <span class="mono">${typed}</span>).`;
-      noticeEl.style.display = '';
+      noticeEl.innerHTML = 'Using apex <span class="mono">'+apex+'</span> (from <span class="mono">'+typed+'</span>).';
+      noticeEl.style.display = "";
     } else {
-      noticeEl.style.display = 'none';
+      noticeEl.style.display = "none";
     }
   }
   return { ok:true, value, apex, changed, typed };
+}
+
+/* ====== HTTP helpers ====== */
+async function get(url){
+  const r = await fetch(url, {
+    method:"GET",
+    credentials:"include",
+    headers:{ "accept":"application/json" }
+  });
+  const t = await r.text();
+  let j = null;
+  try{ j = t ? JSON.parse(t) : null; }catch(e){}
+  if (!r.ok){
+    const msg = (j && j.error) ? j.error : t || ("HTTP "+r.status);
+    throw new Error(msg);
+  }
+  return j;
+}
+async function post(url, body){
+  const r = await fetch(url, {
+    method:"POST",
+    credentials:"include",
+    headers:{ "content-type":"application/json", "accept":"application/json" },
+    body: JSON.stringify(body || {})
+  });
+  const t = await r.text();
+  let j = null;
+  try{ j = t ? JSON.parse(t) : null; }catch(e){}
+  if (!r.ok){
+    const msg = (j && j.error) ? j.error : t || ("HTTP "+r.status);
+    throw new Error(msg);
+  }
+  return j;
 }
 
 /* ====== AUTH (Google sign-in) ====== */
 async function fetchCurrentUser(){
   try{
     const r = await fetch(AUTH_API + "/api/me", {
-      method: "GET",
-      credentials: "include",
-      headers: { "accept": "application/json" }
+      method:"GET",
+      credentials:"include",
+      headers:{ "accept":"application/json" }
     });
-    if (!r.ok) return null;
     const t = await r.text();
-    let j;
-    try{ j = JSON.parse(t); }catch(e){ return null; }
-    if (!j || j.ok === false || !j.user || !j.user.email) return null;
+    let j = null;
+    try{ j = t ? JSON.parse(t) : null; }catch(e){ return null; }
+    if (!r.ok || !j || j.ok === false || !j.user || !j.user.email) return null;
     return j.user;
   }catch(e){
     return null;
   }
 }
-let DSP_USER = null;
 
 function startGoogleLogin(){
-  const loginUrl = AUTH_API + "/auth/google/start";
-  window.location.href = loginUrl;
+  window.location.href = AUTH_API + "/auth/google/start";
 }
 
-function applyAuthState(user){
-  DSP_USER = (user && user.email) ? user : null;
-  const label = document.getElementById("auth-status-label");
-  const veil = document.getElementById("login-veil");
-  if (label){
-    if (DSP_USER && DSP_USER.email){
-      label.textContent = "Signed in as " + DSP_USER.email;
-    } else {
-      label.textContent = "Not signed in";
-    }
+function showAuthedUI(user){
+  document.body.classList.add("authed");
+  const label = $("#auth-status-label");
+  if (label && user && user.email){
+    label.textContent = "Signed in as " + user.email;
   }
-  if (veil){
-    if (DSP_USER && DSP_USER.email){
-      veil.classList.add("hidden");
-    } else {
-      veil.classList.remove("hidden");
-    }
+  const statusRows = $("#statusRows");
+  if (statusRows){
+    statusRows.innerHTML = '<tr><td colspan="7" class="muted">Loading…</td></tr>';
   }
-  if (DSP_USER && DSP_USER.email){
-    try{ loadStatus(); }catch(_e){}
-  }
+  loadStatus();
+  refreshRecent();
 }
 
-function initAuthBar(){
-  const bar = document.getElementById("auth-bar");
-  const btn = document.getElementById("auth-login-btn");
-  const veilBtn = document.getElementById("veil-login-btn");
-  if (!bar) return;
-  if (btn){
-    btn.addEventListener("click", function(ev){
-      ev.preventDefault();
-      startGoogleLogin();
-    });
+function showLoggedOutUI(){
+  document.body.classList.remove("authed");
+  const label = $("#auth-status-label");
+  if (label) label.textContent = "Not signed in";
+  const statusRows = $("#statusRows");
+  if (statusRows){
+    statusRows.innerHTML = '<tr><td colspan="7" class="muted">Sign in to see your connected domains.</td></tr>';
   }
-  if (veilBtn){
-    veilBtn.addEventListener("click", function(ev){
-      ev.preventDefault();
-      startGoogleLogin();
-    });
-  }
-  fetchCurrentUser().then(function(user){
-    applyAuthState(user);
-  });
+  const recent = $("#recentWrap");
+  if (recent) recent.textContent = "Sign in to see your domains.";
+  const addLog = $("#add-log");
+  if (addLog) addLog.textContent = "Sign in, then add a domain.";
 }
-initAuthBar();
+
+async function initAuth(){
+  const btnHeader = $("#auth-login-btn");
+  const btnHero   = $("#login-hero-btn");
+  if (btnHeader) btnHeader.addEventListener("click", startGoogleLogin);
+  if (btnHero)   btnHero.addEventListener("click", startGoogleLogin);
+
+  const user = await fetchCurrentUser();
+  if (user) showAuthedUI(user);
+  else showLoggedOutUI();
+}
 
 /* ====== STATUS & MONITOR ====== */
-async function get(url){
-  const r = await fetch(url, { credentials:"omit" });
-  const t = await r.text();
-  try { const j = JSON.parse(t); if(!r.ok || j?.ok===false) throw new Error(j.error || t); return j; }
-  catch{ if(!r.ok) throw new Error(t); return t; }
+function pill(ok){
+  return ok
+    ? '<span class="pill ok">OK</span>'
+    : '<span class="pill bad">Needs fix</span>';
 }
-async function post(url, body){
-  const r = await fetch(url, { method:"POST", headers:{ "content-type":"application/json" }, body: JSON.stringify(body||{}) });
-  const t = await r.text();
-  let j; try{ j=JSON.parse(t); } catch{ throw new Error(t); }
-  if(!r.ok || j?.ok===false) throw new Error(j.error || t);
-  return j;
-}
+
 async function loadStatus(){
-  const tb = $("#statusRows"); tb.innerHTML = `<tr><td colspan="7" class="muted">Loading…</td></tr>`;
+  const tb = $("#statusRows");
+  if (!tb) return;
+  tb.innerHTML = '<tr><td colspan="7" class="muted">Loading…</td></tr>';
   try{
-    const j = await get(`${ROBOT_API}/api/status`);
-    const rows = j.rows || [];
-    if (!rows.length){ tb.innerHTML = `<tr><td colspan="7" class="muted">No rows yet.</td></tr>`; return; }
-    tb.innerHTML = rows.map(r=>{
-      const yn = v => v ? '<span class="pill ok">OK</span>' : '<span class="pill bad">Needs fix</span>';
-      return `<tr>
-        <td class="mono">${r.domain_name}</td>
-        <td class="mono">${r.email||''}</td>
-        <td>${yn(r.spf_ok)}</td>
-        <td>${yn(r.dmarc_ok)}</td>
-        <td>${yn(r.dkim_s1_ok)}</td>
-        <td>${yn(r.dkim_s2_ok)}</td>
-        <td class="tiny muted">${r.checked_at||''}</td>
-      </tr>`;
-    }).join('');
-  }catch(e){ tb.innerHTML = `<tr><td colspan="7" class="tiny" style="color:#ff9f9f">Error: ${String(e).slice(0,200)}</td></tr>`; }
+    const j = await get(ROBOT_API + "/api/status");
+    const rows = (j && j.rows) ? j.rows : [];
+    if (!rows.length){
+      tb.innerHTML = '<tr><td colspan="7" class="muted">No domains connected yet. Add a domain below to get started.</td></tr>';
+      return;
+    }
+    tb.innerHTML = rows.map(r => (
+      '<tr>' +
+        '<td class="mono">'+(r.domain_name||"")+'</td>' +
+        '<td class="mono">'+(r.email||"")+'</td>' +
+        '<td>'+pill(r.spf_ok)+'</td>' +
+        '<td>'+pill(r.dmarc_ok)+'</td>' +
+        '<td>'+pill(r.dkim_s1_ok)+'</td>' +
+        '<td>'+pill(r.dkim_s2_ok)+'</td>' +
+        '<td class="tiny muted">'+(r.checked_at||"")+'</td>' +
+      '</tr>'
+    )).join("");
+  }catch(e){
+    tb.innerHTML = '<tr><td colspan="7" class="tiny" style="color:#ff9f9f">Error loading status: '+String(e).slice(0,240)+'</td></tr>';
+  }
 }
 $("#btnStatus").addEventListener("click", loadStatus);
 $("#btnMonitor").addEventListener("click", async ()=>{
-  try{ await post(`${ROBOT_API}/api/monitor-run`, {}); }catch(e){ /* ignore */ }
+  try{ await post(ROBOT_API + "/api/monitor-run", {}); }catch(e){}
   loadStatus();
 });
 
-/* ====== CHECK (fun status via /api/check-score; optional legacy debug) ====== */
+/* ====== CHECK (score + badges) ====== */
 function badgeHtml(label, state, detail){
-  let cls='bad', icon='✖';
-  if (state===true || state==='ok'){ cls='ok'; icon='✔'; }
-  else if (state==='warn'){ cls='warn'; icon='⚠'; }
-  const extra = detail ? ` <span class="tiny muted">${detail}</span>` : '';
-  return `<span class="badge ${cls}">${icon} ${label}${extra}</span>`;
+  let cls="bad", icon="✖";
+  if (state===true || state==="ok"){ cls="ok"; icon="✔"; }
+  else if (state==="warn"){ cls="warn"; icon="⚠"; }
+  const extra = detail ? ' <span class="tiny muted">'+detail+'</span>' : "";
+  return '<span class="badge '+cls+'">'+icon+" "+label+extra+"</span>";
 }
+
 $("#btnCheck").addEventListener("click", async ()=>{
   const norm = normalizeForUI($("#chk-domain").value, $("#chk-notice"), $("#chk-error"), {allowExact:true});
-  if(!norm.ok) return;
+  if (!norm.ok) return;
   const dom = norm.value;
   try{
-    // Single call for score + badges + resolution
-    const exact = $("#chk-exact").checked ? "&exact=1" : "";
-    const j = await get(`${ROBOT_API}/api/check-score?domain=${encodeURIComponent(dom)}${exact}`);
+    const exact = ($("#chk-exact") && $("#chk-exact").checked) ? "&exact=1" : "";
+    const j = await get(ROBOT_API + "/api/check-score?domain=" + encodeURIComponent(dom) + exact);
 
-    // Meter + score
-    const pct = Math.max(0, Math.min(100, Number(j.score||0)));
+    const pct = Math.max(0, Math.min(100, Number(j.score || 0)));
     $("#scoreBar").style.width = pct + "%";
-    $("#scoreLbl").textContent = `${pct}/100`;
+    $("#scoreLbl").textContent = pct + "/100";
 
-    // Badges
     const b = j.badges || {};
     const dm = (b.dmarc||"").toString();
     $("#badgeRow").innerHTML = [
       badgeHtml("SPF", b.spf===true, b.spf ? "include:_spf.control" : "missing include"),
       badgeHtml("DKIM", b.dkim===true, b.dkim ? "s1+s2 → control OK" : "selectors not to control"),
-      badgeHtml("DMARC", !!dm, dm ? `p=${dm}` : "missing"),
-      badgeHtml("TLS‑RPT", b.extras?.tlsrpt===true),
-      badgeHtml("MTA‑STS", b.extras?.mtasts===true)
+      badgeHtml("DMARC", !!dm, dm ? "p="+dm : "missing"),
+      badgeHtml("TLS‑RPT", b.extras && b.extras.tlsrpt===true),
+      badgeHtml("MTA‑STS", b.extras && b.extras.mtasts===true)
     ].join(" ");
 
-    // Resolution note (host vs apex / sp)
     const res = j.dmarc_resolution || {};
     const origin = res.origin || "—";
     const applied = res.appliedPolicy || res.policy || "—";
     const sp = (res.sp || "").toString();
-    $("#resRow").innerHTML = `
-      Origin: <b>${origin}</b>${sp ? ` (apex sp=${sp})` : ""} · Applied policy: <b>${applied}</b>
-    `;
+    $("#resRow").innerHTML = 'Origin: <b>'+origin+'</b>' + (sp ? ' (apex sp='+sp+')' : '') + ' · Applied policy: <b>'+applied+'</b>';
 
-    // DoH + tips + raw
-    $("#dohDMARC").textContent = j.doh?._dmarc || "—";
-    $("#dohTLS").textContent   = j.doh?._smtp__tls || "—";
-    $("#dohSTS").textContent   = j.doh?.mta_sts || "—";
-    $("#tips").innerHTML = (j.tips||[]).map(t => `<div class="notice tiny">${t}</div>`).join("") || "—";
+    $("#dohDMARC").textContent = (j.doh && j.doh._dmarc) || "—";
+    $("#dohTLS").textContent   = (j.doh && j.doh._smtp__tls) || "—";
+    $("#dohSTS").textContent   = (j.doh && j.doh.mta_sts) || "—";
+
+    $("#tips").innerHTML = (j.tips || []).map(t => '<div class="notice tiny">'+t+'</div>').join("") || "—";
     $("#checkRaw").textContent = JSON.stringify(j, null, 2);
     $("#checkOut").style.display = "";
 
-    // Optional: legacy deep JSON (for parity with your previous page)
     if ($("#chk-legacy").checked){
-      const status = await get(`${ROBOT_API}/api/status?domain=${encodeURIComponent(dom)}`);
-      const quick  = await get(`${ROBOT_API}/api/check-quick-codes?domain=${encodeURIComponent(dom)}`);
-      const dohDMARC = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent('_dmarc.'+dom)}&type=TXT`, {headers:{Accept:'application/dns-json'}}).then(r=>r.json()).catch(()=>null);
-      const dohTLS   = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent('_smtp._tls.'+dom)}&type=TXT`, {headers:{Accept:'application/dns-json'}}).then(r=>r.json()).catch(()=>null);
-      const dohSTS   = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent('mta-sts.'+dom)}&type=CNAME`, {headers:{Accept:'application/dns-json'}}).then(r=>r.json()).catch(()=>null);
-      const ansTxt = (ans) => (ans && ans.Answer) ? ans.Answer.map(a=>String(a.data).replace(/^"|"$/g,'')).join('\n') : '—';
+      const status = await get(ROBOT_API + "/api/status?domain=" + encodeURIComponent(dom));
+      const quick  = await get(ROBOT_API + "/api/check-quick-codes?domain=" + encodeURIComponent(dom));
+      const dohDMARC = await fetch("https://cloudflare-dns.com/dns-query?name="+encodeURIComponent("_dmarc."+dom)+"&type=TXT",{headers:{Accept:"application/dns-json"}}).then(r=>r.json()).catch(()=>null);
+      const dohTLS   = await fetch("https://cloudflare-dns.com/dns-query?name="+encodeURIComponent("_smtp._tls."+dom)+"&type=TXT",{headers:{Accept:"application/dns-json"}}).then(r=>r.json()).catch(()=>null);
+      const dohSTS   = await fetch("https://cloudflare-dns.com/dns-query?name="+encodeURIComponent("mta-sts."+dom)+"&type=CNAME",{headers:{Accept:"application/dns-json"}}).then(r=>r.json()).catch(()=>null);
+      const ansTxt = a => (a && a.Answer) ? a.Answer.map(x=>String(x.data).replace(/^"|"$/g,"")).join("\n") : "—";
       const legacy = {
         domain: dom,
-        robot_status: status?.status || status,
-        quick_checks: quick?.checks,
-        doh: { _dmarc: ansTxt(dohDMARC), _smtp__tls: ansTxt(dohTLS), mta_sts: ansTxt(dohSTS) }
+        robot_status: status && (status.status || status),
+        quick_checks: quick && quick.checks,
+        doh:{
+          _dmarc: ansTxt(dohDMARC),
+          _smtp__tls: ansTxt(dohTLS),
+          mta_sts: ansTxt(dohSTS)
+        }
       };
       $("#legacyRaw").textContent = JSON.stringify(legacy, null, 2);
       $("#legacyOut").style.display = "";
@@ -663,266 +814,425 @@ $("#btnCheck").addEventListener("click", async ()=>{
     }
 
   }catch(e){
-    $("#checkRaw").textContent = `Error: ${String(e)}`;
+    $("#checkRaw").textContent = "Error: " + String(e);
     $("#checkOut").style.display = "";
+    $("#legacyOut").style.display = "none";
   }
 });
 
-/* ====== ADD DOMAIN ====== */
+/* ====== ADD DOMAIN + RECENT ====== */
 async function refreshRecent(){
+  const wrap = $("#recentWrap");
+  if (!wrap) return;
   try{
-    const s = await get(`${ROBOT_API}/api/domains`);
-    const rows = s.domains || s.rows || [];
-    $("#recentWrap").innerHTML = rows.slice(0,10).map(r =>
-      `<div class="mono">${r.domain_name} <span class="muted">— ${r.status||''} — ${r.created_at||''}</span></div>`
-    ).join("") || "—";
-  }catch{}
+    const j = await get(ROBOT_API + "/api/domains");
+    const rows = (j && (j.domains || j.rows)) ? (j.domains || j.rows) : [];
+    if (!rows.length){
+      wrap.textContent = "No domains connected yet for this account.";
+      return;
+    }
+    wrap.innerHTML = rows.slice(0,10).map(r =>
+      '<div class="mono">'+(r.domain_name || "")+' <span class="muted">— '+(r.status || "")+(r.created_at ? " — "+r.created_at : "")+'</span></div>'
+    ).join("");
+  }catch(e){
+    wrap.textContent = "Unable to load domains: " + String(e).slice(0,200);
+  }
 }
+
 $("#btnAdd").addEventListener("click", async ()=>{
   const norm = normalizeForUI($("#add-domain").value, $("#add-notice"), null);
-  const email = $("#add-email").value.trim();
-  if(!email || !norm.ok){ $("#add-log").textContent = "Please enter a valid email and domain."; return; }
+  const email = ($("#add-email").value || "").trim();
+  if (!email || !norm.ok){
+    $("#add-log").textContent = "Please enter a valid email and domain.";
+    return;
+  }
   try{
-    const j = await post(`${ROBOT_API}/api/domains`, { email, domain: norm.apex || norm.value });
-    logEl("#add-log", j); refreshRecent();
-  }catch(e){ logEl("#add-log", String(e)); }
+    const j = await post(ROBOT_API + "/api/domains", {
+      email: email,
+      domain: norm.apex || norm.value
+    });
+    logEl("#add-log", j);
+    refreshRecent();
+  }catch(e){
+    logEl("#add-log", String(e));
+  }
 });
-refreshRecent();
 
 /* ====== VERIFY ====== */
 $("#btnVerify").addEventListener("click", async ()=>{
   const norm = normalizeForUI($("#verify-domain").value, $("#verify-notice"), null);
-  if(!norm.ok) return logEl("#verify-log","Enter a valid domain.");
+  if (!norm.ok){
+    logEl("#verify-log","Enter a valid domain.");
+    return;
+  }
   try{
-    const j = await get(`${ROBOT_API}/api/check-quick-codes?domain=${encodeURIComponent(norm.apex || norm.value)}`);
+    const j = await get(ROBOT_API + "/api/check-quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value));
     logEl("#verify-log", j);
-  }catch(e){ logEl("#verify-log", String(e)); }
+  }catch(e){
+    logEl("#verify-log", String(e));
+  }
 });
 
 /* ====== QUICK‑CODES ====== */
 $("#btnQCodes").addEventListener("click", async ()=>{
   const norm = normalizeForUI($("#qc-domain").value, $("#qc-notice"), null);
-  if(!norm.ok) return $("#qc-results").textContent = "Enter a valid domain.";
+  if (!norm.ok){
+    $("#qc-results").textContent = "Enter a valid domain.";
+    return;
+  }
   try{
-    const j = await get(`${ROBOT_API}/api/quick-codes?domain=${encodeURIComponent(norm.apex || norm.value)}${$("#qc-extras").checked?'&extras=1':''}`);
+    const extras = ($("#qc-extras").checked ? "&extras=1" : "");
+    const j = await get(ROBOT_API + "/api/quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value) + extras);
     const lines = [];
-    (j.records||[]).forEach(r => lines.push(`${r.type}\t${r.name}\t${r.value}`));
-    if ($("#qc-extras").checked) (j.extras||[]).forEach(r => lines.push(`${r.type}\t${r.name}\t${r.value}`));
-    $("#qc-results").innerHTML = `<pre class="log">${lines.join("\n")||"—"}</pre>`;
-  }catch(e){ $("#qc-results").textContent = String(e); }
+    (j.records || []).forEach(r => lines.push(r.type+"\t"+r.name+"\t"+r.value));
+    (j.extras || []).forEach(r => lines.push(r.type+"\t"+r.name+"\t"+r.value));
+    $("#qc-results").innerHTML = '<pre class="log">'+(lines.join("\n") || "—")+'</pre>';
+  }catch(e){
+    $("#qc-results").textContent = String(e);
+  }
 });
+
 $("#btnCopyAll").addEventListener("click", ()=>{
-  const pre = $("#qc-results").querySelector("pre"); if (pre) copy(pre.textContent);
+  const pre = $("#qc-results").querySelector("pre");
+  if (pre) copy(pre.textContent);
 });
 
 /* ====== CLOUDFLARE ====== */
 $("#btnCfList").addEventListener("click", async ()=>{
-  const token = $("#cf-token").value.trim();
-  if(!token) return logEl("#cf-log","Paste your Cloudflare API token first.");
+  const token = ($("#cf-token").value || "").trim();
+  if (!token){
+    logEl("#cf-log","Paste your Cloudflare API token first.");
+    return;
+  }
   try{
-    const j = await post(`${ROBOT_API}/api/cf/list-zones`, { token });
-    const sel = $("#cf-zones"); sel.innerHTML = '<option value="">— choose a zone —</option>';
-    (j.zones||[]).forEach(z => {
-      const o = document.createElement("option"); o.value = z.id; o.textContent = `${z.name} (${z.status})`; sel.appendChild(o);
+    const j = await post(ROBOT_API + "/api/cf/list-zones", { token });
+    const sel = $("#cf-zones");
+    sel.innerHTML = '<option value="">— choose a zone —</option>';
+    (j.zones || []).forEach(z => {
+      const o = document.createElement("option");
+      o.value = z.id;
+      o.textContent = z.name + " (" + (z.status || "") + ")";
+      sel.appendChild(o);
     });
-    logEl("#cf-log", {ok:true, zones:(j.zones||[]).map(v=>({id:v.id,name:v.name,status:v.status}))});
-  }catch(e){ logEl("#cf-log", String(e)); }
-});
-$("#btnCfProtect").addEventListener("click", async ()=>{
-  const token = $("#cf-token").value.trim();
-  const zone_id = $("#cf-zones").value;
-  if(!token || !zone_id) return logEl("#cf-log","Paste token and choose a zone.");
-  try{
-    const j = await post(`${ROBOT_API}/api/cf/protect`, { token, zone_id });
-    logEl("#cf-log", j);
-    if (j.apex) $("#pol-domain").value = j.apex;
-  }catch(e){ logEl("#cf-log", String(e)); }
+    logEl("#cf-log",{ok:true,zones:(j.zones || []).map(z=>({id:z.id,name:z.name,status:z.status}))});
+  }catch(e){
+    logEl("#cf-log", String(e));
+  }
 });
 
-/* Control‑SPF in this panel */
-$("#btnSpfLoad").addEventListener("click", async ()=>{
-  const token = $("#cf-token").value.trim();
-  if(!token) return logEl("#cf-log","Paste a Cloudflare API token first.");
+$("#btnCfProtect").addEventListener("click", async ()=>{
+  const token = ($("#cf-token").value || "").trim();
+  const zone_id = $("#cf-zones").value;
+  if (!token || !zone_id){
+    logEl("#cf-log","Paste token and choose a zone.");
+    return;
+  }
   try{
-    const j = await get(`${ROBOT_API}/api/cf/control-spf?token=${encodeURIComponent(token)}`);
+    const j = await post(ROBOT_API + "/api/cf/protect", { token, zone_id });
+    logEl("#cf-log", j);
+    if (j.apex) $("#pol-domain").value = j.apex;
+  }catch(e){
+    logEl("#cf-log", String(e));
+  }
+});
+
+$("#btnSpfLoad").addEventListener("click", async ()=>{
+  const token = ($("#cf-token").value || "").trim();
+  if (!token){
+    logEl("#cf-log","Paste a Cloudflare API token first.");
+    return;
+  }
+  try{
+    const j = await get(ROBOT_API + "/api/cf/control-spf?token=" + encodeURIComponent(token));
     $("#spf-value").value = j.value || "";
     logEl("#cf-log", j);
-  }catch(e){ logEl("#cf-log", String(e)); }
+  }catch(e){
+    logEl("#cf-log", String(e));
+  }
 });
+
 $("#btnSpfUpdate").addEventListener("click", async ()=>{
-  const token = $("#cf-token").value.trim();
-  const value = $("#spf-value").value.trim();
-  if(!token) return logEl("#cf-log","Paste a Cloudflare API token first.");
+  const token = ($("#cf-token").value || "").trim();
+  const value = ($("#spf-value").value || "").trim();
+  if (!token){
+    logEl("#cf-log","Paste a Cloudflare API token first.");
+    return;
+  }
   try{
-    const j = await post(`${ROBOT_API}/api/cf/control-spf`, { token, value });
+    const j = await post(ROBOT_API + "/api/cf/control-spf", { token, value });
     logEl("#cf-log", j);
-  }catch(e){ logEl("#cf-log", String(e)); }
+  }catch(e){
+    logEl("#cf-log", String(e));
+  }
 });
 
 /* ====== ROUTE 53 ====== */
-// Use access_key_id / secret_access_key explicitly (prevents fallback).  :contentReference[oaicite:7]{index=7}
 async function r53ListZonesIfReady(){
-  const access_key_id = $("#r53-ak").value.trim();
-  const secret_access_key = $("#r53-sk").value.trim();
-  if(!access_key_id || !secret_access_key) return;
+  const access_key_id = ($("#r53-ak").value || "").trim();
+  const secret_access_key = ($("#r53-sk").value || "").trim();
+  if (!access_key_id || !secret_access_key) return;
   try{
-    const j = await post(`${ROBOT_API}/api/r53/list-zones`, { access_key_id, secret_access_key });
-    const sel = $("#r53-zones"); sel.innerHTML = '<option value="">— choose a hosted zone —</option>';
-    (j.zones||[]).forEach(z => {
-      const o = document.createElement("option"); o.value = z.id; o.textContent = `${z.name} (${z.id})`; sel.appendChild(o);
+    const j = await post(ROBOT_API + "/api/r53/list-zones", { access_key_id, secret_access_key });
+    const sel = $("#r53-zones");
+    sel.innerHTML = '<option value="">— choose a hosted zone —</option>';
+    (j.zones || []).forEach(z => {
+      const o = document.createElement("option");
+      o.value = z.id;
+      o.textContent = z.name + " (" + z.id + ")";
+      sel.appendChild(o);
     });
-    logEl("#r53-log", {ok:true, zones:j.zones});
-  }catch(e){ logEl("#r53-log", String(e)); }
+    logEl("#r53-log",{ok:true,zones:j.zones});
+  }catch(e){
+    logEl("#r53-log", String(e));
+  }
 }
 $("#r53-ak").addEventListener("change", r53ListZonesIfReady);
 $("#r53-sk").addEventListener("change", r53ListZonesIfReady);
 
 $("#btnR53Protect").addEventListener("click", async ()=>{
-  const access_key_id = $("#r53-ak").value.trim();
-  const secret_access_key = $("#r53-sk").value.trim();
+  const access_key_id = ($("#r53-ak").value || "").trim();
+  const secret_access_key = ($("#r53-sk").value || "").trim();
   const hosted_zone_id = $("#r53-zones").value;
-  if(!access_key_id || !secret_access_key || !hosted_zone_id) return logEl("#r53-log","Paste keys and pick a hosted zone.");
+  if (!access_key_id || !secret_access_key || !hosted_zone_id){
+    logEl("#r53-log","Paste keys and pick a hosted zone.");
+    return;
+  }
   try{
-    const j = await post(`${ROBOT_API}/api/r53/protect`, { access_key_id, secret_access_key, hosted_zone_id });
+    const j = await post(ROBOT_API + "/api/r53/protect", { access_key_id, secret_access_key, hosted_zone_id });
     logEl("#r53-log", j);
     if (j.apex) $("#pol-domain").value = j.apex;
-  }catch(e){ logEl("#r53-log", String(e)); }
+  }catch(e){
+    logEl("#r53-log", String(e));
+  }
 });
 
 /* ====== POLICY STEP‑UP ====== */
 $("#btnPolPreview").addEventListener("click", async ()=>{
-  const d = $("#pol-domain").value.trim();
-  if(!d) return logEl("#pol-out","Enter a domain first.");
+  const d = ($("#pol-domain").value || "").trim();
+  if (!d){
+    logEl("#pol-out","Enter a domain first.");
+    return;
+  }
   try{
-    const j = await get(`${ROBOT_API}/policy/preview?domain=${encodeURIComponent(d)}`);
+    const j = await get(ROBOT_API + "/policy/preview?domain=" + encodeURIComponent(d));
     logEl("#pol-out", j);
-  }catch(e){ logEl("#pol-out", String(e)); }
+  }catch(e){
+    logEl("#pol-out", String(e));
+  }
 });
+
 $("#btnApplyCf").addEventListener("click", async ()=>{
   const body = {
-    domain: $("#pol-domain").value.trim(),
+    domain: ($("#pol-domain").value || "").trim(),
     policy: $("#pol-policy").value,
-    pct: Number($("#pol-pct").value||100),
+    pct: Number($("#pol-pct").value || 100),
     adkim: $("#pol-adkim").value,
     aspf:  $("#pol-aspf").value,
-    rua:   $("#pol-rua").value.trim(),
-    fo:    $("#pol-fo").value.trim(),
-    sp:    ($("#pol-sp").value.trim()||null)
+    rua:   ($("#pol-rua").value || "").trim(),
+    fo:    ($("#pol-fo").value || "").trim(),
+    sp:    (($("#pol-sp").value || "").trim() || null)
   };
-  if(!body.domain) return logEl("#pol-out","Enter a domain first.");
-  try{ const j = await post(`${ROBOT_API}/api/policy/dmarc/cf`, body); logEl("#pol-out", j); }
-  catch(e){ logEl("#pol-out", String(e)); }
+  if (!body.domain){
+    logEl("#pol-out","Enter a domain first.");
+    return;
+  }
+  try{
+    const j = await post(ROBOT_API + "/api/policy/dmarc/cf", body);
+    logEl("#pol-out", j);
+  }catch(e){
+    logEl("#pol-out", String(e));
+  }
 });
+
 $("#btnApplyR53").addEventListener("click", async ()=>{
   const body = {
-    domain: $("#pol-domain").value.trim(),
+    domain: ($("#pol-domain").value || "").trim(),
     policy: $("#pol-policy").value,
-    pct: Number($("#pol-pct").value||100),
+    pct: Number($("#pol-pct").value || 100),
     adkim: $("#pol-adkim").value,
     aspf:  $("#pol-aspf").value,
-    rua:   $("#pol-rua").value.trim(),
-    fo:    $("#pol-fo").value.trim(),
-    sp:    ($("#pol-sp").value.trim()||null),
-    hosted_zone_id: $("#r53-zones").value.trim()
+    rua:   ($("#pol-rua").value || "").trim(),
+    fo:    ($("#pol-fo").value || "").trim(),
+    sp:    (($("#pol-sp").value || "").trim() || null),
+    hosted_zone_id: ($("#r53-zones").value || "").trim()
   };
-  if(!body.domain) return logEl("#pol-out","Enter a domain first.");
-  if(!body.hosted_zone_id) return logEl("#pol-out","Pick a Route 53 hosted zone (top-left panel).");
-  try{ const j = await post(`${ROBOT_API}/api/policy/dmarc/r53`, body); logEl("#pol-out", j); }
-  catch(e){ logEl("#pol-out", String(e)); }
-});
-$("#btnEvaluateNow").addEventListener("click", async ()=>{
-  try{ const j = await get(`${ROBOT_API}/policy/evaluate-now`); logEl("#pol-out", j); }
-  catch(e){ logEl("#pol-out", String(e)); }
+  if (!body.domain){
+    logEl("#pol-out","Enter a domain first.");
+    return;
+  }
+  if (!body.hosted_zone_id){
+    logEl("#pol-out","Pick a Route 53 hosted zone (top-left panel).");
+    return;
+  }
+  try{
+    const j = await post(ROBOT_API + "/api/policy/dmarc/r53", body);
+    logEl("#pol-out", j);
+  }catch(e){
+    logEl("#pol-out", String(e));
+  }
 });
 
-/* ====== CONTROL SPF (builder) ====== */
+$("#btnEvaluateNow").addEventListener("click", async ()=>{
+  try{
+    const j = await get(ROBOT_API + "/policy/evaluate-now");
+    logEl("#pol-out", j);
+  }catch(e){
+    logEl("#pol-out", String(e));
+  }
+});
+
+/* ====== CONTROL SPF BUILDER ====== */
 const SPF_MAP = {
-  google:'include:_spf.google.com', m365:'include:spf.protection.outlook.com', sendgrid:'include:sendgrid.net',
-  ses:'include:amazonses.com', mailgun:'include:mailgun.org', mailchimp:'include:servers.mcsv.net',
-  postmark:'include:spf.mtasv.net', sparkpost:'include:_spf.sparkpostmail.com', zoho:'include:zoho.com',
-  zendesk:'include:mail.zendesk.com', intercom:'include:_spf.intercom.io'
+  google:"include:_spf.google.com",
+  m365:"include:spf.protection.outlook.com",
+  sendgrid:"include:sendgrid.net",
+  ses:"include:amazonses.com",
+  mailgun:"include:mailgun.org",
+  mailchimp:"include:servers.mcsv.net",
+  postmark:"include:spf.mtasv.net",
+  sparkpost:"include:_spf.sparkpostmail.com",
+  zoho:"include:zoho.com",
+  zendesk:"include:mail.zendesk.com",
+  intercom:"include:_spf.intercom.io"
 };
+
 function updateSpfPreview(){
-  const sels = [...document.querySelectorAll('.spf-sel:checked')].map(x => SPF_MAP[x.value]).filter(Boolean);
-  const txt = ['v=spf1', ...sels, '~all'].join(' ');
-  $("#spf-preview").value = txt;
+  const sels = Array.from(document.querySelectorAll(".spf-sel:checked"))
+    .map(cb => SPF_MAP[cb.value])
+    .filter(Boolean);
+  const txt = ["v=spf1"].concat(sels).concat(["~all"]).join(" ");
+  const out = $("#spf-preview");
+  if (out) out.value = txt;
 }
-document.querySelectorAll('.spf-sel').forEach(cb => cb.addEventListener('change', updateSpfPreview));
-updateSpfPreview();
+document.querySelectorAll(".spf-sel").forEach(cb => cb.addEventListener("change", updateSpfPreview));
 
 $("#btnSpfLoad2").addEventListener("click", async ()=>{
-  const tok = $("#spf-token").value.trim();
-  if(!tok) return logEl("#spf-log2","Paste a Cloudflare API token first.");
-  try{ const j = await get(`${ROBOT_API}/api/cf/control-spf?token=${encodeURIComponent(tok)}`); if (j.value) $("#spf-preview").value = j.value; logEl("#spf-log2", j); }
-  catch(e){ logEl("#spf-log2", String(e)); }
-});
-$("#btnSpfUpdate2").addEventListener("click", async ()=>{
-  const tok = $("#spf-token").value.trim();
-  const val = $("#spf-preview").value.trim();
-  if(!tok) return logEl("#spf-log2","Paste a Cloudflare API token first.");
-  try{ const j = await post(`${ROBOT_API}/api/cf/control-spf`, { token: tok, value: val }); logEl("#spf-log2", j); }
-  catch(e){ logEl("#spf-log2", String(e)); }
+  const tok = ($("#spf-token").value || "").trim();
+  if (!tok){
+    logEl("#spf-log2","Paste a Cloudflare API token first.");
+    return;
+  }
+  try{
+    const j = await get(ROBOT_API + "/api/cf/control-spf?token=" + encodeURIComponent(tok));
+    if (j.value) $("#spf-preview").value = j.value;
+    logEl("#spf-log2", j);
+  }catch(e){
+    logEl("#spf-log2", String(e));
+  }
 });
 
-/* ====== INSIGHTS (rollup) ====== */
-function fmt(n){ return (n||0).toLocaleString(); }
+$("#btnSpfUpdate2").addEventListener("click", async ()=>{
+  const tok = ($("#spf-token").value || "").trim();
+  const val = ($("#spf-preview").value || "").trim();
+  if (!tok){
+    logEl("#spf-log2","Paste a Cloudflare API token first.");
+    return;
+  }
+  try{
+    const j = await post(ROBOT_API + "/api/cf/control-spf", { token: tok, value: val });
+    logEl("#spf-log2", j);
+  }catch(e){
+    logEl("#spf-log2", String(e));
+  }
+});
+
+/* ====== INSIGHTS ====== */
+function fmt(n){ return (n || 0).toLocaleString(); }
 function pct(a,b){ const r = (b>0) ? (a/b) : 0; return Math.round(r*1000)/10; }
-function asArray(series){ if (Array.isArray(series)) return series; if (series && typeof series==='object'){ return Object.keys(series).sort().map(d => ({date:d, ...series[d]})); } return []; }
+function asArray(series){
+  if (Array.isArray(series)) return series;
+  if (series && typeof series === "object"){
+    return Object.keys(series).sort().map(d => Object.assign({date:d}, series[d]));
+  }
+  return [];
+}
 function renderRollup(j){
   const rows = asArray(j.series);
-  const table = $('#ins-table'); const body = $('#ins-rows'); const summary = $('#ins-summary');
-  if (!rows.length){ table.style.display='none'; summary.textContent='No data yet for this window.'; return; }
-  const T = rows.reduce((acc,r)=>{ acc.total+=r.total||0; acc.aligned+=r.aligned||0; return acc; }, {total:0,aligned:0});
-  const rate = pct(T.aligned, T.total);
-  summary.innerHTML = `<strong>${j.domain}</strong> — ${j.days}‑day totals: <strong>${fmt(T.total)}</strong> msgs, <strong style="color:#8be8bd">${fmt(T.aligned)}</strong> aligned (<strong style="color:#8be8bd">${rate}%</strong>)`;
-  body.innerHTML = '';
+  const table = $("#ins-table");
+  const body  = $("#ins-rows");
+  const summary = $("#ins-summary");
+  if (!rows.length){
+    table.style.display = "none";
+    summary.textContent = "No data yet for this window.";
+    return;
+  }
+  const totals = rows.reduce((acc,r)=>{
+    acc.total += r.total || 0;
+    acc.aligned += r.aligned || 0;
+    return acc;
+  }, {total:0,aligned:0});
+  const rate = pct(totals.aligned, totals.total);
+  summary.innerHTML = "<strong>"+j.domain+"</strong> — "+j.days+"‑day totals: <strong>"+fmt(totals.total)+"</strong> msgs, <strong style=\"color:#8be8bd\">"+fmt(totals.aligned)+"</strong> aligned (<strong style=\"color:#8be8bd\">"+rate+"%</strong>)";
+  body.innerHTML = "";
   rows.forEach(r=>{
-    const p = pct(r.aligned||0, r.total||0);
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="mono">${r.date}</td>
-      <td>${fmt(r.total||0)}</td>
-      <td>${fmt(r.aligned||0)}</td>
-      <td>${p}%</td>
-      <td>
-        <div class="bar"><i style="width:${Math.min(100,p)}%"></i></div>
-        <div class="rowstats">${r.spf_aligned!=null && r.dkim_aligned!=null ? `SPF ${fmt(r.spf_aligned)} · DKIM ${fmt(r.dkim_aligned)}` : ''}</div>
-      </td>`;
+    const p = pct(r.aligned || 0, r.total || 0);
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      '<td class="mono">'+r.date+'</td>'+
+      '<td>'+fmt(r.total || 0)+'</td>'+
+      '<td>'+fmt(r.aligned || 0)+'</td>'+
+      '<td>'+p+'%</td>'+
+      '<td><div class="bar"><i style="width:'+Math.min(100,p)+'%"></i></div><div class="rowstats">'+
+      (r.spf_aligned!=null && r.dkim_aligned!=null ? ("SPF "+fmt(r.spf_aligned)+" · DKIM "+fmt(r.dkim_aligned)) : "")+
+      '</div></td>';
     body.appendChild(tr);
   });
-  table.style.display = '';
+  table.style.display = "";
 }
+
 async function loadRoll(days){
-  const norm = normalizeForUI($('#ins-domain').value, null, null);
-  if(!norm.ok){ $('#ins-wrap').textContent = 'Enter a valid domain first.'; return; }
+  const norm = normalizeForUI($("#ins-domain").value, null, null);
+  if (!norm.ok){
+    $("#ins-wrap").textContent = "Enter a valid domain first.";
+    return;
+  }
   try{
-    const j = await get(`${ROBOT_API}/api/rollup?domain=${encodeURIComponent(norm.apex || norm.value)}&days=${days}`);
-    $('#ins-wrap').textContent = JSON.stringify(j, null, 2); // keep raw JSON visible for debug
-    renderRollup({domain: j.domain || (norm.apex || norm.value), days, series: j.series || []});
-  }catch(e){ $('#ins-wrap').textContent = String(e); }
+    const j = await get(ROBOT_API + "/api/rollup?domain=" + encodeURIComponent(norm.apex || norm.value) + "&days=" + days);
+    $("#ins-wrap").textContent = JSON.stringify(j, null, 2);
+    renderRollup({domain: j.domain || (norm.apex || norm.value), days: days, series: j.series || []});
+  }catch(e){
+    $("#ins-wrap").textContent = String(e);
+  }
 }
-$('#btnLoad7').addEventListener('click', ()=>loadRoll(7));
-$('#btnLoad30').addEventListener('click', ()=>loadRoll(30));
-$('#btnIngest').addEventListener('click', async ()=>{
+
+$("#btnLoad7").addEventListener("click", ()=>loadRoll(7));
+$("#btnLoad30").addEventListener("click", ()=>loadRoll(30));
+
+$("#btnIngest").addEventListener("click", async ()=>{
   try{
-    const j = await post(`${DMARC_API}/api/dmarc/ingest-latest`, {limit:25});
-    $('#ins-wrap').textContent = JSON.stringify(j, null, 2);
-  }catch(e){ $('#ins-wrap').textContent = String(e); }
+    const j = await post(DMARC_API + "/api/dmarc/ingest-latest", {limit:25});
+    $("#ins-wrap").textContent = JSON.stringify(j, null, 2);
+  }catch(e){
+    $("#ins-wrap").textContent = String(e);
+  }
 });
 
 /* ====== ALERTS ====== */
-$('#btnAlertTest').addEventListener('click', async ()=>{
+$("#btnAlertTest").addEventListener("click", async ()=>{
   try{
-    const j = await post(`${ROBOT_API}/alerts/test`, {domain:'slawitness.com', title:'Test alert', message:'This is a test from DomainSafe UI.'});
-    logEl('#alerts-out', j);
-  }catch(e){ logEl('#alerts-out', String(e)); }
+    const j = await post(ROBOT_API + "/alerts/test", {
+      domain:"slawitness.com",
+      title:"Test alert",
+      message:"This is a test from DomainSafe UI."
+    });
+    logEl("#alerts-out", j);
+  }catch(e){
+    logEl("#alerts-out", String(e));
+  }
 });
-$('#btnAlertFlush').addEventListener('click', async ()=>{
+
+$("#btnAlertFlush").addEventListener("click", async ()=>{
   try{
-    const j = await post(`${ROBOT_API}/alerts/flush`, {});
-    logEl('#alerts-out', j);
-  }catch(e){ logEl('#alerts-out', String(e)); }
+    const j = await post(ROBOT_API + "/alerts/flush", {});
+    logEl("#alerts-out", j);
+  }catch(e){
+    logEl("#alerts-out", String(e));
+  }
 });
+
+/* ====== Bootstrap ====== */
+updateSpfPreview();
+initAuth();
 </script>
 </body>
 </html>
