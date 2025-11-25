@@ -1,220 +1,870 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>DomainSafe — Console • Status • Quick‑Codes • Step‑Up</title>
+  <title>DomainSafePro – Console</title>
+  <meta name="description" content="Manage your domain protection, verify records, and configure email authentication."/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@600&family=Exo+2:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://rsms.me/">
+  <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+
   <style>
-    :root{
-      --bg:#0f1221; --fg:#e8ebff; --muted:#a7b1e6; --card:#14183a; --line:#2a3470;
-      --ok:#3ddc97; --warn:#ffcc66; --bad:#ff6b6b; --btn:#3142d0; --btn2:#1f2a7a;
-      --mono:#0f1533; --accent:#9dc0ff;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
-      background:radial-gradient(circle at top,#181c3b 0,#0b0e1a 55%,#050611 100%);
-      color:var(--fg);
-      line-height:1.45;
-    }
-    header{
-      padding:24px 20px 10px;
-      border-bottom:1px solid var(--line);
-      background:rgba(5,7,20,0.92);
-      backdrop-filter:blur(18px);
-      position:sticky;
-      top:0;
-      z-index:20;
-    }
-    header h1{
-      margin:0 0 4px 0;
-      font-size:22px;
-      letter-spacing:0.01em;
-    }
-    header .tag{color:var(--muted); font-size:13px}
-    .auth-bar{
-      margin-top:8px;
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .auth-bar .left{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .auth-bar .right{font-size:12px;color:var(--muted)}
-    .btn-auth{padding:6px 12px;font-size:12px;border-radius:999px}
+/* ========== TOKENS (matching landing page) ========== */
+:root {
+  --font-serif: 'Vollkorn', Georgia, serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-brand: 'Exo 2', sans-serif;
+  --font-mono: 'Roboto Mono', 'Fira Code', ui-monospace, monospace;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --maxw: 1100px;
+  --fast-transition: 0.15s ease;
+  --med-transition: 0.3s ease;
+}
 
-    /* Login hero (shown before auth) */
-    #login-section{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:40px 16px 32px;
-    }
-    .login-card{
-      width:100%;
-      max-width:520px;
-      background:var(--card);
-      border-radius:18px;
-      border:1px solid var(--line);
-      padding:22px 20px 22px;
-      box-shadow:0 22px 55px rgba(0,0,0,0.65);
-    }
-    .login-card .eyebrow{
-      font-size:12px;
-      color:var(--muted);
-      text-transform:uppercase;
-      letter-spacing:0.08em;
-      margin-bottom:4px;
-    }
-    .login-card h2{
-      margin:0 0 8px 0;
-      font-size:24px;
-    }
-    .login-card p{
-      margin:0 0 14px 0;
-      font-size:14px;
-      color:var(--muted);
-    }
-    .login-card .btn{
-      padding:10px 18px;
-      font-size:14px;
-      border-radius:999px;
-    }
-    .login-card .tiny{
-      margin-top:8px;
-      font-size:12px;
-      color:var(--muted);
-    }
+[data-theme="dark"] {
+  --bg: #0c0c0e;
+  --bg-card: #141417;
+  --bg-alt: #1a1a1d;
+  --bg-input: rgba(0,0,0,0.25);
+  --fg: #ededf0;
+  --fg-muted: #9496a3;
+  --border: rgba(255,255,255,0.1);
+  --border-glow: rgba(255,255,255,0.2);
+  --brand: #5a81ff;
+  --brand-accent: #8a7aff;
+  --warn: #ffd36a;
+  --ok: #67e8a3;
+  --danger: #ff7a7a;
+  --shadow-color: rgba(0,0,0,0.3);
+  --glass-bg: rgba(20,20,23,0.55);
+  --glass-border: rgba(255,255,255,0.12);
+}
 
-    /* Main console */
-    main{
-      max-width:1150px;
-      margin:0 auto;
-      padding:24px 16px 56px;
-    }
-    #app-main{display:none;}
+[data-theme="light"] {
+  --bg: #fafafa;
+  --bg-card: #ffffff;
+  --bg-alt: #f5f5f5;
+  --bg-input: rgba(0,0,0,0.04);
+  --fg: #111113;
+  --fg-muted: #55555c;
+  --border: rgba(0,0,0,0.1);
+  --border-glow: rgba(0,0,0,0.2);
+  --brand: #4a75ff;
+  --brand-accent: #7a6aff;
+  --warn: #f5a623;
+  --ok: #28a745;
+  --danger: #d9534f;
+  --shadow-color: rgba(0,0,0,0.08);
+  --glass-bg: rgba(255,255,255,0.6);
+  --glass-border: rgba(0,0,0,0.08);
+}
 
-    body.authed #login-section{display:none;}
-    body.authed #app-main{display:block;}
+/* ========== BASE ========== */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { max-width: 100%; overflow-x: clip; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-alt) 50%, var(--bg) 100%);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1000px;
+  height: 1000px;
+  background: radial-gradient(circle, rgba(90,129,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
 
-    .grid{display:grid; grid-template-columns:1fr; gap:16px}
-    @media(min-width:1040px){ .grid{grid-template-columns:1fr 1fr} }
-    .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:16px;
-    }
-    .card h3{margin:0 0 8px 0; font-size:18px}
-    .desc{color:var(--muted); font-size:13px; margin:0 0 10px 0}
-    label{display:block; font-size:13px; color:var(--muted); margin-bottom:6px}
-    input,select,textarea{
-      width:100%;
-      padding:10px 12px;
-      background:#0f1533;
-      border:1px solid var(--line);
-      color:var(--fg);
-      border-radius:8px;
-      outline:none;
-    }
-    textarea{min-height:100px}
-    .row{display:flex; gap:10px; flex-wrap:wrap}
-    .row > div{flex:1 1 220px}
-    .btn{
-      appearance:none;
-      border:1px solid var(--btn);
-      background:var(--btn);
-      color:#fff;
-      padding:10px 14px;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:600;
-    }
-    .btn.secondary{background:var(--btn2); border-color:var(--btn2)}
-    .btn.ghost{background:transparent; color:var(--fg); border-color:var(--line)}
-    .btn.warn{
-      background:linear-gradient(180deg,#f7c74e,#d8a823);
-      border-color:#d8a823;
-      color:#100a00;
-    }
-    .btn:disabled{opacity:0.6; cursor:not-allowed}
-    .mono{
-      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
-    }
-    .log{
-      white-space:pre-wrap;
-      font-family:ui-monospace,Menlo,Monaco,Consolas,monospace;
-      background:var(--mono);
-      border:1px solid var(--line);
-      border-radius:8px;
-      padding:10px;
-      font-size:13px
-    }
-    table{width:100%; border-collapse:collapse; font-size:14px}
-    th,td{border-bottom:1px solid var(--line); padding:8px 6px; text-align:left}
-    th{color:#c7d0ff; font-weight:600}
-    .pill{
-      display:inline-block;
-      padding:3px 8px;
-      border-radius:999px;
-      font-size:12px
-    }
-    .ok{background:rgba(61,220,151,.15); color:var(--ok); border:1px solid rgba(61,220,151,.4)}
-    .bad{background:rgba(255,107,107,.15); color:var(--bad); border:1px solid rgba(255,107,107,.35)}
-    .warn{background:rgba(255,204,102,.12); color:var(--warn); border:1px solid rgba(255,204,102,.35)}
-    .hint{font-size:12px; color:var(--muted)}
-    .tiny{font-size:12px}
-    .muted{color:var(--muted)}
-    .notice{
-      margin-top:6px;
-      background:rgba(255,204,102,.12);
-      border:1px dashed var(--warn);
-      color:var(--warn);
-      padding:6px 8px;
-      border-radius:8px
-    }
-    .danger{color:#ff9f9f}
-    .kvs{display:grid; grid-template-columns: 160px 1fr; gap:8px 12px}
-    .meter{
-      height:12px;
-      border-radius:999px;
-      background:#0b1028;
-      border:1px solid #1c2559;
-      overflow:hidden;
-      max-width:320px
-    }
-    .meter > i{display:block; height:100%; background:linear-gradient(90deg,#ff6d6d,#ffcc66,#3ddc97); width:0%}
-    .badges{display:flex; gap:8px; flex-wrap:wrap; margin-top:6px}
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding:6px 8px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#0f1533;
-      font-weight:600
-    }
-    .badge.ok{border-color:#1e8f62}
-    .badge.warn{border-color:#a1893a}
-    .badge.bad{border-color:#a04444}
-    .bar{height:8px; background:var(--line); border-radius:6px; overflow:hidden}
-    .bar > i{display:block; height:100%; background:var(--ok)}
-    .rowstats{font-size:12px; color:var(--muted)}
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  color: var(--fg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 0;
+}
+p { color: var(--fg-muted); margin: 0; }
+a { text-decoration: none; color: var(--brand); }
+code, .mono { font-family: var(--font-mono); font-size: 0.9em; }
+
+/* ========== HEADER ========== */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 16px 20px;
+}
+.header-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--fg);
+}
+.brand-text {
+  font-family: var(--font-brand);
+  background: linear-gradient(90deg, #5a81ff 0%, #21E6C1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-tag {
+  font-size: 13px;
+  color: var(--fg-muted);
+  display: none;
+}
+@media (min-width: 768px) {
+  .header-tag { display: block; max-width: 400px; }
+}
+
+.auth-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+#auth-status-label {
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+/* Theme toggle */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--fast-transition);
+}
+.theme-toggle:hover { border-color: var(--border-glow); }
+.theme-toggle svg { width: 16px; height: 16px; color: var(--fg-muted); }
+[data-theme="dark"] .theme-toggle .sun-icon { display: block; }
+[data-theme="dark"] .theme-toggle .moon-icon { display: none; }
+[data-theme="light"] .theme-toggle .sun-icon { display: none; }
+[data-theme="light"] .theme-toggle .moon-icon { display: block; }
+
+/* ========== BUTTONS ========== */
+.btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--fast-transition);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  border: 2px solid var(--brand);
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+.btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px var(--shadow-color);
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: none; }
+
+.btn.secondary, .btn-auth {
+  background: var(--glass-bg);
+  border: 2px solid var(--glass-border);
+  color: var(--fg);
+  backdrop-filter: blur(8px);
+}
+.btn.secondary:hover, .btn-auth:hover {
+  background: var(--bg-alt);
+  border-color: var(--border-glow);
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--fg-muted);
+}
+.btn.ghost:hover {
+  border-color: var(--border-glow);
+  color: var(--fg);
+}
+
+.btn.warn {
+  background: linear-gradient(135deg, #ffd36a 0%, #f5a623 100%);
+  border-color: #f5a623;
+  color: #1a1a1d;
+}
+.btn.warn:hover {
+  filter: brightness(1.05);
+}
+
+/* Small buttons */
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+/* ========== LOGIN SECTION ========== */
+#login-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  min-height: 60vh;
+}
+.login-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius);
+  border: 1px solid var(--glass-border);
+  padding: 32px 28px;
+  box-shadow: 0 24px 60px var(--shadow-color);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.login-card .eyebrow {
+  font-size: 12px;
+  color: var(--brand);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.login-card h2 {
+  font-size: 1.75rem;
+  margin-bottom: 12px;
+}
+.login-card p {
+  font-size: 15px;
+  color: var(--fg-muted);
+  margin-bottom: 24px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.login-card .btn { width: 100%; max-width: 280px; }
+.login-card .tiny {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+body.authed #login-section { display: none; }
+body.authed #app-main { display: block; }
+
+/* ========== MAIN CONSOLE ========== */
+main {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+  position: relative;
+  z-index: 1;
+}
+#app-main { display: none; }
+
+/* Section titles */
+.section-title {
+  font-size: 1.1rem;
+  color: var(--fg-muted);
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-sans);
+}
+
+/* ========== GRID ========== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+@media (min-width: 900px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
+.grid.full { grid-template-columns: 1fr; }
+
+/* ========== CARDS ========== */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 8px 32px var(--shadow-color);
+  transition: border-color var(--fast-transition), box-shadow var(--fast-transition);
+}
+.card:hover {
+  border-color: var(--border-glow);
+}
+.card h3 {
+  font-size: 1.25rem;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card h3 .icon {
+  width: 24px;
+  height: 24px;
+  opacity: 0.7;
+}
+.card .desc {
+  color: var(--fg-muted);
+  font-size: 14px;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+/* ========== FORM ELEMENTS ========== */
+label {
+  display: block;
+  font-size: 13px;
+  color: var(--fg-muted);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+input, select, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color var(--fast-transition), box-shadow var(--fast-transition);
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(90,129,255,0.15);
+}
+input.mono, textarea.mono, .mono {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+textarea { min-height: 100px; resize: vertical; }
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239496a3' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* Row layouts */
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.row:last-child { margin-bottom: 0; }
+.row > div { flex: 1 1 200px; }
+.row > div.narrow { flex: 0 0 140px; }
+.row > div.action { flex: 0 0 auto; align-self: flex-end; }
+
+/* ========== LOG / OUTPUT AREAS ========== */
+.log {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  max-height: 300px;
+  overflow-y: auto;
+  color: var(--fg-muted);
+}
+.log:empty::before {
+  content: 'Ready.';
+  opacity: 0.5;
+}
+
+/* ========== TABLES ========== */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -4px;
+  padding: 0 4px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 600px;
+}
+th, td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+td { color: var(--fg-muted); }
+
+/* Mobile table → card stack */
+@media (max-width: 700px) {
+  .table-wrap { margin: 0; padding: 0; }
+  table, thead, tbody, th, td, tr { display: block; }
+  thead { display: none; }
+  table { min-width: 0; }
+  tr {
+    background: var(--bg-input);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+  }
+  td {
+    padding: 6px 0;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--fg);
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-right: 12px;
+  }
+}
+
+/* ========== PILLS / BADGES ========== */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.pill.ok {
+  background: rgba(103,232,163,0.15);
+  color: var(--ok);
+  border: 1px solid rgba(103,232,163,0.3);
+}
+.pill.bad {
+  background: rgba(255,122,122,0.15);
+  color: var(--danger);
+  border: 1px solid rgba(255,122,122,0.3);
+}
+.pill.warn {
+  background: rgba(255,211,106,0.12);
+  color: var(--warn);
+  border: 1px solid rgba(255,211,106,0.3);
+}
+
+/* Badges row */
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  font-weight: 600;
+  font-size: 13px;
+}
+.badge.ok { border-color: rgba(103,232,163,0.4); color: var(--ok); }
+.badge.warn { border-color: rgba(255,211,106,0.4); color: var(--warn); }
+.badge.bad { border-color: rgba(255,122,122,0.4); color: var(--danger); }
+
+/* ========== SCORE METER ========== */
+.meter {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  max-width: 320px;
+}
+.meter > i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--danger), var(--warn), var(--ok));
+  width: 0%;
+  transition: width 0.5s ease;
+  border-radius: 999px;
+}
+
+/* Mini bar chart */
+.bar {
+  height: 10px;
+  background: var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.bar > i {
+  display: block;
+  height: 100%;
+  background: var(--ok);
+  border-radius: 6px;
+}
+
+/* ========== KVS (Key-Value pairs) ========== */
+.kvs {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 10px 16px;
+  font-size: 14px;
+}
+.kvs > div:nth-child(odd) {
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+@media (max-width: 500px) {
+  .kvs {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .kvs > div:nth-child(odd) {
+    margin-top: 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .kvs > div:nth-child(odd):first-child { margin-top: 0; }
+}
+
+/* ========== NOTICES ========== */
+.notice {
+  margin-top: 8px;
+  background: rgba(255,211,106,0.1);
+  border: 1px dashed var(--warn);
+  color: var(--warn);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+.notice.info {
+  background: rgba(90,129,255,0.1);
+  border-color: var(--brand);
+  color: var(--brand);
+}
+.notice.success {
+  background: rgba(103,232,163,0.1);
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+/* ========== CHECKBOXES ========== */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--fg-muted);
+  margin: 8px 0;
+}
+.checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  accent-color: var(--brand);
+}
+
+/* SPF checkboxes grid */
+.spf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.spf-grid label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all var(--fast-transition);
+}
+.spf-grid label:hover {
+  border-color: var(--border-glow);
+}
+.spf-grid input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--brand);
+}
+
+/* ========== COLLAPSIBLE SECTIONS ========== */
+details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-top: 16px;
+}
+summary {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--fg);
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+summary::-webkit-details-marker { display: none; }
+summary::before {
+  content: '▸';
+  font-size: 12px;
+  transition: transform var(--fast-transition);
+}
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+details > div {
+  padding: 16px;
+}
+
+/* ========== QUICK-CODES RESULT CARDS ========== */
+.qc-cards {
+  display: grid;
+  gap: 12px;
+}
+.qc-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+.qc-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.qc-type {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.qc-type.txt { background: rgba(138,122,255,0.2); color: var(--brand-accent); }
+.qc-type.cname { background: rgba(90,129,255,0.2); color: var(--brand); }
+.qc-purpose { font-size: 13px; color: var(--fg-muted); }
+.qc-field {
+  margin-bottom: 10px;
+}
+.qc-field:last-child { margin-bottom: 0; }
+.qc-label {
+  font-size: 11px;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.qc-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  word-break: break-all;
+}
+.qc-value code {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.copy-btn {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all var(--fast-transition);
+}
+.copy-btn:hover { filter: brightness(1.1); }
+.copy-btn.copied {
+  background: var(--ok);
+}
+
+/* ========== UTILITIES ========== */
+.tiny { font-size: 12px; }
+.muted { color: var(--fg-muted); }
+.danger { color: var(--danger); }
+.text-center { text-align: center; }
+.mt-sm { margin-top: 8px; }
+.mt-md { margin-top: 16px; }
+.mb-sm { margin-bottom: 8px; }
+.mb-md { margin-bottom: 16px; }
+.hidden { display: none !important; }
+
+/* Gap between button rows */
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+/* ========== DOCS SECTION ========== */
+.docs-content {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.docs-content strong {
+  color: var(--fg);
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+.docs-content strong:first-child { margin-top: 0; }
+.docs-content p {
+  margin-bottom: 12px;
+}
+.docs-content .mono {
+  background: var(--bg-input);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* ========== MOBILE OPTIMIZATIONS ========== */
+@media (max-width: 640px) {
+  header { padding: 12px 16px; }
+  .header-inner { gap: 8px; }
+  .brand { font-size: 1.2rem; gap: 8px; }
+  main { padding: 16px 12px 60px; }
+  .card { padding: 18px 16px; }
+  .card h3 { font-size: 1.1rem; }
+  .btn { padding: 10px 18px; font-size: 13px; }
+  .row > div { flex: 1 1 100%; }
+  .row > div.narrow { flex: 1 1 100%; }
+  .row > div.action { width: 100%; }
+  .btn-row { flex-direction: column; }
+  .btn-row .btn { width: 100%; }
+  .login-card { padding: 24px 20px; }
+  .login-card h2 { font-size: 1.5rem; }
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px; /* Prevents iOS zoom */
+    min-height: 48px;
+  }
+  .btn { min-height: 48px; }
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card {
+  animation: fadeIn 0.4s ease;
+}
+
+/* ========== FOOTER ========== */
+.console-footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+  color: var(--fg-muted);
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+.console-footer a {
+  color: var(--brand);
+}
   </style>
 </head>
 <body>
+
 <header>
-  <h1>DomainSafePro Console <span class="muted">• Step‑Up UI + Apex‑Guard</span></h1>
-  <div class="tag">Connect domains, verify records, one‑click Protect, DMARC Policy Step‑Up, and Insights. The robot keeps watch daily.</div>
-  <div class="auth-bar" id="auth-bar">
-    <div class="left">
-      <button class="btn secondary btn-auth" id="auth-login-btn" type="button">Sign in with Google</button>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-text">DomainSafePro</span>
+      <span class="header-tag">Console — Connect, verify, and protect your domains</span>
     </div>
-    <div class="right" id="auth-status-label">Not signed in</div>
+    <div class="auth-bar" id="auth-bar">
+      <span id="auth-status-label">Not signed in</span>
+      <button class="btn secondary btn-sm btn-auth" id="auth-login-btn" type="button">Sign in with Google</button>
+      <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -222,10 +872,10 @@
 <section id="login-section">
   <div class="login-card">
     <div class="eyebrow">DomainSafePro Console</div>
-    <h2>Sign in to manage your domain</h2>
-    <p>Use your Google account to connect domains, turn protection on, and view reports.</p>
-    <button class="btn secondary" type="button" id="login-hero-btn">Sign in with Google</button>
-    <div class="tiny">You’ll be redirected back here after signing in.</div>
+    <h2>Welcome Back</h2>
+    <p>Sign in with your Google account to manage your domains, configure protection, and view reports.</p>
+    <button class="btn" type="button" id="login-hero-btn">Sign in with Google</button>
+    <div class="tiny">You'll be redirected back here after signing in.</div>
   </div>
 </section>
 
@@ -233,217 +883,312 @@
 <main id="app-main">
 
   <!-- STATUS + QUICK CHECK -->
+  <div class="section-title">🛡️ Domain Health</div>
   <section class="grid">
     <div class="card">
-      <h3>Domain Status (daily robot checks)</h3>
-      <p class="desc">Robot monitors connected domains and records SPF / DMARC / DKIM health snapshots.</p>
-      <div class="row">
-        <button class="btn" id="btnStatus">Refresh status</button>
-        <button class="btn secondary" id="btnMonitor">Run monitor now</button>
+      <h3>Connected Domains</h3>
+      <p class="desc">Your domains under monitoring. The robot checks SPF, DKIM, and DMARC health daily.</p>
+      <div class="btn-row">
+        <button class="btn btn-sm" id="btnStatus">Refresh Status</button>
+        <button class="btn btn-sm secondary" id="btnMonitor">Run Monitor Now</button>
       </div>
-      <div style="height:6px"></div>
-      <table id="statusTable">
-        <thead>
-          <tr><th>Domain</th><th>Owner</th><th>SPF</th><th>DMARC</th><th>DKIM s1</th><th>DKIM s2</th><th>Checked at</th></tr>
-        </thead>
-        <tbody id="statusRows"><tr><td colspan="7" class="muted">Sign in to see your connected domains.</td></tr></tbody>
-      </table>
+      <div class="mt-md table-wrap">
+        <table id="statusTable">
+          <thead>
+            <tr>
+              <th>Domain</th>
+              <th>Owner</th>
+              <th>SPF</th>
+              <th>DMARC</th>
+              <th>DKIM s1</th>
+              <th>DKIM s2</th>
+              <th>Checked</th>
+            </tr>
+          </thead>
+          <tbody id="statusRows">
+            <tr><td colspan="7" class="muted">Sign in to see your connected domains.</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div class="card">
-      <h3>“Check my domain” (instant protection check)</h3>
-      <p class="desc">Quick, safe checker — no tokens. Uses <code>/api/check-score</code> and shows badges.</p>
+      <h3>Check Any Domain</h3>
+      <p class="desc">Instant protection check — no tokens required. Enter any domain to see its email security status.</p>
       <div class="row">
         <div>
-          <label>Domain</label>
-          <input id="chk-domain" class="mono" placeholder="example.com"/>
-          <div class="notice tiny" id="chk-notice" style="display:none"></div>
-          <div class="tiny danger" id="chk-error" style="display:none"></div>
+          <label for="chk-domain">Domain to check</label>
+          <input id="chk-domain" class="mono" placeholder="example.com" autocapitalize="off" autocorrect="off" spellcheck="false"/>
+          <div class="notice hidden" id="chk-notice"></div>
+          <div class="tiny danger hidden" id="chk-error"></div>
         </div>
-        <div style="flex:0 0 180px; align-self:flex-end"><button class="btn" id="btnCheck">Check now</button></div>
+        <div class="action">
+          <button class="btn" id="btnCheck">Check Now</button>
+        </div>
       </div>
-      <div class="row">
-        <label class="tiny"><input type="checkbox" id="chk-exact"> Treat as typed (no apex normalization)</label>
-        <label class="tiny"><input type="checkbox" id="chk-legacy"> Also show legacy (status + quick‑codes + DoH JSON)</label>
+      <div class="checkbox-row">
+        <input type="checkbox" id="chk-exact"/>
+        <label for="chk-exact" style="margin:0">Treat as typed (no apex normalization)</label>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="chk-legacy"/>
+        <label for="chk-legacy" style="margin:0">Show legacy debug output</label>
       </div>
 
-      <div style="height:6px"></div>
-      <div id="checkOut" style="display:none">
+      <div id="checkOut" class="mt-md hidden">
         <div class="kvs">
           <div>Score</div>
           <div>
             <div class="meter"><i id="scoreBar"></i></div>
-            <div class="tiny muted" id="scoreLbl">0/100</div>
+            <div class="tiny muted mt-sm" id="scoreLbl">0/100</div>
           </div>
 
-          <div>Badges</div>
+          <div>Protection</div>
           <div class="badges" id="badgeRow"></div>
 
-          <div>DMARC resolution</div>
+          <div>DMARC Policy</div>
           <div class="tiny" id="resRow">—</div>
 
-          <div>DoH</div>
+          <div>DNS Records</div>
           <div class="tiny">
-            <div><b>_dmarc</b><div id="dohDMARC" class="log tiny" style="margin-top:6px"></div></div>
-            <div style="height:6px"></div>
-            <div><b>_smtp._tls</b><div id="dohTLS" class="log tiny" style="margin-top:6px"></div></div>
-            <div style="height:6px"></div>
-            <div><b>mta-sts</b><div id="dohSTS" class="log tiny" style="margin-top:6px"></div></div>
+            <details>
+              <summary>View raw DNS lookups</summary>
+              <div>
+                <div class="mb-sm"><strong>_dmarc</strong></div>
+                <div id="dohDMARC" class="log tiny"></div>
+                <div class="mb-sm mt-md"><strong>_smtp._tls</strong></div>
+                <div id="dohTLS" class="log tiny"></div>
+                <div class="mb-sm mt-md"><strong>mta-sts</strong></div>
+                <div id="dohSTS" class="log tiny"></div>
+              </div>
+            </details>
           </div>
 
           <div>Tips</div>
           <div id="tips" class="tiny">—</div>
 
           <div>Raw JSON</div>
-          <div><pre id="checkRaw" class="log tiny">—</pre></div>
+          <div>
+            <details>
+              <summary>View API response</summary>
+              <div><pre id="checkRaw" class="log tiny">—</pre></div>
+            </details>
+          </div>
         </div>
       </div>
 
-      <div id="legacyOut" style="display:none">
-        <h4 class="tiny" style="margin-top:10px;color:#c7d0ff">Legacy deep check (debug)</h4>
-        <pre id="legacyRaw" class="log tiny">—</pre>
-        <p class="hint tiny">Legacy calls: Robot <code>/api/status</code> &amp; <code>/api/check-quick-codes</code> + DoH TXT/CNAME.</p>
+      <div id="legacyOut" class="hidden mt-md">
+        <details>
+          <summary>Legacy debug output</summary>
+          <div><pre id="legacyRaw" class="log tiny">—</pre></div>
+        </details>
       </div>
     </div>
   </section>
 
   <!-- ONBOARD / ADD DOMAIN + VERIFY -->
+  <div class="section-title">➕ Add & Verify Domains</div>
   <section class="grid">
     <div class="card">
-      <h3>Add Domain</h3>
-      <p class="desc">Register a domain with the robot (owner email only; no tokens here).</p>
+      <h3>Add New Domain</h3>
+      <p class="desc">Register a domain with the robot. We'll start monitoring its email security automatically.</p>
       <div class="row">
-        <div><label>Contact email</label><input id="add-email" class="mono" placeholder="owner@example.com"/></div>
         <div>
-          <label>Domain</label>
-          <input id="add-domain" class="mono" placeholder="example.com"/>
-          <div class="notice tiny" id="add-notice" style="display:none"></div>
+          <label for="add-email">Contact email</label>
+          <input id="add-email" class="mono" placeholder="owner@example.com" type="email"/>
+        </div>
+        <div>
+          <label for="add-domain">Domain</label>
+          <input id="add-domain" class="mono" placeholder="example.com" autocapitalize="off"/>
+          <div class="notice hidden" id="add-notice"></div>
         </div>
       </div>
-      <div style="height:6px"></div>
-      <button class="btn" id="btnAdd">Add domain</button>
-      <div style="height:6px"></div>
-      <pre class="log" id="add-log">Sign in, then add a domain.</pre>
+      <div class="btn-row">
+        <button class="btn" id="btnAdd">Add Domain</button>
+      </div>
+      <pre class="log mt-md" id="add-log">Sign in, then add a domain.</pre>
 
-      <h4 class="tiny" style="margin-top:10px;color:#c7d0ff">Recent domains</h4>
-      <div id="recentWrap" class="tiny muted">Sign in to see your domains.</div>
+      <details class="mt-md">
+        <summary>Recent domains</summary>
+        <div id="recentWrap" class="tiny muted">Sign in to see your domains.</div>
+      </details>
     </div>
 
     <div class="card">
       <h3>Verify Records</h3>
-      <p class="desc">Checks public DNS. Green means your domain is wired to central controls.</p>
+      <p class="desc">Check if your domain's DNS records are correctly configured for central control.</p>
       <div class="row">
         <div>
-          <label>Domain to check</label>
-          <input id="verify-domain" class="mono" placeholder="example.com"/>
-          <div class="notice tiny" id="verify-notice" style="display:none"></div>
+          <label for="verify-domain">Domain to verify</label>
+          <input id="verify-domain" class="mono" placeholder="example.com" autocapitalize="off"/>
+          <div class="notice hidden" id="verify-notice"></div>
         </div>
-        <div style="flex:0 0 160px; align-self:flex-end"><button class="btn" id="btnVerify">Check</button></div>
+        <div class="action">
+          <button class="btn" id="btnVerify">Verify</button>
+        </div>
       </div>
-      <div style="height:6px"></div>
-      <pre class="log" id="verify-log">Enter a domain → Check.</pre>
+      <pre class="log mt-md" id="verify-log">Enter a domain → Verify.</pre>
     </div>
   </section>
 
   <!-- QUICK CODES + CLOUDFLARE -->
+  <div class="section-title">⚡ Quick Setup</div>
   <section class="grid">
     <div class="card">
-      <h3>Quick‑Codes (one‑time DNS)</h3>
-      <p class="desc">Use if you don’t want to connect a provider account. Paste these at your DNS provider and you’re done.</p>
+      <h3>Quick-Codes</h3>
+      <p class="desc">Get DNS records to copy & paste at your provider. No API tokens needed — works with any registrar.</p>
       <div class="row">
         <div>
-          <label>Domain to secure</label>
-          <input id="qc-domain" class="mono" placeholder="example.com"/>
-          <div class="notice tiny" id="qc-notice" style="display:none"></div>
+          <label for="qc-domain">Domain to secure</label>
+          <input id="qc-domain" class="mono" placeholder="example.com" autocapitalize="off"/>
+          <div class="notice hidden" id="qc-notice"></div>
         </div>
-        <div style="flex:0 0 200px; align-self:flex-end"><button class="btn" id="btnQCodes">Generate Quick‑Codes</button></div>
+        <div class="action">
+          <button class="btn" id="btnQCodes">Generate Codes</button>
+        </div>
       </div>
-      <div style="margin:8px 0">
-        <label class="tiny"><input type="checkbox" id="qc-extras"/> Show optional extras (MTA‑STS &amp; TLS‑RPT)</label>
+      <div class="checkbox-row">
+        <input type="checkbox" id="qc-extras"/>
+        <label for="qc-extras" style="margin:0">Include MTA-STS & TLS-RPT (optional)</label>
       </div>
-      <div style="height:6px"></div>
-      <div id="qc-results" class="tiny muted">Enter a domain → Generate.</div>
-      <div style="height:6px"></div>
-      <button class="btn ghost" id="btnCopyAll">Copy all</button>
+      <div id="qc-results" class="mt-md tiny muted">Enter a domain → Generate.</div>
+      <div class="btn-row">
+        <button class="btn ghost btn-sm" id="btnCopyAll">Copy All Records</button>
+      </div>
     </div>
 
     <div class="card">
-      <h3>Connect Cloudflare (one‑click Protect)</h3>
-      <p class="desc">Paste a Cloudflare API Token (Zone:Read + DNS:Edit). Token is used only for this request.</p>
+      <h3>Cloudflare (One-Click)</h3>
+      <p class="desc">Connect with a Cloudflare API token for automatic protection. Requires Zone:Read + DNS:Edit permissions.</p>
       <div class="row">
-        <div><label>Cloudflare API Token</label><input id="cf-token" class="mono" type="password" placeholder="paste token here"/></div>
-        <div style="flex:0 0 180px; align-self:flex-end"><button class="btn" id="btnCfList">List zones</button></div>
+        <div>
+          <label for="cf-token">Cloudflare API Token</label>
+          <input id="cf-token" class="mono" type="password" placeholder="Paste your token"/>
+        </div>
+        <div class="action">
+          <button class="btn secondary btn-sm" id="btnCfList">List Zones</button>
+        </div>
       </div>
       <div class="row">
-        <div><label>Zone</label><select id="cf-zones"><option value="">— choose a zone —</option></select></div>
-        <div style="flex:0 0 180px; align-self:flex-end"><button class="btn warn" id="btnCfProtect">Protect</button></div>
+        <div>
+          <label for="cf-zones">Select Zone</label>
+          <select id="cf-zones"><option value="">— choose a zone —</option></select>
+        </div>
+        <div class="action">
+          <button class="btn warn btn-sm" id="btnCfProtect">Protect</button>
+        </div>
       </div>
-      <div style="height:6px"></div>
-      <pre class="log tiny" id="cf-log">Paste token → List zones → choose zone → Protect.</pre>
+      <pre class="log mt-md tiny" id="cf-log">Paste token → List zones → Protect.</pre>
 
-      <h4 class="tiny" style="margin-top:10px;color:#c7d0ff">Control‑SPF (_spf.control.domainsafepro.com)</h4>
-      <div class="row">
-        <div style="flex:1 1 100%"><button class="btn secondary" id="btnSpfLoad">Load current</button></div>
-        <div style="flex:1 1 100%"><button class="btn secondary" id="btnSpfUpdate">Update control SPF</button></div>
-      </div>
-      <div class="row">
-        <div><label>Current / Desired value</label><textarea id="spf-value" class="mono" spellcheck="false"></textarea></div>
-      </div>
+      <details class="mt-md">
+        <summary>Control SPF Management</summary>
+        <div>
+          <div class="row">
+            <button class="btn secondary btn-sm" id="btnSpfLoad">Load Current</button>
+            <button class="btn secondary btn-sm" id="btnSpfUpdate">Update SPF</button>
+          </div>
+          <div class="row mt-sm">
+            <div>
+              <label for="spf-value">SPF Value</label>
+              <textarea id="spf-value" class="mono" spellcheck="false" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+      </details>
     </div>
   </section>
 
-  <!-- ROUTE 53 + POLICY STEP‑UP -->
+  <!-- ROUTE 53 + POLICY STEP-UP -->
+  <div class="section-title">🔧 Advanced Configuration</div>
   <section class="grid">
     <div class="card">
-      <h3>Connect AWS Route 53 (one‑click Protect)</h3>
-      <p class="desc">Use an IAM user limited to Route 53. Keys are used only for this request.</p>
+      <h3>AWS Route 53 (One-Click)</h3>
+      <p class="desc">Connect with AWS IAM credentials for automatic protection. Requires Route 53 permissions.</p>
       <div class="row">
-        <div><label>AWS Access Key ID</label><input id="r53-ak" class="mono" placeholder="AKIA…"/></div>
-        <div><label>AWS Secret Access Key</label><input id="r53-sk" class="mono" type="password" placeholder="(paste secret)"/></div>
+        <div>
+          <label for="r53-ak">AWS Access Key ID</label>
+          <input id="r53-ak" class="mono" placeholder="AKIA…"/>
+        </div>
+        <div>
+          <label for="r53-sk">AWS Secret Access Key</label>
+          <input id="r53-sk" class="mono" type="password" placeholder="Secret key"/>
+        </div>
       </div>
       <div class="row">
-        <div><label>Hosted zone</label><select id="r53-zones"><option value="">— choose a hosted zone —</option></select></div>
-        <div style="flex:0 0 180px; align-self:flex-end"><button class="btn warn" id="btnR53Protect">Protect</button></div>
+        <div>
+          <label for="r53-zones">Hosted Zone</label>
+          <select id="r53-zones"><option value="">— choose a hosted zone —</option></select>
+        </div>
+        <div class="action">
+          <button class="btn warn btn-sm" id="btnR53Protect">Protect</button>
+        </div>
       </div>
-      <div style="height:6px"></div>
-      <pre class="log tiny" id="r53-log">Paste keys → List hosted zones → choose one → Protect.</pre>
+      <pre class="log mt-md tiny" id="r53-log">Paste keys → Zone auto-loads → Protect.</pre>
     </div>
 
     <div class="card">
-      <h3>DMARC Policy Step‑Up (None → Quarantine → Reject)</h3>
-      <p class="desc">Start safe (<code>p=none</code>), then raise to <code>quarantine</code> (percentage), finally <code>reject</code>. Robot writes TXT at <code>_dmarc.&lt;domain&gt;</code>.</p>
+      <h3>DMARC Policy Step-Up</h3>
+      <p class="desc">Graduate from monitoring to enforcement. Start with <code>none</code>, then move to <code>quarantine</code>, and finally <code>reject</code>.</p>
       <div class="row">
-        <div><label>Domain</label><input id="pol-domain" class="mono" placeholder="example.com"/></div>
-        <div><label>Policy</label>
-          <select id="pol-policy"><option>none</option><option>quarantine</option><option>reject</option></select>
+        <div>
+          <label for="pol-domain">Domain</label>
+          <input id="pol-domain" class="mono" placeholder="example.com"/>
         </div>
-        <div><label>PCT</label><input id="pol-pct" type="number" min="1" max="100" value="100"/></div>
-        <div><label>adkim</label><select id="pol-adkim"><option>s</option><option>r</option></select></div>
-        <div><label>aspf</label><select id="pol-aspf"><option>s</option><option>r</option></select></div>
+        <div class="narrow">
+          <label for="pol-policy">Policy</label>
+          <select id="pol-policy">
+            <option>none</option>
+            <option>quarantine</option>
+            <option>reject</option>
+          </select>
+        </div>
+        <div class="narrow">
+          <label for="pol-pct">PCT</label>
+          <input id="pol-pct" type="number" min="1" max="100" value="100"/>
+        </div>
       </div>
       <div class="row">
-        <div><label>rua</label><input id="pol-rua" value="mailto:dmarc@domainsafepro.com"/></div>
-        <div><label>fo</label><input id="pol-fo" value="1"/></div>
-        <div><label>sp (optional)</label><input id="pol-sp" placeholder=""/></div>
+        <div class="narrow">
+          <label for="pol-adkim">adkim</label>
+          <select id="pol-adkim"><option>s</option><option>r</option></select>
+        </div>
+        <div class="narrow">
+          <label for="pol-aspf">aspf</label>
+          <select id="pol-aspf"><option>s</option><option>r</option></select>
+        </div>
+        <div>
+          <label for="pol-rua">rua</label>
+          <input id="pol-rua" value="mailto:dmarc@domainsafepro.com"/>
+        </div>
       </div>
       <div class="row">
-        <button class="btn secondary" id="btnPolPreview">Preview decision</button>
-        <button class="btn" id="btnApplyCf">Apply via Cloudflare</button>
-        <button class="btn" id="btnApplyR53">Apply via Route 53</button>
-        <button class="btn secondary" id="btnEvaluateNow">Evaluate now (engine)</button>
+        <div class="narrow">
+          <label for="pol-fo">fo</label>
+          <input id="pol-fo" value="1"/>
+        </div>
+        <div>
+          <label for="pol-sp">sp (subdomain policy)</label>
+          <input id="pol-sp" placeholder="Optional"/>
+        </div>
       </div>
-      <div style="height:6px"></div>
-      <pre id="pol-out" class="log tiny">Use Preview, then Apply via CF or R53. For “other DNS”, copy the TXT from Preview.</pre>
+      <div class="btn-row">
+        <button class="btn secondary btn-sm" id="btnPolPreview">Preview</button>
+        <button class="btn btn-sm" id="btnApplyCf">Apply via Cloudflare</button>
+        <button class="btn btn-sm" id="btnApplyR53">Apply via Route 53</button>
+        <button class="btn ghost btn-sm" id="btnEvaluateNow">Evaluate Engine</button>
+      </div>
+      <pre id="pol-out" class="log mt-md tiny">Preview first, then apply.</pre>
     </div>
   </section>
 
   <!-- CONTROL SPF BUILDER + INSIGHTS -->
+  <div class="section-title">📊 Central Control & Insights</div>
   <section class="grid">
     <div class="card">
-      <h3>Control SPF (central include for all protected domains)</h3>
-      <p class="desc">Choose senders and update <code>_spf.control.domainsafepro.com</code> once. All protected domains inherit it.</p>
+      <h3>Central SPF Manager</h3>
+      <p class="desc">Manage <code>_spf.control.domainsafepro.com</code>. All protected domains inherit these senders.</p>
 
-      <div class="row tiny" style="gap:12px">
+      <div class="spf-grid">
         <label><input type="checkbox" class="spf-sel" value="google"/> Google Workspace</label>
         <label><input type="checkbox" class="spf-sel" value="m365"/> Microsoft 365</label>
         <label><input type="checkbox" class="spf-sel" value="sendgrid"/> SendGrid</label>
@@ -458,96 +1203,117 @@
       </div>
 
       <div class="row">
-        <div><label>Preview (TXT for <span class="mono">_spf.control.domainsafepro.com</span>)</label>
+        <div>
+          <label for="spf-preview">Generated SPF Record</label>
           <input id="spf-preview" class="mono" value="v=spf1 ~all" readonly/>
         </div>
       </div>
 
       <div class="row">
-        <div><label>Cloudflare API Token (Zone:Read + DNS:Edit on <span class="mono">domainsafepro.com</span>)</label>
-          <input id="spf-token" class="mono" type="password" placeholder="paste token here"/>
+        <div>
+          <label for="spf-token">Cloudflare API Token (for domainsafepro.com)</label>
+          <input id="spf-token" class="mono" type="password" placeholder="Paste token"/>
         </div>
       </div>
 
-      <div class="row">
-        <button class="btn" id="btnSpfLoad2">Load current</button>
-        <button class="btn" id="btnSpfUpdate2">Update control SPF</button>
+      <div class="btn-row">
+        <button class="btn secondary btn-sm" id="btnSpfLoad2">Load Current</button>
+        <button class="btn btn-sm" id="btnSpfUpdate2">Update Central SPF</button>
       </div>
-
-      <div style="height:6px"></div>
-      <pre class="log tiny" id="spf-log2">Use “Load current” to see existing value, select senders, then “Update”.</pre>
+      <pre class="log mt-md tiny" id="spf-log2">Select senders → Update.</pre>
     </div>
 
     <div class="card">
       <h3>DMARC Insights</h3>
-      <p class="desc">Pull fresh aggregate XMLs and show daily alignment summaries (7/30 days).</p>
+      <p class="desc">View aggregate report data — daily alignment rates over 7 or 30 days.</p>
       <div class="row">
-        <div style="flex:0 0 200px"><button class="btn" id="btnIngest">Ingest latest 20</button></div>
-        <div style="flex:1">
-          <label>Domain</label>
+        <div class="narrow">
+          <button class="btn secondary btn-sm" id="btnIngest">Ingest Latest</button>
+        </div>
+        <div>
+          <label for="ins-domain">Domain</label>
           <input id="ins-domain" class="mono" value="domainsafepro.com"/>
         </div>
-        <div style="flex:0 0 140px; align-self:flex-end">
-          <button class="btn secondary" id="btnLoad7">Load 7‑day</button>
+        <div class="action">
+          <button class="btn secondary btn-sm" id="btnLoad7">7 Days</button>
         </div>
-        <div style="flex:0 0 140px; align-self:flex-end">
-          <button class="btn secondary" id="btnLoad30">Load 30‑day</button>
+        <div class="action">
+          <button class="btn secondary btn-sm" id="btnLoad30">30 Days</button>
         </div>
       </div>
-      <div style="height:6px"></div>
-      <div id="ins-summary" class="tiny muted">—</div>
-      <div style="height:6px"></div>
-      <table id="ins-table" style="display:none">
-        <thead>
-          <tr><th>Date</th><th>Total</th><th>Aligned</th><th>Aligned&nbsp;%</th><th style="width:160px">Trend</th></tr>
-        </thead>
-        <tbody id="ins-rows"></tbody>
-      </table>
-      <div style="height:6px"></div>
-      <div id="ins-wrap" class="tiny muted">—</div>
+      <div id="ins-summary" class="mt-md tiny muted">—</div>
+      <div class="mt-md table-wrap">
+        <table id="ins-table" class="hidden">
+          <thead>
+            <tr><th>Date</th><th>Total</th><th>Aligned</th><th>Rate</th><th>Trend</th></tr>
+          </thead>
+          <tbody id="ins-rows"></tbody>
+        </table>
+      </div>
+      <pre id="ins-wrap" class="log mt-md tiny hidden">—</pre>
     </div>
   </section>
 
   <!-- ALERTS -->
-  <section class="card">
-    <h3>Alerts</h3>
-    <p class="desc">Send a test to Slack, then flush queued messages.</p>
-    <div class="row">
-      <button class="btn" id="btnAlertTest">Send test alert</button>
-      <button class="btn secondary" id="btnAlertFlush">Flush alerts</button>
+  <section class="grid full">
+    <div class="card">
+      <h3>Alerts & Notifications</h3>
+      <p class="desc">Test Slack integration and manage alert queue.</p>
+      <div class="btn-row">
+        <button class="btn btn-sm" id="btnAlertTest">Send Test Alert</button>
+        <button class="btn secondary btn-sm" id="btnAlertFlush">Flush Queue</button>
+      </div>
+      <pre class="log mt-md tiny" id="alerts-out">—</pre>
     </div>
-    <div style="height:6px"></div>
-    <pre class="log tiny" id="alerts-out">—</pre>
   </section>
 
   <!-- DOCS -->
-  <section class="card">
-    <h3>Docs (short &amp; practical)</h3>
-    <p class="desc">
-      <strong>Option A — Quick‑Codes (copy‑paste at your DNS provider)</strong><br/>
-      Enter your domain in Quick‑Codes → Generate. Copy each required row and paste at your DNS provider (TXT/CNAME records).  
-      (Optional) tick “Show optional extras” and add those too. Go to Verify → Check → expect all green.
-    </p>
-    <p class="desc">
-      <strong>Option B — Connect Cloudflare (one‑click)</strong><br/>
-      Cloudflare → API Tokens → Create Token (Zone:Read + DNS:Edit). Paste token here → List zones → choose zone → Protect. Use Verify to confirm.
-    </p>
-    <p class="desc">
-      <strong>Option C — Connect AWS Route 53 (one‑click)</strong><br/>
-      AWS IAM → create user with Route 53. Create access key → paste here → List hosted zones → choose → Protect. Use Verify to confirm.
-    </p>
-    <p class="desc">
-      <strong>What the robot sets</strong><br/>
-      SPF TXT at apex: <span class="mono">v=spf1 include:_spf.control.domainsafepro.com ~all</span><br/>
-      DKIM CNAMEs: <span class="mono">s1._domainkey</span> and <span class="mono">s2._domainkey</span> → central keys<br/>
-      DMARC TXT at <span class="mono">_dmarc</span>: start in monitor mode (<span class="mono">p=none</span>)<br/>
-      Extras (optional): <span class="mono">mta-sts</span> CNAME and <span class="mono">_smtp._tls</span> TXT for TLS reporting
-    </p>
+  <section class="grid full">
+    <div class="card">
+      <h3>Quick Reference</h3>
+      <div class="docs-content">
+        <strong>Option A — Quick-Codes (Copy & Paste)</strong>
+        <p>Enter your domain in Quick-Codes → Generate. Copy each record and paste at your DNS provider. Verify → Check to confirm (all should be green).</p>
+
+        <strong>Option B — Cloudflare (One-Click)</strong>
+        <p>Create a Cloudflare API Token (Zone:Read + DNS:Edit). Paste here → List Zones → Select → Protect. Use Verify to confirm.</p>
+
+        <strong>Option C — AWS Route 53 (One-Click)</strong>
+        <p>Create IAM user with Route 53 access. Paste keys → Select hosted zone → Protect. Use Verify to confirm.</p>
+
+        <strong>What Gets Configured</strong>
+        <p>
+          <span class="mono">SPF</span> — <code>v=spf1 include:_spf.control.domainsafepro.com ~all</code><br>
+          <span class="mono">DKIM</span> — <code>s1._domainkey</code> and <code>s2._domainkey</code> CNAMEs to central keys<br>
+          <span class="mono">DMARC</span> — Starts in monitor mode (<code>p=none</code>), step up when ready<br>
+          <span class="mono">Extras</span> — MTA-STS CNAME and TLS-RPT TXT for enhanced security
+        </p>
+      </div>
+    </div>
   </section>
+
+  <footer class="console-footer">
+    <a href="https://domainsafepro.com" target="_blank">DomainSafePro</a> — Email Authentication on Autopilot
+  </footer>
 
 </main>
 
 <script>
+/* ====== Theme Toggle ====== */
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  try { localStorage.setItem('dsp-theme', next); } catch(e){}
+}
+(function(){
+  try {
+    const saved = localStorage.getItem('dsp-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  } catch(e){}
+})();
+
 /* ====== Real endpoints (no placeholders) ====== */
 const ROBOT_API = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 const DMARC_API = "https://api.domainsafepro.com";
@@ -555,8 +1321,11 @@ const AUTH_API  = "https://domainsafe-robot.pankajonlinerepository.workers.dev";
 
 /* ====== Tiny helpers ====== */
 const $ = sel => document.querySelector(sel);
+const $$ = sel => document.querySelectorAll(sel);
 const logEl = (sel, v) => { const el = $(sel); if (!el) return; el.textContent = (typeof v === "string") ? v : JSON.stringify(v, null, 2); };
 const copy = txt => { if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(()=>{}); };
+const show = el => { if (el) el.classList.remove('hidden'); };
+const hide = el => { if (el) el.classList.add('hidden'); };
 
 function sanitizeDomain(raw){
   return (raw||"").trim().toLowerCase()
@@ -588,12 +1357,12 @@ function normalizeForUI(raw, noticeEl, errorEl, opts){
   if (!isValidHostname(typed)){
     if (errorEl){
       errorEl.textContent = "Invalid hostname: use letters, digits and hyphens only; no underscores; no trailing dot.";
-      errorEl.style.display = "";
+      show(errorEl);
     }
-    if (noticeEl) noticeEl.style.display = "none";
+    if (noticeEl) hide(noticeEl);
     return { ok:false, value:typed, apex:"", changed:false };
   }
-  if (errorEl) errorEl.style.display = "none";
+  if (errorEl) hide(errorEl);
   const apex = apexify(typed);
   let value = apex, changed = false;
   if (options.allowExact && $("#chk-exact") && $("#chk-exact").checked){
@@ -604,9 +1373,9 @@ function normalizeForUI(raw, noticeEl, errorEl, opts){
   if (noticeEl){
     if (changed){
       noticeEl.innerHTML = 'Using apex <span class="mono">'+apex+'</span> (from <span class="mono">'+typed+'</span>).';
-      noticeEl.style.display = "";
+      show(noticeEl);
     } else {
-      noticeEl.style.display = "none";
+      hide(noticeEl);
     }
   }
   return { ok:true, value, apex, changed, typed };
@@ -670,8 +1439,16 @@ function startGoogleLogin(){
 function showAuthedUI(user){
   document.body.classList.add("authed");
   const label = $("#auth-status-label");
+  const loginBtn = $("#auth-login-btn");
   if (label && user && user.email){
-    label.textContent = "Signed in as " + user.email;
+    label.textContent = user.email;
+  }
+  if (loginBtn) {
+    loginBtn.textContent = "Sign out";
+    loginBtn.onclick = () => {
+      document.body.classList.remove("authed");
+      showLoggedOutUI();
+    };
   }
   const statusRows = $("#statusRows");
   if (statusRows){
@@ -684,7 +1461,12 @@ function showAuthedUI(user){
 function showLoggedOutUI(){
   document.body.classList.remove("authed");
   const label = $("#auth-status-label");
+  const loginBtn = $("#auth-login-btn");
   if (label) label.textContent = "Not signed in";
+  if (loginBtn) {
+    loginBtn.textContent = "Sign in with Google";
+    loginBtn.onclick = startGoogleLogin;
+  }
   const statusRows = $("#statusRows");
   if (statusRows){
     statusRows.innerHTML = '<tr><td colspan="7" class="muted">Sign in to see your connected domains.</td></tr>';
@@ -709,8 +1491,8 @@ async function initAuth(){
 /* ====== STATUS & MONITOR ====== */
 function pill(ok){
   return ok
-    ? '<span class="pill ok">OK</span>'
-    : '<span class="pill bad">Needs fix</span>';
+    ? '<span class="pill ok">✓ OK</span>'
+    : '<span class="pill bad">✗ Fix</span>';
 }
 
 async function loadStatus(){
@@ -726,17 +1508,17 @@ async function loadStatus(){
     }
     tb.innerHTML = rows.map(r => (
       '<tr>' +
-        '<td class="mono">'+(r.domain_name||"")+'</td>' +
-        '<td class="mono">'+(r.email||"")+'</td>' +
-        '<td>'+pill(r.spf_ok)+'</td>' +
-        '<td>'+pill(r.dmarc_ok)+'</td>' +
-        '<td>'+pill(r.dkim_s1_ok)+'</td>' +
-        '<td>'+pill(r.dkim_s2_ok)+'</td>' +
-        '<td class="tiny muted">'+(r.checked_at||"")+'</td>' +
+        '<td data-label="Domain" class="mono">'+(r.domain_name||"")+'</td>' +
+        '<td data-label="Owner" class="mono tiny">'+(r.email||"")+'</td>' +
+        '<td data-label="SPF">'+pill(r.spf_ok)+'</td>' +
+        '<td data-label="DMARC">'+pill(r.dmarc_ok)+'</td>' +
+        '<td data-label="DKIM s1">'+pill(r.dkim_s1_ok)+'</td>' +
+        '<td data-label="DKIM s2">'+pill(r.dkim_s2_ok)+'</td>' +
+        '<td data-label="Checked" class="tiny muted">'+(r.checked_at||"")+'</td>' +
       '</tr>'
     )).join("");
   }catch(e){
-    tb.innerHTML = '<tr><td colspan="7" class="tiny" style="color:#ff9f9f">Error loading status: '+String(e).slice(0,240)+'</td></tr>';
+    tb.innerHTML = '<tr><td colspan="7" class="tiny danger">Error loading status: '+String(e).slice(0,240)+'</td></tr>';
   }
 }
 $("#btnStatus").addEventListener("click", loadStatus);
@@ -747,8 +1529,8 @@ $("#btnMonitor").addEventListener("click", async ()=>{
 
 /* ====== CHECK (score + badges) ====== */
 function badgeHtml(label, state, detail){
-  let cls="bad", icon="✖";
-  if (state===true || state==="ok"){ cls="ok"; icon="✔"; }
+  let cls="bad", icon="✗";
+  if (state===true || state==="ok"){ cls="ok"; icon="✓"; }
   else if (state==="warn"){ cls="warn"; icon="⚠"; }
   const extra = detail ? ' <span class="tiny muted">'+detail+'</span>' : "";
   return '<span class="badge '+cls+'">'+icon+" "+label+extra+"</span>";
@@ -780,15 +1562,15 @@ $("#btnCheck").addEventListener("click", async ()=>{
     const origin = res.origin || "—";
     const applied = res.appliedPolicy || res.policy || "—";
     const sp = (res.sp || "").toString();
-    $("#resRow").innerHTML = 'Origin: <b>'+origin+'</b>' + (sp ? ' (apex sp='+sp+')' : '') + ' · Applied policy: <b>'+applied+'</b>';
+    $("#resRow").innerHTML = 'Origin: <strong>'+origin+'</strong>' + (sp ? ' (apex sp='+sp+')' : '') + ' · Applied: <strong>'+applied+'</strong>';
 
     $("#dohDMARC").textContent = (j.doh && j.doh._dmarc) || "—";
     $("#dohTLS").textContent   = (j.doh && j.doh._smtp__tls) || "—";
     $("#dohSTS").textContent   = (j.doh && j.doh.mta_sts) || "—";
 
-    $("#tips").innerHTML = (j.tips || []).map(t => '<div class="notice tiny">'+t+'</div>').join("") || "—";
+    $("#tips").innerHTML = (j.tips || []).map(t => '<div class="notice info tiny">'+t+'</div>').join("") || "—";
     $("#checkRaw").textContent = JSON.stringify(j, null, 2);
-    $("#checkOut").style.display = "";
+    show($("#checkOut"));
 
     if ($("#chk-legacy").checked){
       const status = await get(ROBOT_API + "/api/status?domain=" + encodeURIComponent(dom));
@@ -808,15 +1590,15 @@ $("#btnCheck").addEventListener("click", async ()=>{
         }
       };
       $("#legacyRaw").textContent = JSON.stringify(legacy, null, 2);
-      $("#legacyOut").style.display = "";
+      show($("#legacyOut"));
     } else {
-      $("#legacyOut").style.display = "none";
+      hide($("#legacyOut"));
     }
 
   }catch(e){
     $("#checkRaw").textContent = "Error: " + String(e);
-    $("#checkOut").style.display = "";
-    $("#legacyOut").style.display = "none";
+    show($("#checkOut"));
+    hide($("#legacyOut"));
   }
 });
 
@@ -832,7 +1614,7 @@ async function refreshRecent(){
       return;
     }
     wrap.innerHTML = rows.slice(0,10).map(r =>
-      '<div class="mono">'+(r.domain_name || "")+' <span class="muted">— '+(r.status || "")+(r.created_at ? " — "+r.created_at : "")+'</span></div>'
+      '<div class="mono" style="margin-bottom:6px">'+(r.domain_name || "")+' <span class="muted">— '+(r.status || "")+(r.created_at ? " — "+r.created_at : "")+'</span></div>'
     ).join("");
   }catch(e){
     wrap.textContent = "Unable to load domains: " + String(e).slice(0,200);
@@ -873,7 +1655,7 @@ $("#btnVerify").addEventListener("click", async ()=>{
   }
 });
 
-/* ====== QUICK‑CODES ====== */
+/* ====== QUICK-CODES ====== */
 $("#btnQCodes").addEventListener("click", async ()=>{
   const norm = normalizeForUI($("#qc-domain").value, $("#qc-notice"), null);
   if (!norm.ok){
@@ -894,7 +1676,13 @@ $("#btnQCodes").addEventListener("click", async ()=>{
 
 $("#btnCopyAll").addEventListener("click", ()=>{
   const pre = $("#qc-results").querySelector("pre");
-  if (pre) copy(pre.textContent);
+  if (pre) {
+    copy(pre.textContent);
+    const btn = $("#btnCopyAll");
+    const oldText = btn.textContent;
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.textContent = oldText; }, 2000);
+  }
 });
 
 /* ====== CLOUDFLARE ====== */
@@ -1006,7 +1794,7 @@ $("#btnR53Protect").addEventListener("click", async ()=>{
   }
 });
 
-/* ====== POLICY STEP‑UP ====== */
+/* ====== POLICY STEP-UP ====== */
 $("#btnPolPreview").addEventListener("click", async ()=>{
   const d = ($("#pol-domain").value || "").trim();
   if (!d){
@@ -1061,7 +1849,7 @@ $("#btnApplyR53").addEventListener("click", async ()=>{
     return;
   }
   if (!body.hosted_zone_id){
-    logEl("#pol-out","Pick a Route 53 hosted zone (top-left panel).");
+    logEl("#pol-out","Pick a Route 53 hosted zone (above).");
     return;
   }
   try{
@@ -1152,7 +1940,7 @@ function renderRollup(j){
   const body  = $("#ins-rows");
   const summary = $("#ins-summary");
   if (!rows.length){
-    table.style.display = "none";
+    hide(table);
     summary.textContent = "No data yet for this window.";
     return;
   }
@@ -1162,36 +1950,39 @@ function renderRollup(j){
     return acc;
   }, {total:0,aligned:0});
   const rate = pct(totals.aligned, totals.total);
-  summary.innerHTML = "<strong>"+j.domain+"</strong> — "+j.days+"‑day totals: <strong>"+fmt(totals.total)+"</strong> msgs, <strong style=\"color:#8be8bd\">"+fmt(totals.aligned)+"</strong> aligned (<strong style=\"color:#8be8bd\">"+rate+"%</strong>)";
+  summary.innerHTML = "<strong>"+j.domain+"</strong> — "+j.days+"‑day totals: <strong>"+fmt(totals.total)+"</strong> msgs, <strong style=\"color:var(--ok)\">"+fmt(totals.aligned)+"</strong> aligned (<strong style=\"color:var(--ok)\">"+rate+"%</strong>)";
   body.innerHTML = "";
   rows.forEach(r=>{
     const p = pct(r.aligned || 0, r.total || 0);
     const tr = document.createElement("tr");
     tr.innerHTML =
-      '<td class="mono">'+r.date+'</td>'+
-      '<td>'+fmt(r.total || 0)+'</td>'+
-      '<td>'+fmt(r.aligned || 0)+'</td>'+
-      '<td>'+p+'%</td>'+
-      '<td><div class="bar"><i style="width:'+Math.min(100,p)+'%"></i></div><div class="rowstats">'+
+      '<td data-label="Date" class="mono">'+r.date+'</td>'+
+      '<td data-label="Total">'+fmt(r.total || 0)+'</td>'+
+      '<td data-label="Aligned">'+fmt(r.aligned || 0)+'</td>'+
+      '<td data-label="Rate">'+p+'%</td>'+
+      '<td data-label="Trend"><div class="bar"><i style="width:'+Math.min(100,p)+'%"></i></div><div class="tiny muted" style="margin-top:4px">'+
       (r.spf_aligned!=null && r.dkim_aligned!=null ? ("SPF "+fmt(r.spf_aligned)+" · DKIM "+fmt(r.dkim_aligned)) : "")+
       '</div></td>';
     body.appendChild(tr);
   });
-  table.style.display = "";
+  show(table);
 }
 
 async function loadRoll(days){
   const norm = normalizeForUI($("#ins-domain").value, null, null);
   if (!norm.ok){
     $("#ins-wrap").textContent = "Enter a valid domain first.";
+    show($("#ins-wrap"));
     return;
   }
   try{
     const j = await get(ROBOT_API + "/api/rollup?domain=" + encodeURIComponent(norm.apex || norm.value) + "&days=" + days);
     $("#ins-wrap").textContent = JSON.stringify(j, null, 2);
+    show($("#ins-wrap"));
     renderRollup({domain: j.domain || (norm.apex || norm.value), days: days, series: j.series || []});
   }catch(e){
     $("#ins-wrap").textContent = String(e);
+    show($("#ins-wrap"));
   }
 }
 
@@ -1202,8 +1993,10 @@ $("#btnIngest").addEventListener("click", async ()=>{
   try{
     const j = await post(DMARC_API + "/api/dmarc/ingest-latest", {limit:25});
     $("#ins-wrap").textContent = JSON.stringify(j, null, 2);
+    show($("#ins-wrap"));
   }catch(e){
     $("#ins-wrap").textContent = String(e);
+    show($("#ins-wrap"));
   }
 });
 
