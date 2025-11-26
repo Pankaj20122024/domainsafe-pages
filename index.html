@@ -448,6 +448,11 @@ main {
   width: 28px;
   height: 28px;
 }
+.card h3 .card-icon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
 .card .desc {
   color: var(--fg-muted);
   font-size: 15px;
@@ -501,8 +506,8 @@ main {
   height: 100%;
 }
 .route-card .route-icon img {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
 }
 .route-card h4 {
@@ -581,6 +586,27 @@ select {
   color: var(--fg-muted);
 }
 .checkbox-row input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+/* SPF Builder checkboxes */
+.spf-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-bottom: 16px;
+}
+.spf-checkboxes label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--fg);
+  cursor: pointer;
+  margin-bottom: 0;
+}
+.spf-checkboxes input[type="checkbox"] {
   width: auto;
   margin: 0;
 }
@@ -919,6 +945,45 @@ details[open] summary {
   color: var(--fg);
 }
 
+/* ========== INSIGHTS SECTION ========== */
+.insights-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+/* Insights alignment bars */
+.ins-bar {
+  height: 10px;
+  background: var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  min-width: 100px;
+}
+.ins-bar > i {
+  display: block;
+  height: 100%;
+  background: var(--ok);
+  border-radius: 6px;
+}
+.ins-stats {
+  font-size: 12px;
+  color: var(--fg-muted);
+  margin-top: 4px;
+}
+.ins-summary-stat {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  margin-right: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.ins-summary-stat strong {
+  color: var(--ok);
+}
+
 /* ========== ADMIN SECTION ========== */
 .admin-section {
   margin-top: 40px;
@@ -1140,7 +1205,7 @@ details[open] summary {
   <section class="grid three" id="route-selection">
     <div class="route-card" data-route="cloudflare" onclick="selectRoute('cloudflare')">
       <div class="route-icon">
-        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174230/cloudflare_transparent_cci2hq.png" alt="" style="width:48px;height:48px;object-fit:contain;"/>
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174230/cloudflare_transparent_cci2hq.png" alt=""/>
       </div>
       <h4>Cloudflare</h4>
       <p>I manage my DNS through Cloudflare.</p>
@@ -1148,7 +1213,7 @@ details[open] summary {
     </div>
     <div class="route-card" data-route="route53" onclick="selectRoute('route53')">
       <div class="route-icon">
-        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174236/ChatGPT_Image_Nov_26_2025_09_03_47_PM_yjbzqf.png" alt="" style="width:48px;height:48px;object-fit:contain;"/>
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174236/ChatGPT_Image_Nov_26_2025_09_03_47_PM_yjbzqf.png" alt=""/>
       </div>
       <h4>AWS Route 53</h4>
       <p>I manage my DNS through AWS.</p>
@@ -1156,7 +1221,7 @@ details[open] summary {
     </div>
     <div class="route-card" data-route="manual" onclick="selectRoute('manual')">
       <div class="route-icon">
-        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764176078/ChatGPT_Image_Nov_26_2025_10_24_10_PM_xcgbrm.png" alt="" style="width:48px;height:48px;object-fit:contain;"/>
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764176078/ChatGPT_Image_Nov_26_2025_10_24_10_PM_xcgbrm.png" alt=""/>
       </div>
       <h4>Other Provider</h4>
       <p>GoDaddy, Namecheap, Google Domains, or another registrar.</p>
@@ -1174,15 +1239,7 @@ details[open] summary {
       <div class="card highlight">
         <h3>
           <span class="card-icon">
-            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="cf-card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#F6821F"/>
-                  <stop offset="100%" style="stop-color:#FAAD3F"/>
-                </linearGradient>
-              </defs>
-              <path fill="url(#cf-card-grad)" d="M19.5,19.8H6.8c-0.2,0-0.3-0.1-0.3-0.3c0-0.2,0-0.3,0.2-0.4l1.5-0.9c0.3-0.2,0.6-0.3,0.9-0.3h9.9c2.3,0,4.2-1.6,4.6-3.8c0.2-1.3-0.1-2.6-1-3.5c-0.8-1-2-1.5-3.3-1.5h-0.3c-0.1,0-0.3-0.1-0.3-0.2c-0.7-2.1-2.7-3.5-4.9-3.5c-2.4,0-4.5,1.7-5.1,4c0,0.1-0.1,0.2-0.3,0.2c-1.1,0-2.1,0.5-2.8,1.4c-0.7,0.8-1,1.9-0.9,3c0.2,2,2,3.4,4,3.4h0.1c0.2,0,0.3,0.1,0.3,0.3c0,0.2,0,0.3-0.2,0.4l-1.5,0.9c-0.3,0.2-0.6,0.3-0.9,0.3h-0.1c-3.2,0-5.9-2.4-6.2-5.5c-0.2-1.7,0.3-3.4,1.4-4.8c1-1.2,2.4-2,4-2.2C6.5,3.9,9.5,1.7,13,1.7c3.1,0,5.9,1.8,7.2,4.6h0.2c2,0,3.9,0.9,5.2,2.4c1.3,1.5,1.8,3.4,1.5,5.4C26.6,17.6,23.3,19.8,19.5,19.8z"/>
-            </svg>
+            <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174230/cloudflare_transparent_cci2hq.png" alt="" style="width:28px;height:28px;object-fit:contain;"/>
           </span>
           Connect Your Cloudflare Account
         </h3>
@@ -1236,18 +1293,7 @@ details[open] summary {
       <div class="card highlight">
         <h3>
           <span class="card-icon">
-            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="aws-card-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" style="stop-color:#8C4FFF"/>
-                  <stop offset="100%" style="stop-color:#5829A7"/>
-                </linearGradient>
-              </defs>
-              <rect x="2" y="2" width="24" height="24" rx="2" fill="url(#aws-card-grad)"/>
-              <circle cx="14" cy="14" r="8" fill="none" stroke="#fff" stroke-width="1.5"/>
-              <circle cx="14" cy="14" r="5" fill="none" stroke="#fff" stroke-width="1.5"/>
-              <circle cx="14" cy="14" r="2" fill="#fff"/>
-            </svg>
+            <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174236/ChatGPT_Image_Nov_26_2025_09_03_47_PM_yjbzqf.png" alt="" style="width:28px;height:28px;object-fit:contain;"/>
           </span>
           Connect Your AWS Account
         </h3>
@@ -1394,10 +1440,57 @@ details[open] summary {
     </div>
   </section>
 
+  <!-- ========== DMARC INSIGHTS (User-visible for active plans) ========== -->
+  <div class="insights-section" id="insights-section">
+    <section class="grid full">
+      <div class="card">
+        <h3><span class="card-icon">📊</span> DMARC Insights</h3>
+        <p class="desc">See who is sending email as your domain and whether they are passing authentication. This data comes from DMARC aggregate reports.</p>
+        
+        <div class="row">
+          <div>
+            <label for="ins-domain">Domain to analyze</label>
+            <input id="ins-domain" class="mono" placeholder="yourdomain.com" autocapitalize="off"/>
+          </div>
+          <div class="action">
+            <button class="btn secondary btn-sm" id="btnLoad7">Last 7 Days</button>
+          </div>
+          <div class="action">
+            <button class="btn secondary btn-sm" id="btnLoad30">Last 30 Days</button>
+          </div>
+        </div>
+        
+        <div id="ins-summary" class="mt-md tiny muted">Enter a domain and select a time range to view insights.</div>
+        
+        <div class="table-wrap">
+          <table id="ins-table" style="display:none">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Total Emails</th>
+                <th>Aligned</th>
+                <th>Aligned %</th>
+                <th style="min-width:140px">Trend</th>
+              </tr>
+            </thead>
+            <tbody id="ins-rows"></tbody>
+          </table>
+        </div>
+        
+        <details class="mt-md">
+          <summary>View raw data</summary>
+          <div>
+            <pre id="ins-wrap" class="log tiny">—</pre>
+          </div>
+        </details>
+      </div>
+    </section>
+  </div>
+
   <!-- ============================================================ -->
   <!-- ADMIN / OWNER SECTION (Collapsible) -->
   <!-- ============================================================ -->
-  <div class="admin-section">
+  <div class="admin-section" id="admin-section">
     <div class="admin-header">
       <h2><span>🔧</span> Admin Tools</h2>
       <div class="admin-toggle" id="admin-toggle" onclick="toggleAdmin()">
@@ -1465,6 +1558,150 @@ details[open] summary {
             <summary>View registered domains</summary>
             <div id="recentWrap" class="tiny muted">Loading...</div>
           </details>
+        </div>
+      </section>
+
+      <!-- DMARC POLICY STEP-UP -->
+      <div class="section-title"><span class="icon">📈</span> DMARC Policy Step-Up</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Adjust DMARC Policy</h3>
+          <p class="desc">Progress from monitoring (<code>p=none</code>) to quarantine to full rejection. Start safe, then tighten as alignment improves.</p>
+          
+          <div class="row">
+            <div>
+              <label for="pol-domain">Domain</label>
+              <input id="pol-domain" class="mono" placeholder="example.com"/>
+            </div>
+            <div class="narrow">
+              <label for="pol-policy">Policy</label>
+              <select id="pol-policy">
+                <option value="none">none (monitor)</option>
+                <option value="quarantine">quarantine</option>
+                <option value="reject">reject</option>
+              </select>
+            </div>
+            <div class="narrow">
+              <label for="pol-pct">Percentage</label>
+              <input id="pol-pct" type="number" min="1" max="100" value="100"/>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="narrow">
+              <label for="pol-adkim">DKIM Alignment</label>
+              <select id="pol-adkim">
+                <option value="r">relaxed (r)</option>
+                <option value="s">strict (s)</option>
+              </select>
+            </div>
+            <div class="narrow">
+              <label for="pol-aspf">SPF Alignment</label>
+              <select id="pol-aspf">
+                <option value="r">relaxed (r)</option>
+                <option value="s">strict (s)</option>
+              </select>
+            </div>
+            <div>
+              <label for="pol-rua">Report URI (rua)</label>
+              <input id="pol-rua" class="mono" value="mailto:dmarc@domainsafepro.com"/>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="narrow">
+              <label for="pol-fo">Failure Options (fo)</label>
+              <input id="pol-fo" value="1"/>
+            </div>
+            <div>
+              <label for="pol-sp">Subdomain Policy (sp, optional)</label>
+              <input id="pol-sp" placeholder="leave blank to inherit"/>
+            </div>
+          </div>
+          
+          <div class="btn-row">
+            <button class="btn secondary btn-sm" id="btnPolPreview">Preview Policy</button>
+            <button class="btn btn-sm" id="btnApplyCf">Apply via Cloudflare</button>
+            <button class="btn btn-sm" id="btnApplyR53">Apply via Route 53</button>
+            <button class="btn secondary btn-sm" id="btnEvaluateNow">Evaluate Engine</button>
+          </div>
+          
+          <pre class="log mt-md" id="pol-out">Use Preview to see the generated DMARC record, then Apply via your DNS provider.</pre>
+        </div>
+      </section>
+
+      <!-- CONTROL SPF BUILDER -->
+      <div class="section-title"><span class="icon">🛠️</span> Control SPF (Central Include)</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>SPF Sender Builder</h3>
+          <p class="desc">Select authorized email senders and update <code>_spf.control.domainsafepro.com</code>. All protected domains inherit this central include automatically.</p>
+          
+          <div class="spf-checkboxes">
+            <label><input type="checkbox" class="spf-sel" value="google"/> Google Workspace</label>
+            <label><input type="checkbox" class="spf-sel" value="m365"/> Microsoft 365</label>
+            <label><input type="checkbox" class="spf-sel" value="sendgrid"/> SendGrid</label>
+            <label><input type="checkbox" class="spf-sel" value="ses"/> Amazon SES</label>
+            <label><input type="checkbox" class="spf-sel" value="mailgun"/> Mailgun</label>
+            <label><input type="checkbox" class="spf-sel" value="mailchimp"/> Mailchimp</label>
+            <label><input type="checkbox" class="spf-sel" value="postmark"/> Postmark</label>
+            <label><input type="checkbox" class="spf-sel" value="sparkpost"/> SparkPost</label>
+            <label><input type="checkbox" class="spf-sel" value="zoho"/> Zoho</label>
+            <label><input type="checkbox" class="spf-sel" value="zendesk"/> Zendesk</label>
+            <label><input type="checkbox" class="spf-sel" value="intercom"/> Intercom</label>
+          </div>
+          
+          <div class="row">
+            <div>
+              <label for="spf-preview">Generated SPF Record</label>
+              <input id="spf-preview" class="mono" value="v=spf1 ~all" readonly/>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div>
+              <label for="spf-token">Cloudflare API Token (for domainsafepro.com zone)</label>
+              <input id="spf-token" class="mono" type="password" placeholder="Paste token here"/>
+            </div>
+          </div>
+          
+          <div class="btn-row">
+            <button class="btn secondary btn-sm" id="btnSpfLoad2">Load Current</button>
+            <button class="btn btn-sm" id="btnSpfUpdate2">Update Control SPF</button>
+          </div>
+          
+          <pre class="log mt-md" id="spf-log2">Select senders above, then click "Update Control SPF" to apply.</pre>
+        </div>
+      </section>
+
+      <!-- INGEST REPORTS -->
+      <div class="section-title"><span class="icon">📥</span> Report Ingestion</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Ingest DMARC Reports</h3>
+          <p class="desc">Pull the latest aggregate DMARC XML reports from the mailbox and process them into the insights database.</p>
+          
+          <div class="btn-row">
+            <button class="btn btn-sm" id="btnIngest">Ingest Latest 25 Reports</button>
+          </div>
+          
+          <pre class="log mt-md" id="ingest-log">Click to fetch and process recent DMARC reports.</pre>
+        </div>
+      </section>
+
+      <!-- ALERTS -->
+      <div class="section-title"><span class="icon">🔔</span> Alerts</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Slack Notifications</h3>
+          <p class="desc">Test the alert system and flush any queued notifications.</p>
+          
+          <div class="btn-row">
+            <button class="btn btn-sm" id="btnAlertTest">Send Test Alert</button>
+            <button class="btn secondary btn-sm" id="btnAlertFlush">Flush Alert Queue</button>
+          </div>
+          
+          <pre class="log mt-md" id="alerts-out">—</pre>
         </div>
       </section>
 
@@ -1699,7 +1936,8 @@ function applyPlanGate(user){
   var r53Setup = $("#setup-route53");
   var manualSetup = $("#setup-manual");
   var helpSection = $("#help-section");
-  var adminSection = document.querySelector(".admin-section");
+  var insightsSection = $("#insights-section");
+  var adminSection = document.getElementById("admin-section");
 
   var email = user && user.email ? String(user.email) : "";
   var plan = user && user.plan ? user.plan : null;
@@ -1711,14 +1949,15 @@ function applyPlanGate(user){
     gateEmail.textContent = email;
   }
 
-  var sections = [welcomeBanner, routeSelection, cfSetup, r53Setup, manualSetup, helpSection];
+  // Sections visible to users with active plans (or admins)
+  var userSections = [welcomeBanner, routeSelection, cfSetup, r53Setup, manualSetup, helpSection, insightsSection];
 
   if (hasActivePlan || isAdminFront) {
     if (gate) gate.classList.add("hidden");
-    sections.forEach(function(el){ if (el) el.classList.remove("hidden"); });
+    userSections.forEach(function(el){ if (el) el.classList.remove("hidden"); });
   } else {
     if (gate) gate.classList.remove("hidden");
-    sections.forEach(function(el){ if (el) el.classList.add("hidden"); });
+    userSections.forEach(function(el){ if (el) el.classList.add("hidden"); });
   }
 
   // Admin section only visible for admin users
@@ -2177,6 +2416,8 @@ $("#btnCfProtect").addEventListener("click", async function(){
     logEl("#cf-log", j);
     if (j.apex) {
       $("#verify-domain").value = j.apex;
+      $("#pol-domain").value = j.apex;
+      $("#ins-domain").value = j.apex;
     }
   }catch(e){
     logEl("#cf-log", String(e));
@@ -2219,10 +2460,215 @@ $("#btnR53Protect").addEventListener("click", async function(){
     logEl("#r53-log", j);
     if (j.apex) {
       $("#verify-domain").value = j.apex;
+      $("#pol-domain").value = j.apex;
+      $("#ins-domain").value = j.apex;
     }
   }catch(e){
     logEl("#r53-log", String(e));
   }
+});
+
+/* ====== DMARC INSIGHTS (Rollup) ====== */
+function fmt(n){ return (n||0).toLocaleString(); }
+function pct(a,b){ var r = (b>0) ? (a/b) : 0; return Math.round(r*1000)/10; }
+function asArray(series){ 
+  if (Array.isArray(series)) return series; 
+  if (series && typeof series==='object'){ 
+    return Object.keys(series).sort().map(function(d) { 
+      return Object.assign({date:d}, series[d]); 
+    }); 
+  } 
+  return []; 
+}
+
+function renderRollup(j){
+  var rows = asArray(j.series);
+  var table = $('#ins-table'); 
+  var body = $('#ins-rows'); 
+  var summary = $('#ins-summary');
+  
+  if (!rows.length){ 
+    table.style.display='none'; 
+    summary.textContent='No data yet for this domain and time range. DMARC reports may take 24-48 hours to arrive.'; 
+    return; 
+  }
+  
+  var T = rows.reduce(function(acc,r){ 
+    acc.total += r.total||0; 
+    acc.aligned += r.aligned||0; 
+    return acc; 
+  }, {total:0,aligned:0});
+  
+  var rate = pct(T.aligned, T.total);
+  summary.innerHTML = '<div class="ins-summary-stat"><strong>' + j.domain + '</strong></div>' +
+    '<div class="ins-summary-stat">' + j.days + '-day totals</div>' +
+    '<div class="ins-summary-stat"><strong>' + fmt(T.total) + '</strong> emails</div>' +
+    '<div class="ins-summary-stat"><strong>' + fmt(T.aligned) + '</strong> aligned (' + rate + '%)</div>';
+  
+  body.innerHTML = '';
+  rows.forEach(function(r){
+    var p = pct(r.aligned||0, r.total||0);
+    var tr = document.createElement('tr');
+    tr.innerHTML = 
+      '<td data-label="Date" class="mono">' + r.date + '</td>' +
+      '<td data-label="Total">' + fmt(r.total||0) + '</td>' +
+      '<td data-label="Aligned">' + fmt(r.aligned||0) + '</td>' +
+      '<td data-label="Aligned %">' + p + '%</td>' +
+      '<td data-label="Trend">' +
+        '<div class="ins-bar"><i style="width:' + Math.min(100,p) + '%"></i></div>' +
+        (r.spf_aligned!=null && r.dkim_aligned!=null ? '<div class="ins-stats">SPF ' + fmt(r.spf_aligned) + ' · DKIM ' + fmt(r.dkim_aligned) + '</div>' : '') +
+      '</td>';
+    body.appendChild(tr);
+  });
+  table.style.display = '';
+}
+
+async function loadRoll(days){
+  var norm = normalizeForUI($('#ins-domain').value, null, null);
+  if(!norm.ok){ 
+    $('#ins-summary').textContent = 'Please enter a valid domain name first.'; 
+    return; 
+  }
+  $('#ins-summary').textContent = 'Loading insights...';
+  try{
+    var j = await get(ROBOT_API + '/api/rollup?domain=' + encodeURIComponent(norm.apex || norm.value) + '&days=' + days);
+    $('#ins-wrap').textContent = JSON.stringify(j, null, 2);
+    renderRollup({domain: j.domain || (norm.apex || norm.value), days: days, series: j.series || []});
+  }catch(e){ 
+    $('#ins-summary').textContent = 'Error: ' + String(e).slice(0,100);
+    $('#ins-wrap').textContent = String(e); 
+  }
+}
+
+$('#btnLoad7').addEventListener('click', function(){ loadRoll(7); });
+$('#btnLoad30').addEventListener('click', function(){ loadRoll(30); });
+
+/* ====== DMARC POLICY STEP-UP ====== */
+$('#btnPolPreview').addEventListener('click', async function(){
+  var d = ($('#pol-domain').value || '').trim();
+  if(!d){ logEl('#pol-out','Enter a domain first.'); return; }
+  try{
+    var j = await get(ROBOT_API + '/policy/preview?domain=' + encodeURIComponent(d));
+    logEl('#pol-out', j);
+  }catch(e){ logEl('#pol-out', String(e)); }
+});
+
+$('#btnApplyCf').addEventListener('click', async function(){
+  var body = {
+    domain: ($('#pol-domain').value || '').trim(),
+    policy: $('#pol-policy').value,
+    pct: Number($('#pol-pct').value||100),
+    adkim: $('#pol-adkim').value,
+    aspf:  $('#pol-aspf').value,
+    rua:   ($('#pol-rua').value || '').trim(),
+    fo:    ($('#pol-fo').value || '').trim(),
+    sp:    ($('#pol-sp').value || '').trim() || null
+  };
+  if(!body.domain){ logEl('#pol-out','Enter a domain first.'); return; }
+  try{ 
+    var j = await post(ROBOT_API + '/api/policy/dmarc/cf', body); 
+    logEl('#pol-out', j); 
+  }catch(e){ logEl('#pol-out', String(e)); }
+});
+
+$('#btnApplyR53').addEventListener('click', async function(){
+  var body = {
+    domain: ($('#pol-domain').value || '').trim(),
+    policy: $('#pol-policy').value,
+    pct: Number($('#pol-pct').value||100),
+    adkim: $('#pol-adkim').value,
+    aspf:  $('#pol-aspf').value,
+    rua:   ($('#pol-rua').value || '').trim(),
+    fo:    ($('#pol-fo').value || '').trim(),
+    sp:    ($('#pol-sp').value || '').trim() || null,
+    hosted_zone_id: ($('#r53-zones').value || '').trim()
+  };
+  if(!body.domain){ logEl('#pol-out','Enter a domain first.'); return; }
+  if(!body.hosted_zone_id){ logEl('#pol-out','Pick a Route 53 hosted zone first (in the setup section above).'); return; }
+  try{ 
+    var j = await post(ROBOT_API + '/api/policy/dmarc/r53', body); 
+    logEl('#pol-out', j); 
+  }catch(e){ logEl('#pol-out', String(e)); }
+});
+
+$('#btnEvaluateNow').addEventListener('click', async function(){
+  try{ 
+    var j = await get(ROBOT_API + '/policy/evaluate-now'); 
+    logEl('#pol-out', j); 
+  }catch(e){ logEl('#pol-out', String(e)); }
+});
+
+/* ====== CONTROL SPF BUILDER ====== */
+var SPF_MAP = {
+  google:'include:_spf.google.com', 
+  m365:'include:spf.protection.outlook.com', 
+  sendgrid:'include:sendgrid.net',
+  ses:'include:amazonses.com', 
+  mailgun:'include:mailgun.org', 
+  mailchimp:'include:servers.mcsv.net',
+  postmark:'include:spf.mtasv.net', 
+  sparkpost:'include:_spf.sparkpostmail.com', 
+  zoho:'include:zoho.com',
+  zendesk:'include:mail.zendesk.com', 
+  intercom:'include:_spf.intercom.io'
+};
+
+function updateSpfPreview(){
+  var sels = [];
+  document.querySelectorAll('.spf-sel:checked').forEach(function(x) {
+    if (SPF_MAP[x.value]) sels.push(SPF_MAP[x.value]);
+  });
+  var txt = ['v=spf1'].concat(sels).concat(['~all']).join(' ');
+  $('#spf-preview').value = txt;
+}
+
+document.querySelectorAll('.spf-sel').forEach(function(cb) { 
+  cb.addEventListener('change', updateSpfPreview); 
+});
+updateSpfPreview();
+
+$('#btnSpfLoad2').addEventListener('click', async function(){
+  var tok = ($('#spf-token').value || '').trim();
+  if(!tok){ logEl('#spf-log2','Paste a Cloudflare API token first.'); return; }
+  try{ 
+    var j = await get(ROBOT_API + '/api/cf/control-spf?token=' + encodeURIComponent(tok)); 
+    if (j.value) $('#spf-preview').value = j.value; 
+    logEl('#spf-log2', j); 
+  }catch(e){ logEl('#spf-log2', String(e)); }
+});
+
+$('#btnSpfUpdate2').addEventListener('click', async function(){
+  var tok = ($('#spf-token').value || '').trim();
+  var val = ($('#spf-preview').value || '').trim();
+  if(!tok){ logEl('#spf-log2','Paste a Cloudflare API token first.'); return; }
+  try{ 
+    var j = await post(ROBOT_API + '/api/cf/control-spf', { token: tok, value: val }); 
+    logEl('#spf-log2', j); 
+  }catch(e){ logEl('#spf-log2', String(e)); }
+});
+
+/* ====== INGEST REPORTS ====== */
+$('#btnIngest').addEventListener('click', async function(){
+  logEl('#ingest-log', 'Fetching and processing reports...');
+  try{
+    var j = await post(DMARC_API + '/api/dmarc/ingest-latest', {limit:25});
+    logEl('#ingest-log', j);
+  }catch(e){ logEl('#ingest-log', String(e)); }
+});
+
+/* ====== ALERTS ====== */
+$('#btnAlertTest').addEventListener('click', async function(){
+  try{
+    var j = await post(ROBOT_API + '/alerts/test', {domain:'domainsafepro.com', title:'Test alert', message:'This is a test from DomainSafePro Console.'});
+    logEl('#alerts-out', j);
+  }catch(e){ logEl('#alerts-out', String(e)); }
+});
+
+$('#btnAlertFlush').addEventListener('click', async function(){
+  try{
+    var j = await post(ROBOT_API + '/alerts/flush', {});
+    logEl('#alerts-out', j);
+  }catch(e){ logEl('#alerts-out', String(e)); }
 });
 
 /* ====== Bootstrap ====== */
