@@ -1130,6 +1130,7 @@ details > div {
     </div>
     <div class="auth-bar" id="auth-bar">
       <span id="auth-status-label">Not signed in</span>
+      <span id="auth-plan-label" class="tiny muted"></span>
       <button class="btn secondary btn-sm btn-auth" id="auth-login-btn" type="button">Sign in with Google</button>
       <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
         <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -1684,9 +1685,34 @@ function startGoogleLogin(){
 function showAuthedUI(user){
   document.body.classList.add("authed");
   var label = $("#auth-status-label");
+  var planLabel = $("#auth-plan-label");
   var loginBtn = $("#auth-login-btn");
   if (label && user && user.email){
     label.textContent = user.email;
+  }
+  if (planLabel){
+    if (user && user.plan && user.plan.code){
+      var plan = user.plan;
+      var parts = [];
+      parts.push("Plan: " + String(plan.code));
+      if (typeof plan.domains_used === "number" && (plan.max_domains === null || typeof plan.max_domains === "number")){
+        var used = plan.domains_used;
+        var max = plan.max_domains;
+        if (max === null){
+          parts.push("Domains: " + used + "+");
+        } else {
+          parts.push("Domains: " + used + "/" + max);
+        }
+      }
+      if (plan.valid_until){
+        parts.push("Until: " + String(plan.valid_until).slice(0,10));
+      }
+      planLabel.textContent = parts.join(" · ");
+      planLabel.classList.remove("hidden");
+    } else {
+      planLabel.textContent = "";
+      planLabel.classList.add("hidden");
+    }
   }
   if (loginBtn) {
     loginBtn.textContent = "Sign out";
@@ -1699,6 +1725,10 @@ function showAuthedUI(user){
   if (statusRows){
     statusRows.innerHTML = '<tr><td colspan="7" class="muted">Loading...</td></tr>';
   }
+  var addEmail = $("#add-email");
+  if (addEmail && user && user.email){
+    addEmail.value = user.email;
+  }
   loadStatus();
   refreshRecent();
 }
@@ -1706,8 +1736,13 @@ function showAuthedUI(user){
 function showLoggedOutUI(){
   document.body.classList.remove("authed");
   var label = $("#auth-status-label");
+  var planLabel = $("#auth-plan-label");
   var loginBtn = $("#auth-login-btn");
   if (label) label.textContent = "Not signed in";
+  if (planLabel){
+    planLabel.textContent = "";
+    planLabel.classList.add("hidden");
+  }
   if (loginBtn) {
     loginBtn.textContent = "Sign in with Google";
     loginBtn.onclick = startGoogleLogin;
@@ -1718,6 +1753,8 @@ function showLoggedOutUI(){
   }
   var recent = $("#recentWrap");
   if (recent) recent.textContent = "Sign in to see your domains.";
+  var addEmail = $("#add-email");
+  if (addEmail) addEmail.value = "";
   var addLog = $("#add-log");
   if (addLog) addLog.textContent = "Enter domain details above.";
 }
@@ -2023,13 +2060,15 @@ async function refreshRecent(){
 }
 
 $("#btnAdd").addEventListener("click", async function(){
-  var norm = normalizeForUI($("#add-domain").value, $("#add-notice"), null);
+  var noticeEl = $("#add-notice");
+  var norm = normalizeForUI($("#add-domain").value, noticeEl, null);
   var email = ($("#add-email").value || "").trim();
   if (!email || !norm.ok){
     $("#add-log").textContent = "Please enter a valid email and domain name.";
     return;
   }
   try{
+    if (noticeEl) hide(noticeEl);
     var j = await post(ROBOT_API + "/api/domains", {
       email: email,
       domain: norm.apex || norm.value
@@ -2037,7 +2076,12 @@ $("#btnAdd").addEventListener("click", async function(){
     logEl("#add-log", j);
     refreshRecent();
   }catch(e){
-    logEl("#add-log", String(e));
+    var msg = String(e);
+    logEl("#add-log", "Error: " + msg);
+    if (noticeEl){
+      noticeEl.textContent = msg;
+      show(noticeEl);
+    }
   }
 });
 
