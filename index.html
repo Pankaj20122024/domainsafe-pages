@@ -1140,7 +1140,7 @@ details[open] summary {
   <section class="grid three" id="route-selection">
     <div class="route-card" data-route="cloudflare" onclick="selectRoute('cloudflare')">
       <div class="route-icon">
-        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174230/cloudflare_transparent_cci2hq.png" alt="Cloudflare" style="width:48px;height:48px;object-fit:contain;"/>
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174230/cloudflare_transparent_cci2hq.png" alt="" style="width:48px;height:48px;object-fit:contain;"/>
       </div>
       <h4>Cloudflare</h4>
       <p>I manage my DNS through Cloudflare.</p>
@@ -1148,7 +1148,7 @@ details[open] summary {
     </div>
     <div class="route-card" data-route="route53" onclick="selectRoute('route53')">
       <div class="route-icon">
-        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174236/ChatGPT_Image_Nov_26_2025_09_03_47_PM_yjbzqf.png" alt="AWS Route 53" style="width:48px;height:48px;object-fit:contain;"/>
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174236/ChatGPT_Image_Nov_26_2025_09_03_47_PM_yjbzqf.png" alt="" style="width:48px;height:48px;object-fit:contain;"/>
       </div>
       <h4>AWS Route 53</h4>
       <p>I manage my DNS through AWS.</p>
@@ -1156,7 +1156,7 @@ details[open] summary {
     </div>
     <div class="route-card" data-route="manual" onclick="selectRoute('manual')">
       <div class="route-icon">
-        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174202/ChatGPT_Image_Nov_26_2025_09_46_32_PM_g9jhmk.png" alt="DNS Records" style="width:48px;height:48px;object-fit:contain;"/>
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764176078/ChatGPT_Image_Nov_26_2025_10_24_10_PM_xcgbrm.png" alt="" style="width:48px;height:48px;object-fit:contain;"/>
       </div>
       <h4>Other Provider</h4>
       <p>GoDaddy, Namecheap, Google Domains, or another registrar.</p>
@@ -1711,7 +1711,7 @@ function applyPlanGate(user){
     gateEmail.textContent = email;
   }
 
-  var sections = [welcomeBanner, routeSelection, cfSetup, r53Setup, manualSetup, helpSection, adminSection];
+  var sections = [welcomeBanner, routeSelection, cfSetup, r53Setup, manualSetup, helpSection];
 
   if (hasActivePlan || isAdminFront) {
     if (gate) gate.classList.add("hidden");
@@ -1719,6 +1719,13 @@ function applyPlanGate(user){
   } else {
     if (gate) gate.classList.remove("hidden");
     sections.forEach(function(el){ if (el) el.classList.add("hidden"); });
+  }
+
+  // Admin section only visible for admin users
+  if (isAdminFront && adminSection) {
+    adminSection.classList.remove("hidden");
+  } else if (adminSection) {
+    adminSection.classList.add("hidden");
   }
 }
 
