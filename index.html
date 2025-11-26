@@ -1107,6 +1107,14 @@ details > div {
 }
 
 /* ========== FOOTER ========== */
+/* Plan gate card */
+#plan-gate {
+  margin-bottom: 18px;
+}
+#plan-gate .desc {
+  max-width: 540px;
+}
+
 .console-footer {
   text-align: center;
   padding: 24px;
@@ -1153,6 +1161,18 @@ details > div {
 
 <!-- Main app (hidden until authed) -->
 <main id="app-main">
+
+  <div id="plan-gate" class="card highlight hidden">
+    <h3><span class="card-icon">🔒</span> Activate Your DomainSafePro Plan</h3>
+    <p class="desc">You are signed in as <span id="plan-gate-email" class="mono"></span>, but do not yet have an active DomainSafePro subscription connected to this account.</p>
+    <p class="tiny muted mt-sm">Choose a plan to unlock automatic setup (Cloudflare, Route 53) and domain monitoring. Once your purchase is complete, return here with the same Google account to connect your domain.</p>
+    <div class="row mt-sm">
+      <div class="action">
+        <a class="btn" href="https://www.domainsafepro.com/#pricing">View plans on main site</a>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Welcome banner -->
   <div class="welcome-banner">
@@ -1682,6 +1702,37 @@ function startGoogleLogin(){
   window.location.href = AUTH_API + "/auth/google/start";
 }
 
+function applyPlanGate(user){
+  var gate = $("#plan-gate");
+  var gateEmail = $("#plan-gate-email");
+  var routeSelection = $("#route-selection");
+  var cfSetup = $("#setup-cloudflare");
+  var r53Setup = $("#setup-route53");
+  var manualSetup = $("#setup-manual");
+  var helpSection = $("#help-section");
+  var adminSection = document.querySelector(".admin-section");
+
+  var email = user && user.email ? String(user.email) : "";
+  var plan = user && user.plan ? user.plan : null;
+  var lower = email.toLowerCase();
+  var isAdminFront = (lower === "pankajonlinerepository@gmail.com" || lower === "ops@domainsafepro.com");
+  var hasActivePlan = !!(plan && plan.status === "active");
+
+  if (gateEmail && email){
+    gateEmail.textContent = email;
+  }
+
+  var sections = [routeSelection, cfSetup, r53Setup, manualSetup, helpSection, adminSection];
+
+  if (hasActivePlan || isAdminFront) {
+    if (gate) gate.classList.add("hidden");
+    sections.forEach(function(el){ if (el) el.classList.remove("hidden"); });
+  } else {
+    if (gate) gate.classList.remove("hidden");
+    sections.forEach(function(el){ if (el) el.classList.add("hidden"); });
+  }
+}
+
 function showAuthedUI(user){
   document.body.classList.add("authed");
   var label = $("#auth-status-label");
@@ -1721,6 +1772,7 @@ function showAuthedUI(user){
       showLoggedOutUI();
     };
   }
+  applyPlanGate(user);
   var statusRows = $("#statusRows");
   if (statusRows){
     statusRows.innerHTML = '<tr><td colspan="7" class="muted">Loading...</td></tr>';
