@@ -500,6 +500,11 @@ main {
   width: 100%;
   height: 100%;
 }
+.route-card .route-icon img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
 .route-card h4 {
   font-family: var(--font-sans);
   font-size: 1rem;
@@ -1135,21 +1140,7 @@ details[open] summary {
   <section class="grid three" id="route-selection">
     <div class="route-card" data-route="cloudflare" onclick="selectRoute('cloudflare')">
       <div class="route-icon">
-        <!-- Cloudflare Logo SVG -->
-        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="cf-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#F6821F"/>
-              <stop offset="100%" style="stop-color:#FAAD3F"/>
-            </linearGradient>
-            <linearGradient id="cf-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#F6821F"/>
-              <stop offset="100%" style="stop-color:#F9A51B"/>
-            </linearGradient>
-          </defs>
-          <path fill="url(#cf-grad-1)" d="M44.5,45.3H15.6c-0.4,0-0.7-0.3-0.8-0.6c-0.1-0.4,0.1-0.8,0.4-1l3.5-2.1c0.6-0.4,1.3-0.6,2-0.6h22.5c5.2,0,9.7-3.6,10.5-8.7c0.5-3-0.3-5.9-2.2-8.1c-1.9-2.2-4.6-3.5-7.6-3.5h-0.6c-0.3,0-0.6-0.2-0.7-0.5c-1.6-4.8-6.1-8-11.3-8c-5.6,0-10.4,3.8-11.7,9.2c-0.1,0.3-0.3,0.5-0.6,0.5c-2.5,0.1-4.8,1.2-6.4,3.1c-1.6,1.9-2.4,4.4-2.1,6.9c0.5,4.5,4.5,7.9,9.1,7.9h0.3c0.4,0,0.7,0.3,0.8,0.6c0.1,0.4-0.1,0.8-0.4,1l-3.5,2.1c-0.6,0.4-1.3,0.6-2,0.6h-0.3c-7.3,0-13.6-5.4-14.3-12.6c-0.4-4,0.8-7.9,3.3-10.9c2.3-2.8,5.6-4.6,9.2-5.1C14.9,8.9,21.8,4,29.7,4c7.2,0,13.6,4.2,16.6,10.5h0.4c4.6,0,8.9,2,11.9,5.5c2.9,3.4,4.2,7.9,3.5,12.4C61,40.4,53.3,45.3,44.5,45.3z"/>
-          <path fill="url(#cf-grad-2)" d="M50.3,45.3h-5.8c-0.4,0-0.7-0.3-0.8-0.6c-0.1-0.4,0.1-0.8,0.4-1l3.5-2.1c0.6-0.4,1.3-0.6,2-0.6h0.7c3.3,0,6.1-2.3,6.7-5.5c0.3-1.9-0.2-3.8-1.4-5.2c-1.2-1.4-2.9-2.2-4.8-2.2h-2.5c-0.4,0-0.7-0.3-0.7-0.6c-0.8-4.4-4.6-7.7-9.2-7.7c-0.9,0-1.7,0.1-2.5,0.3c-0.3,0.1-0.6,0-0.8-0.2c-0.2-0.2-0.3-0.5-0.2-0.8c0.7-2.1,1.1-4.4,1.1-6.7c0-0.8-0.1-1.6-0.1-2.4c2.3,0.6,4.4,1.7,6.3,3.1h0.4c4.6,0,8.9,2,11.9,5.5c2.9,3.4,4.2,7.9,3.5,12.4C57.1,38.9,54.2,42.8,50.3,45.3z"/>
-        </svg>
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174230/cloudflare_transparent_cci2hq.png" alt="Cloudflare" style="width:48px;height:48px;object-fit:contain;"/>
       </div>
       <h4>Cloudflare</h4>
       <p>I manage my DNS through Cloudflare.</p>
@@ -1157,20 +1148,7 @@ details[open] summary {
     </div>
     <div class="route-card" data-route="route53" onclick="selectRoute('route53')">
       <div class="route-icon">
-        <!-- AWS Route 53 Logo SVG -->
-        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="aws-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color:#8C4FFF"/>
-              <stop offset="100%" style="stop-color:#5829A7"/>
-            </linearGradient>
-          </defs>
-          <rect x="6" y="6" width="52" height="52" rx="4" fill="url(#aws-grad)"/>
-          <path fill="#fff" d="M32,14c-9.9,0-18,8.1-18,18s8.1,18,18,18s18-8.1,18-18S41.9,14,32,14z M32,46c-7.7,0-14-6.3-14-14s6.3-14,14-14s14,6.3,14,14S39.7,46,32,46z"/>
-          <path fill="#fff" d="M32,20c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.4,12-12S38.6,20,32,20z M32,40c-4.4,0-8-3.6-8-8s3.6-8,8-8s8,3.6,8,8S36.4,40,32,40z"/>
-          <circle fill="#fff" cx="32" cy="32" r="4"/>
-          <path fill="#fff" d="M46,30h4v4h-4V30z M14,30h4v4h-4V30z M30,14h4v4h-4V14z M30,46h4v4h-4V46z"/>
-        </svg>
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174236/ChatGPT_Image_Nov_26_2025_09_03_47_PM_yjbzqf.png" alt="AWS Route 53" style="width:48px;height:48px;object-fit:contain;"/>
       </div>
       <h4>AWS Route 53</h4>
       <p>I manage my DNS through AWS.</p>
@@ -1178,13 +1156,7 @@ details[open] summary {
     </div>
     <div class="route-card" data-route="manual" onclick="selectRoute('manual')">
       <div class="route-icon">
-        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="10" y="8" width="44" height="48" rx="4" fill="var(--bg-card)" stroke="var(--fg-muted)"/>
-          <line x1="18" y1="20" x2="46" y2="20" stroke="var(--fg-muted)"/>
-          <line x1="18" y1="28" x2="46" y2="28" stroke="var(--fg-muted)"/>
-          <line x1="18" y1="36" x2="38" y2="36" stroke="var(--fg-muted)"/>
-          <line x1="18" y1="44" x2="34" y2="44" stroke="var(--fg-muted)"/>
-        </svg>
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174202/ChatGPT_Image_Nov_26_2025_09_46_32_PM_g9jhmk.png" alt="DNS Records" style="width:48px;height:48px;object-fit:contain;"/>
       </div>
       <h4>Other Provider</h4>
       <p>GoDaddy, Namecheap, Google Domains, or another registrar.</p>
