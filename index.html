@@ -69,7 +69,7 @@
 
 /* ========== BASE ========== */
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; font-feature-settings: 'liga' 1, 'kern' 1; }
 html, body { max-width: 100%; overflow-x: clip; }
 body {
   margin: 0;
@@ -77,9 +77,11 @@ body {
   background: linear-gradient(135deg, var(--bg) 0%, var(--bg-alt) 50%, var(--bg) 100%);
   color: var(--fg);
   font-family: var(--font-sans);
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: 17px;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--med-transition), color var(--med-transition);
 }
 body::before {
   content: '';
@@ -102,7 +104,7 @@ h1, h2, h3, h4 {
   line-height: 1.3;
   margin: 0;
 }
-p { color: var(--fg-muted); margin: 0; }
+p { color: var(--fg-muted); margin: 0; max-width: 65ch; }
 a { text-decoration: none; color: var(--brand); }
 code, .mono { font-family: var(--font-mono); font-size: 0.9em; }
 
@@ -193,7 +195,7 @@ header {
   font-weight: 600;
   cursor: pointer;
   transition: all var(--fast-transition);
-  font-size: 14px;
+  font-size: 15px;
   font-family: var(--font-sans);
   border: 2px solid var(--brand);
   background: var(--brand);
@@ -239,7 +241,7 @@ header {
 
 .btn.large {
   padding: 16px 32px;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .btn-sm {
@@ -247,9 +249,54 @@ header {
   font-size: 13px;
 }
 
+/* ========== LOADING SECTION ========== */
+#loading-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  min-height: 60vh;
+}
+.loading-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius);
+  border: 1px solid var(--glass-border);
+  padding: 48px 28px;
+  box-shadow: 0 24px 60px var(--shadow-color);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.loading-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+.loading-card p {
+  font-size: 15px;
+  color: var(--fg-muted);
+  max-width: 320px;
+  margin: 0 auto;
+}
+
 /* ========== LOGIN SECTION ========== */
 #login-section {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
@@ -296,8 +343,12 @@ header {
   color: var(--fg-muted);
 }
 
+body.authed #loading-section { display: none; }
 body.authed #login-section { display: none; }
 body.authed #app-main { display: block; }
+body.logged-out #loading-section { display: none; }
+body.logged-out #login-section { display: flex; }
+body.logged-out #app-main { display: none; }
 
 /* ========== MAIN CONSOLE ========== */
 main {
@@ -320,7 +371,7 @@ main {
   margin-bottom: 8px;
 }
 .welcome-banner p {
-  font-size: 16px;
+  font-size: 1.05rem;
   max-width: 500px;
   margin: 0 auto;
 }
@@ -342,11 +393,6 @@ main {
 .section-title:first-of-type { margin-top: 0; }
 .section-title .icon {
   font-size: 1.2rem;
-}
-.section-title .icon svg {
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
 }
 
 /* ========== GRID ========== */
@@ -392,14 +438,15 @@ main {
   font-size: 1.3rem;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 .card h3 .card-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
 }
 .card .desc {
   color: var(--fg-muted);
-  font-size: 14px;
+  font-size: 15px;
   margin: 0 0 16px 0;
   line-height: 1.6;
 }
@@ -438,8 +485,16 @@ main {
   background: var(--highlight-bg);
 }
 .route-card .route-icon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.route-card .route-icon svg {
+  width: 100%;
+  height: 100%;
 }
 .route-card h4 {
   font-family: var(--font-sans);
@@ -448,7 +503,7 @@ main {
   margin-bottom: 8px;
 }
 .route-card p {
-  font-size: 13px;
+  font-size: 14px;
   margin: 0;
 }
 .route-card .route-tag {
@@ -484,7 +539,7 @@ input, select, textarea {
   border: 1px solid var(--border);
   color: var(--fg);
   border-radius: var(--radius-sm);
-  font-size: 15px;
+  font-size: 1rem;
   font-family: var(--font-sans);
   outline: none;
   transition: border-color var(--fast-transition), box-shadow var(--fast-transition);
@@ -507,6 +562,20 @@ select {
   padding-right: 36px;
 }
 
+/* Checkbox row */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--fg-muted);
+}
+.checkbox-row input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
 /* Row layouts */
 .row {
   display: flex;
@@ -518,6 +587,17 @@ select {
 .row > div { flex: 1 1 200px; }
 .row > div.narrow { flex: 0 0 140px; }
 .row > div.action { flex: 0 0 auto; align-self: flex-end; }
+
+/* Notice banners */
+.notice {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: rgba(90,129,255,0.1);
+  border: 1px solid rgba(90,129,255,0.2);
+  border-radius: var(--radius-sm);
+  color: var(--brand);
+  font-size: 13px;
+}
 
 /* ========== LOG / OUTPUT AREAS ========== */
 .log {
@@ -612,277 +692,117 @@ select {
 }
 .verify-summary-text h4 {
   font-family: var(--font-sans);
-  font-size: 15px;
-  margin: 0 0 2px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 2px;
 }
 .verify-summary-text p {
-  font-size: 13px;
+  font-size: 14px;
   margin: 0;
 }
 
 /* ========== TABLES ========== */
 .table-wrap {
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin: 0 -4px;
-  padding: 0 4px;
+  margin-top: 16px;
 }
 table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
-  min-width: 600px;
 }
 th, td {
-  padding: 12px 10px;
+  padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid var(--border);
 }
 th {
-  color: var(--fg);
   font-weight: 600;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-td { color: var(--fg-muted); }
-
-/* Mobile table to card stack */
-@media (max-width: 700px) {
-  .table-wrap { margin: 0; padding: 0; }
-  table, thead, tbody, th, td, tr { display: block; }
-  thead { display: none; }
-  table { min-width: 0; }
-  tr {
-    background: var(--bg-input);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    margin-bottom: 12px;
-    border: 1px solid var(--border);
-  }
-  td {
-    padding: 6px 0;
-    border: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: var(--fg);
-    font-size: 12px;
-    text-transform: uppercase;
-    margin-right: 12px;
-  }
-}
-
-/* ========== PILLS / BADGES ========== */
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
-  border-radius: 999px;
+  color: var(--fg-muted);
   font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+td {
+  color: var(--fg);
+}
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
   font-weight: 600;
+  text-transform: uppercase;
 }
 .pill.ok {
   background: rgba(103,232,163,0.15);
   color: var(--ok);
-  border: 1px solid rgba(103,232,163,0.3);
 }
 .pill.bad {
-  background: rgba(255,122,122,0.15);
+  background: rgba(255,122,122,0.12);
   color: var(--danger);
-  border: 1px solid rgba(255,122,122,0.3);
-}
-.pill.warn {
-  background: rgba(255,211,106,0.12);
-  color: var(--warn);
-  border: 1px solid rgba(255,211,106,0.3);
 }
 
-/* Badges row */
-.badges {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--bg-input);
-  font-weight: 600;
-  font-size: 13px;
-}
-.badge.ok { border-color: rgba(103,232,163,0.4); color: var(--ok); }
-.badge.warn { border-color: rgba(255,211,106,0.4); color: var(--warn); }
-.badge.bad { border-color: rgba(255,122,122,0.4); color: var(--danger); }
-
-/* ========== SCORE METER ========== */
-.meter {
-  height: 14px;
-  border-radius: 999px;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  max-width: 320px;
-}
-.meter > i {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--danger), var(--warn), var(--ok));
-  width: 0%;
-  transition: width 0.5s ease;
-  border-radius: 999px;
-}
-
-/* Mini bar chart */
-.bar {
-  height: 10px;
-  background: var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-.bar > i {
-  display: block;
-  height: 100%;
-  background: var(--ok);
-  border-radius: 6px;
-}
-
-/* ========== KVS (Key-Value pairs) ========== */
-.kvs {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 10px 16px;
-  font-size: 14px;
-}
-.kvs > div:nth-child(odd) {
-  color: var(--fg-muted);
-  font-weight: 500;
-}
-@media (max-width: 500px) {
-  .kvs {
-    grid-template-columns: 1fr;
-    gap: 4px;
+/* Responsive tables */
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
   }
-  .kvs > div:nth-child(odd) {
-    margin-top: 12px;
+  thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  tr {
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    background: var(--bg-input);
+  }
+  td {
+    border: none;
+    position: relative;
+    padding-left: 40%;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  td::before {
+    position: absolute;
+    top: 6px;
+    left: 12px;
+    width: 35%;
+    padding-right: 10px;
+    white-space: nowrap;
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--fg-muted);
     font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
   }
-  .kvs > div:nth-child(odd):first-child { margin-top: 0; }
 }
 
-/* ========== NOTICES ========== */
-.notice {
-  margin-top: 8px;
-  background: rgba(255,211,106,0.1);
-  border: 1px dashed var(--warn);
-  color: var(--warn);
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-}
-.notice.info {
-  background: rgba(90,129,255,0.1);
-  border-color: var(--brand);
-  color: var(--brand);
-}
-.notice.success {
-  background: rgba(103,232,163,0.1);
-  border-color: var(--ok);
-  color: var(--ok);
-}
-
-/* ========== CHECKBOXES ========== */
-.checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--fg-muted);
-  margin: 8px 0;
-}
-.checkbox-row input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  accent-color: var(--brand);
-}
-
-/* SPF checkboxes grid */
-.spf-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 8px;
-  margin-bottom: 16px;
-}
-.spf-grid label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: var(--bg-input);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  font-size: 13px;
-  transition: all var(--fast-transition);
-}
-.spf-grid label:hover {
-  border-color: var(--border-glow);
-}
-.spf-grid input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--brand);
-}
-
-/* ========== COLLAPSIBLE SECTIONS ========== */
+/* ========== DETAILS/SUMMARY ========== */
 details {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
   margin-top: 16px;
 }
 summary {
-  padding: 12px 16px;
   cursor: pointer;
-  font-weight: 600;
   font-size: 14px;
-  color: var(--fg);
-  background: var(--bg-input);
-  border-radius: var(--radius-sm);
-  list-style: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  color: var(--brand);
+  font-weight: 500;
+  padding: 8px 0;
 }
-summary::-webkit-details-marker { display: none; }
-summary::before {
-  content: '▸';
-  font-size: 12px;
-  transition: transform var(--fast-transition);
+summary:hover {
+  text-decoration: underline;
 }
-details[open] summary::before {
-  transform: rotate(90deg);
-}
-details > div {
-  padding: 16px;
+details[open] summary {
+  margin-bottom: 12px;
 }
 
-/* ========== QUICK-CODES RESULT CARDS ========== */
+/* ========== QUICK CODES DISPLAY ========== */
 .qc-cards {
   display: grid;
-  gap: 12px;
+  gap: 16px;
   margin-top: 16px;
 }
 .qc-card {
@@ -898,15 +818,22 @@ details > div {
   margin-bottom: 12px;
 }
 .qc-type {
+  display: inline-block;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-.qc-type.txt { background: rgba(138,122,255,0.2); color: var(--brand-accent); }
-.qc-type.cname { background: rgba(90,129,255,0.2); color: var(--brand); }
+.qc-type.txt {
+  background: rgba(90,129,255,0.15);
+  color: var(--brand);
+}
+.qc-type.cname {
+  background: rgba(103,232,163,0.15);
+  color: var(--ok);
+}
 .qc-purpose {
   font-size: 14px;
   color: var(--fg);
@@ -1003,10 +930,6 @@ details > div {
   align-items: center;
   gap: 10px;
 }
-.admin-header h2 svg {
-  width: 28px;
-  height: 28px;
-}
 .admin-badge {
   font-size: 11px;
   padding: 4px 10px;
@@ -1054,7 +977,7 @@ details > div {
 
 /* ========== DOCS SECTION ========== */
 .docs-content {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.7;
 }
 .docs-content strong {
@@ -1082,7 +1005,7 @@ details > div {
   main { padding: 16px 12px 60px; }
   .card { padding: 18px 16px; }
   .card h3 { font-size: 1.1rem; }
-  .btn { padding: 10px 18px; font-size: 13px; }
+  .btn { padding: 10px 18px; font-size: 14px; }
   .btn.large { padding: 14px 24px; font-size: 15px; }
   .row > div { flex: 1 1 100%; }
   .row > div.narrow { flex: 1 1 100%; }
@@ -1093,7 +1016,7 @@ details > div {
   .login-card h2 { font-size: 1.5rem; }
   .welcome-banner h1 { font-size: 1.5rem; }
   .route-card { padding: 18px 16px; }
-  .route-card .route-icon { font-size: 2rem; }
+  .route-card .route-icon { width: 56px; height: 56px; }
 }
 
 /* Touch-friendly tap targets */
@@ -1163,6 +1086,15 @@ details > div {
   </div>
 </header>
 
+<!-- Loading state (shown initially while checking auth) -->
+<section id="loading-section">
+  <div class="loading-card">
+    <div class="loading-spinner"></div>
+    <h2>Loading...</h2>
+    <p>Checking your authentication status</p>
+  </div>
+</section>
+
 <!-- Login hero (shown when not signed in) -->
 <section id="login-section">
   <div class="login-card">
@@ -1198,19 +1130,58 @@ details > div {
   <!-- ROUTE SELECTION -->
   <section class="grid three" id="route-selection">
     <div class="route-card" data-route="cloudflare" onclick="selectRoute('cloudflare')">
-      <div class="route-icon">☁️</div>
+      <div class="route-icon">
+        <!-- Cloudflare Logo SVG -->
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="cf-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#F6821F"/>
+              <stop offset="100%" style="stop-color:#FAAD3F"/>
+            </linearGradient>
+            <linearGradient id="cf-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#F6821F"/>
+              <stop offset="100%" style="stop-color:#F9A51B"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#cf-grad-1)" d="M44.5,45.3H15.6c-0.4,0-0.7-0.3-0.8-0.6c-0.1-0.4,0.1-0.8,0.4-1l3.5-2.1c0.6-0.4,1.3-0.6,2-0.6h22.5c5.2,0,9.7-3.6,10.5-8.7c0.5-3-0.3-5.9-2.2-8.1c-1.9-2.2-4.6-3.5-7.6-3.5h-0.6c-0.3,0-0.6-0.2-0.7-0.5c-1.6-4.8-6.1-8-11.3-8c-5.6,0-10.4,3.8-11.7,9.2c-0.1,0.3-0.3,0.5-0.6,0.5c-2.5,0.1-4.8,1.2-6.4,3.1c-1.6,1.9-2.4,4.4-2.1,6.9c0.5,4.5,4.5,7.9,9.1,7.9h0.3c0.4,0,0.7,0.3,0.8,0.6c0.1,0.4-0.1,0.8-0.4,1l-3.5,2.1c-0.6,0.4-1.3,0.6-2,0.6h-0.3c-7.3,0-13.6-5.4-14.3-12.6c-0.4-4,0.8-7.9,3.3-10.9c2.3-2.8,5.6-4.6,9.2-5.1C14.9,8.9,21.8,4,29.7,4c7.2,0,13.6,4.2,16.6,10.5h0.4c4.6,0,8.9,2,11.9,5.5c2.9,3.4,4.2,7.9,3.5,12.4C61,40.4,53.3,45.3,44.5,45.3z"/>
+          <path fill="url(#cf-grad-2)" d="M50.3,45.3h-5.8c-0.4,0-0.7-0.3-0.8-0.6c-0.1-0.4,0.1-0.8,0.4-1l3.5-2.1c0.6-0.4,1.3-0.6,2-0.6h0.7c3.3,0,6.1-2.3,6.7-5.5c0.3-1.9-0.2-3.8-1.4-5.2c-1.2-1.4-2.9-2.2-4.8-2.2h-2.5c-0.4,0-0.7-0.3-0.7-0.6c-0.8-4.4-4.6-7.7-9.2-7.7c-0.9,0-1.7,0.1-2.5,0.3c-0.3,0.1-0.6,0-0.8-0.2c-0.2-0.2-0.3-0.5-0.2-0.8c0.7-2.1,1.1-4.4,1.1-6.7c0-0.8-0.1-1.6-0.1-2.4c2.3,0.6,4.4,1.7,6.3,3.1h0.4c4.6,0,8.9,2,11.9,5.5c2.9,3.4,4.2,7.9,3.5,12.4C57.1,38.9,54.2,42.8,50.3,45.3z"/>
+        </svg>
+      </div>
       <h4>Cloudflare</h4>
       <p>I manage my DNS through Cloudflare.</p>
       <span class="route-tag auto">Automatic Setup</span>
     </div>
     <div class="route-card" data-route="route53" onclick="selectRoute('route53')">
-      <div class="route-icon">🔶</div>
+      <div class="route-icon">
+        <!-- AWS Route 53 Logo SVG -->
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="aws-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#8C4FFF"/>
+              <stop offset="100%" style="stop-color:#5829A7"/>
+            </linearGradient>
+          </defs>
+          <rect x="6" y="6" width="52" height="52" rx="4" fill="url(#aws-grad)"/>
+          <path fill="#fff" d="M32,14c-9.9,0-18,8.1-18,18s8.1,18,18,18s18-8.1,18-18S41.9,14,32,14z M32,46c-7.7,0-14-6.3-14-14s6.3-14,14-14s14,6.3,14,14S39.7,46,32,46z"/>
+          <path fill="#fff" d="M32,20c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.4,12-12S38.6,20,32,20z M32,40c-4.4,0-8-3.6-8-8s3.6-8,8-8s8,3.6,8,8S36.4,40,32,40z"/>
+          <circle fill="#fff" cx="32" cy="32" r="4"/>
+          <path fill="#fff" d="M46,30h4v4h-4V30z M14,30h4v4h-4V30z M30,14h4v4h-4V14z M30,46h4v4h-4V46z"/>
+        </svg>
+      </div>
       <h4>AWS Route 53</h4>
       <p>I manage my DNS through AWS.</p>
       <span class="route-tag auto">Automatic Setup</span>
     </div>
     <div class="route-card" data-route="manual" onclick="selectRoute('manual')">
-      <div class="route-icon">📋</div>
+      <div class="route-icon">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="10" y="8" width="44" height="48" rx="4" fill="var(--bg-card)" stroke="var(--fg-muted)"/>
+          <line x1="18" y1="20" x2="46" y2="20" stroke="var(--fg-muted)"/>
+          <line x1="18" y1="28" x2="46" y2="28" stroke="var(--fg-muted)"/>
+          <line x1="18" y1="36" x2="38" y2="36" stroke="var(--fg-muted)"/>
+          <line x1="18" y1="44" x2="34" y2="44" stroke="var(--fg-muted)"/>
+        </svg>
+      </div>
       <h4>Other Provider</h4>
       <p>GoDaddy, Namecheap, Google Domains, or another registrar.</p>
       <span class="route-tag manual">Copy-Paste Setup</span>
@@ -1225,7 +1196,20 @@ details > div {
 
     <section class="grid full">
       <div class="card highlight">
-        <h3><span class="card-icon">☁️</span> Connect Your Cloudflare Account</h3>
+        <h3>
+          <span class="card-icon">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="cf-card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#F6821F"/>
+                  <stop offset="100%" style="stop-color:#FAAD3F"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#cf-card-grad)" d="M19.5,19.8H6.8c-0.2,0-0.3-0.1-0.3-0.3c0-0.2,0-0.3,0.2-0.4l1.5-0.9c0.3-0.2,0.6-0.3,0.9-0.3h9.9c2.3,0,4.2-1.6,4.6-3.8c0.2-1.3-0.1-2.6-1-3.5c-0.8-1-2-1.5-3.3-1.5h-0.3c-0.1,0-0.3-0.1-0.3-0.2c-0.7-2.1-2.7-3.5-4.9-3.5c-2.4,0-4.5,1.7-5.1,4c0,0.1-0.1,0.2-0.3,0.2c-1.1,0-2.1,0.5-2.8,1.4c-0.7,0.8-1,1.9-0.9,3c0.2,2,2,3.4,4,3.4h0.1c0.2,0,0.3,0.1,0.3,0.3c0,0.2,0,0.3-0.2,0.4l-1.5,0.9c-0.3,0.2-0.6,0.3-0.9,0.3h-0.1c-3.2,0-5.9-2.4-6.2-5.5c-0.2-1.7,0.3-3.4,1.4-4.8c1-1.2,2.4-2,4-2.2C6.5,3.9,9.5,1.7,13,1.7c3.1,0,5.9,1.8,7.2,4.6h0.2c2,0,3.9,0.9,5.2,2.4c1.3,1.5,1.8,3.4,1.5,5.4C26.6,17.6,23.3,19.8,19.5,19.8z"/>
+            </svg>
+          </span>
+          Connect Your Cloudflare Account
+        </h3>
         <p class="desc">Paste your Cloudflare API token below and we will automatically configure all your email security records. You need a token with "Zone Read" and "DNS Edit" permissions.</p>
         
         <div class="row">
@@ -1274,7 +1258,23 @@ details > div {
 
     <section class="grid full">
       <div class="card highlight">
-        <h3><span class="card-icon">🔶</span> Connect Your AWS Account</h3>
+        <h3>
+          <span class="card-icon">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="aws-card-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:#8C4FFF"/>
+                  <stop offset="100%" style="stop-color:#5829A7"/>
+                </linearGradient>
+              </defs>
+              <rect x="2" y="2" width="24" height="24" rx="2" fill="url(#aws-card-grad)"/>
+              <circle cx="14" cy="14" r="8" fill="none" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="14" cy="14" r="5" fill="none" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="14" cy="14" r="2" fill="#fff"/>
+            </svg>
+          </span>
+          Connect Your AWS Account
+        </h3>
         <p class="desc">Enter your AWS IAM credentials below and we will automatically configure all your email security records. You need an IAM user with Route 53 access.</p>
         
         <div class="row">
@@ -1324,7 +1324,7 @@ details > div {
     <!-- STEP 1: GET YOUR CODES -->
     <section class="grid full">
       <div class="card highlight">
-        <h3><span class="card-icon"><svg width="24px" height="24px" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid meet"><path fill="#FFB636" d="M459.866 218.346l-186.7.701c-4.619.017-7.618-4.861-5.517-8.975L370.845 8.024c3.103-6.075-4.493-11.949-9.592-7.417L39.948 286.141c-4.221 3.751-1.602 10.732 4.045 10.78l170.444 1.457c4.443.038 7.391 4.619 5.583 8.679L133.317 501.73c-2.688 6.035 4.709 11.501 9.689 7.16l320.937-279.725c4.307-3.753 1.637-10.84-4.077-10.819z"></path></svg></span> Step 1: Get Your DNS Records</h3>
+        <h3><span class="card-icon">📋</span> Step 1: Get Your DNS Records</h3>
         <p class="desc">Enter your domain below and we will generate the DNS records you need. Then copy each record and add it at your domain registrar.</p>
         
         <div class="row">
@@ -1407,13 +1407,10 @@ details > div {
   <!-- HELP SECTION (Always visible) -->
   <section class="grid full" id="help-section">
     <div class="card">
-      <h3><span class="card-icon"><svg width="24px" height="24px" viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg"><g><path fill="#F5C0C0" d="M58.5,43.2C59,55.8,69.2,66.2,81.7,67.2c3.5,0.2,7-0.2,10.2-1.2c1.7-0.6,8,2.6,11.6,4.4c0.9,0.4,2-0.4,1.6-1.4   c-1.3-3.5-3.2-9.2-2.3-10.2c4.3-4.9,6.8-11.5,6.3-18.7c-0.9-12.6-11.4-22.8-24.1-23.4C70.1,15.9,57.8,28.2,58.5,43.2z"/><path fill="#FF7171" d="M82.2,64.8c-0.8,17.8-15.1,32.5-32.8,33.9c-5,0.3-9.8-0.3-14.4-1.7c-2.3-0.8-11.2,3.6-16.4,6.2   c-1.2,0.6-2.8-0.6-2.2-2c1.9-5,4.5-12.9,3.3-14.4c-6.1-6.9-9.5-16.2-8.9-26.4C12.1,42.7,27,28.3,44.8,27.5   C65.8,26.4,83.1,43.8,82.2,64.8z"/><g><path fill="#FFFFFF" d="M37.4,53.4h18.4c1.2,0,2.3-1.1,2.3-2.3s-1.1-2.3-2.3-2.3H37.4c-1.2,0-2.3,1.1-2.3,2.3    C34.9,52.3,36,53.4,37.4,53.4z"/><path fill="#FFFFFF" d="M55.8,72.6H37.4c-1.2,0-2.3,1.1-2.3,2.3s1.1,2.3,2.3,2.3h18.4c1.2,0,2.3-1.1,2.3-2.3    C58.2,73.7,57.1,72.6,55.8,72.6z"/><path fill="#FFFFFF" d="M65.2,60.6H27.9c-1.2,0-2.3,1.1-2.3,2.3s1.1,2.3,2.3,2.3H65c1.2,0,2.3-1.1,2.3-2.3    C67.5,61.7,66.4,60.6,65.2,60.6z"/></g></g></svg></span> Need Help?</h3>
+      <h3><span class="card-icon">💡</span> Need Help?</h3>
       <div class="docs-content">
         <strong>Not sure which DNS provider you use?</strong>
-        <p>Check the confirmation email from when you bought your domain, or look at your domain's WHOIS record. Common providers include GoDaddy, Namecheap, Google Domains, and Cloudflare.</p>
-        
-        <strong>Verification keeps failing?</strong>
-        <p>DNS changes can take up to 48 hours to fully propagate, though most complete within an hour. Make sure you copied the records exactly as shown, including any underscores or periods.</p>
+        <p>Your DNS is typically managed by whoever you registered your domain with (like GoDaddy, Namecheap), or by a service you pointed your nameservers to (like Cloudflare or AWS). Check your domain registrar's settings if unsure.</p>
         
         <strong>Already protected but showing errors?</strong>
         <p>If you set up protection through Cloudflare or Route 53 but verification shows issues, wait a few minutes for DNS to propagate and try again.</p>
@@ -1426,7 +1423,7 @@ details > div {
   <!-- ============================================================ -->
   <div class="admin-section">
     <div class="admin-header">
-      <h2><svg width="28px" height="28px" viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg"><g><path fill="#4D96FF" d="M94.7,63.5V50c0-1.7-1.3-3-3-3h-4.3c-0.8-3-2-6-3.6-8.5l3-3c1.2-1.2,1.2-3.1,0-4.2l-7.5-7.6   c-1.2-1.2-3.1-1.2-4.3,0l-3,3c-2.7-1.6-5.5-2.8-8.5-3.6v-4.3c0-1.7-1.3-3-3-3H50c-1.7,0-3,1.3-3,3v4.3c-3,0.8-6,2-8.5,3.6l-3.1-3.1   c-1.2-1.2-3.1-1.1-4.2,0l-7.5,7.5c-1.2,1.2-1.2,3.1,0,4.2l3,3c-1.6,2.7-2.8,5.5-3.6,8.5h-4.3c-1.7,0-3,1.3-3,3v10.6   c0,1.7,1.3,3,3,3h4.3c0.8,3,2,6,3.6,8.5l-3.1,3.1c-1.2,1.2-1.1,3.1,0,4.2l7.5,7.5c1.2,1.2,3.1,1.2,4.2,0l3-3   c2.7,1.6,5.5,2.8,8.5,3.6v4.3c0,1.7,1.3,3,3,3h10.6c1.7,0,3-1.3,3-3v-4.3c3-0.8,6-2,8.5-3.6l3,3c1.2,1.2,3.1,1.2,4.2,0l7.6-7.5   c1.2-1.2,1.2-3.1,0-4.3l-3-3c1.6-2.7,2.8-5.5,3.6-8.5L94.7,63.5L94.7,63.5z M55.3,76.6c-11.8,0-21.3-9.5-21.3-21.3   s9.5-21.3,21.3-21.3s21.3,9.5,21.3,21.3S67,76.6,55.3,76.6z"/><path fill="#FFD07A" d="M66.1,43.9c-4.8-4.8-11.9-5.9-17.8-3l8.5,8.5c1.9,1.9,2.2,4.9,0.5,7.1c-2,2.5-5.7,2.7-7.8,0.5l-8.7-8.7   c-3,6.2-1.5,14,4.2,18.8c4.6,3.9,11.2,4.6,16.6,2l25.9,31.6c3.5,4.3,9.9,4.6,13.8,0.7l0,0c3.9-3.9,3.6-10.3-0.7-13.8L69.1,61.7   C72,55.8,70.9,48.7,66.1,43.9z M98.3,98.3c-1.9,1.9-5.1,1.9-7,0c-1.9-1.9-1.9-5.1,0-7s5.1-1.9,7,0C100.2,93.2,100.2,96.3,98.3,98.3   z"/></g></svg> Admin Tools</h2>
+      <h2><span>🔧</span> Admin Tools</h2>
       <div class="admin-toggle" id="admin-toggle" onclick="toggleAdmin()">
         <span id="admin-toggle-text">Show admin tools</span>
         <span id="admin-toggle-icon">▼</span>
@@ -1713,178 +1710,279 @@ async function fetchCurrentUser(){
   }
 }
 
-function loginRedirect(){
-  window.location.href = AUTH_API + "/login?redirect=" + encodeURIComponent(window.location.href);
+function startGoogleLogin(){
+  window.location.href = AUTH_API + "/auth/google/start";
 }
 
-function updateUI(user){
-  var statusLabel = $("#auth-status-label");
-  var planLabel = $("#auth-plan-label");
-  var authBtn = $("#auth-login-btn");
-  var planGate = $("#plan-gate");
-  var planGateEmail = $("#plan-gate-email");
-  
-  if (!user){
-    document.body.classList.remove("authed");
-    statusLabel.textContent = "Not signed in";
-    planLabel.textContent = "";
-    authBtn.textContent = "Sign in with Google";
-    authBtn.onclick = loginRedirect;
-    hide(planGate);
-    return;
+function applyPlanGate(user){
+  var gate = $("#plan-gate");
+  var gateEmail = $("#plan-gate-email");
+  var routeSelection = $("#route-selection");
+  var cfSetup = $("#setup-cloudflare");
+  var r53Setup = $("#setup-route53");
+  var manualSetup = $("#setup-manual");
+  var helpSection = $("#help-section");
+  var adminSection = document.querySelector(".admin-section");
+
+  var email = user && user.email ? String(user.email) : "";
+  var plan = user && user.plan ? user.plan : null;
+  var lower = email.toLowerCase();
+  var isAdminFront = (lower === "pankajonlinerepository@gmail.com" || lower === "ops@domainsafepro.com");
+  var hasActivePlan = !!(plan && plan.status === "active");
+
+  if (gateEmail && email){
+    gateEmail.textContent = email;
   }
-  
-  document.body.classList.add("authed");
-  statusLabel.textContent = user.email || "";
-  
-  var hasPlan = user.plan && user.plan !== "free" && user.plan !== "none";
-  
-  if (hasPlan){
-    planLabel.textContent = "Plan: " + user.plan;
-    hide(planGate);
+
+  var sections = [routeSelection, cfSetup, r53Setup, manualSetup, helpSection, adminSection];
+
+  if (hasActivePlan || isAdminFront) {
+    if (gate) gate.classList.add("hidden");
+    sections.forEach(function(el){ if (el) el.classList.remove("hidden"); });
   } else {
-    planLabel.textContent = "No active plan";
-    if (planGateEmail) planGateEmail.textContent = user.email || "";
-    show(planGate);
+    if (gate) gate.classList.remove("hidden");
+    sections.forEach(function(el){ if (el) el.classList.add("hidden"); });
   }
-  
-  authBtn.textContent = "Sign out";
-  authBtn.onclick = async function(){
-    try{
-      await fetch(AUTH_API + "/logout", { method:"POST", credentials:"include" });
-    }catch(e){}
-    window.location.reload();
-  };
+}
+
+function showAuthedUI(user){
+  document.body.classList.remove("logged-out");
+  document.body.classList.add("authed");
+  var label = $("#auth-status-label");
+  var planLabel = $("#auth-plan-label");
+  var loginBtn = $("#auth-login-btn");
+  if (label && user && user.email){
+    label.textContent = user.email;
+  }
+  if (planLabel){
+    if (user && user.plan && user.plan.code){
+      var plan = user.plan;
+      var parts = [];
+      parts.push("Plan: " + String(plan.code));
+      if (typeof plan.domains_used === "number" && (plan.max_domains === null || typeof plan.max_domains === "number")){
+        var used = plan.domains_used;
+        var max = plan.max_domains;
+        if (max === null){
+          parts.push("Domains: " + used + "+");
+        } else {
+          parts.push("Domains: " + used + "/" + max);
+        }
+      }
+      if (plan.valid_until){
+        parts.push("Until: " + String(plan.valid_until).slice(0,10));
+      }
+      planLabel.textContent = parts.join(" · ");
+      planLabel.classList.remove("hidden");
+    } else {
+      planLabel.textContent = "";
+      planLabel.classList.add("hidden");
+    }
+  }
+  if (loginBtn) {
+    loginBtn.textContent = "Sign out";
+    loginBtn.onclick = function() {
+      document.body.classList.remove("authed");
+      document.body.classList.add("logged-out");
+      showLoggedOutUI();
+    };
+  }
+  applyPlanGate(user);
+  var statusRows = $("#statusRows");
+  if (statusRows){
+    statusRows.innerHTML = '<tr><td colspan="7" class="muted">Loading...</td></tr>';
+  }
+  var addEmail = $("#add-email");
+  if (addEmail && user && user.email){
+    addEmail.value = user.email;
+  }
+  loadStatus();
+  refreshRecent();
+}
+
+function showLoggedOutUI(){
+  document.body.classList.remove("authed");
+  document.body.classList.add("logged-out");
+  var label = $("#auth-status-label");
+  var planLabel = $("#auth-plan-label");
+  var loginBtn = $("#auth-login-btn");
+  if (label) label.textContent = "Not signed in";
+  if (planLabel){
+    planLabel.textContent = "";
+    planLabel.classList.add("hidden");
+  }
+  if (loginBtn) {
+    loginBtn.textContent = "Sign in with Google";
+    loginBtn.onclick = startGoogleLogin;
+  }
+  var statusRows = $("#statusRows");
+  if (statusRows){
+    statusRows.innerHTML = '<tr><td colspan="7" class="muted">Sign in to see your connected domains.</td></tr>';
+  }
+  var recent = $("#recentWrap");
+  if (recent) recent.textContent = "Sign in to see your domains.";
+  var addEmail = $("#add-email");
+  if (addEmail) addEmail.value = "";
+  var addLog = $("#add-log");
+  if (addLog) addLog.textContent = "Enter domain details above.";
 }
 
 async function initAuth(){
+  var btnHeader = $("#auth-login-btn");
+  var btnHero   = $("#login-hero-btn");
+  if (btnHeader) btnHeader.addEventListener("click", startGoogleLogin);
+  if (btnHero)   btnHero.addEventListener("click", startGoogleLogin);
+
+  // Show loading state initially (already shown by default)
+  // Now fetch user
   var user = await fetchCurrentUser();
-  updateUI(user);
-  if (user){
-    refreshRecent();
-    loadStatus();
+  
+  // Hide loading and show appropriate UI
+  if (user) {
+    showAuthedUI(user);
+  } else {
+    showLoggedOutUI();
   }
 }
 
-$("#login-hero-btn").addEventListener("click", loginRedirect);
+/* ====== STATUS & MONITOR ====== */
+function pill(ok){
+  return ok
+    ? '<span class="pill ok">OK</span>'
+    : '<span class="pill bad">Needs setup</span>';
+}
 
-/* ====== STATUS TABLE ====== */
 async function loadStatus(){
-  var tbody = $("#statusRows");
+  var tb = $("#statusRows");
+  if (!tb) return;
+  tb.innerHTML = '<tr><td colspan="7" class="muted">Loading...</td></tr>';
   try{
-    var j = await get(ROBOT_API + "/api/domains/status");
-    var rows = (j && j.domains) ? j.domains : [];
+    var j = await get(ROBOT_API + "/api/status");
+    var rows = (j && j.rows) ? j.rows : [];
     if (!rows.length){
-      tbody.innerHTML = '<tr><td colspan="7" class="muted">No domains found. Add one below.</td></tr>';
+      tb.innerHTML = '<tr><td colspan="7" class="muted">No domains registered yet. Add your first domain above.</td></tr>';
       return;
     }
-    tbody.innerHTML = rows.map(function(d){
-      function pill(ok){ return ok ? '<span class="pill ok">✓</span>' : '<span class="pill bad">✗</span>'; }
-      return '<tr>'+
-        '<td data-label="Domain"><span class="mono">'+d.domain_name+'</span></td>'+
-        '<td data-label="Owner">'+d.owner_email+'</td>'+
-        '<td data-label="SPF">'+pill(d.spf_ok)+'</td>'+
-        '<td data-label="DMARC">'+pill(d.dmarc_ok)+'</td>'+
-        '<td data-label="DKIM s1">'+pill(d.dkim_s1_ok)+'</td>'+
-        '<td data-label="DKIM s2">'+pill(d.dkim_s2_ok)+'</td>'+
-        '<td data-label="Checked">'+(d.last_checked ? new Date(d.last_checked).toLocaleString() : '-')+'</td>'+
+    tb.innerHTML = rows.map(function(r) {
+      return '<tr>' +
+        '<td data-label="Domain" class="mono">'+(r.domain_name||"")+'</td>' +
+        '<td data-label="Owner" class="mono tiny">'+(r.email||"")+'</td>' +
+        '<td data-label="SPF">'+pill(r.spf_ok)+'</td>' +
+        '<td data-label="DMARC">'+pill(r.dmarc_ok)+'</td>' +
+        '<td data-label="DKIM s1">'+pill(r.dkim_s1_ok)+'</td>' +
+        '<td data-label="DKIM s2">'+pill(r.dkim_s2_ok)+'</td>' +
+        '<td data-label="Checked" class="tiny muted">'+(r.checked_at||"")+'</td>' +
       '</tr>';
     }).join("");
   }catch(e){
-    tbody.innerHTML = '<tr><td colspan="7" class="muted danger">Error: '+String(e).slice(0,100)+'</td></tr>';
+    tb.innerHTML = '<tr><td colspan="7" class="tiny danger">Could not load status. Please try again.</td></tr>';
   }
 }
 $("#btnStatus").addEventListener("click", loadStatus);
-
 $("#btnMonitor").addEventListener("click", async function(){
-  try{
-    var j = await post(ROBOT_API + "/api/monitor/run", {});
-    alert("Monitor run triggered. Refresh status in a moment.");
-    loadStatus();
-  }catch(e){
-    alert("Error: " + String(e));
-  }
+  try{ await post(ROBOT_API + "/api/monitor-run", {}); }catch(e){}
+  loadStatus();
 });
 
-/* ====== QUICK CODES (DNS record generator) ====== */
-$("#btnQCodes").addEventListener("click", async function(){
-  var noticeEl = $("#qc-notice");
-  var resultsEl = $("#qc-results");
-  var actionsEl = $("#qc-actions");
-  var norm = normalizeForUI($("#qc-domain").value, noticeEl, null);
-  if (!norm.ok){
-    hide(resultsEl);
-    hide(actionsEl);
-    return;
-  }
-  var extras = $("#qc-extras").checked;
-  
-  try{
-    var url = ROBOT_API + "/api/quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value);
-    if (extras) url += "&extras=1";
-    var j = await get(url);
-    renderQuickCodes(j);
-  }catch(e){
-    resultsEl.innerHTML = '<div class="notice danger">Error: '+String(e).slice(0,150)+'</div>';
-    show(resultsEl);
-    hide(actionsEl);
-  }
-});
-
-function renderQuickCodes(data){
+/* ====== QUICK-CODES (Customer-facing) ====== */
+function renderQuickCodes(records, extras) {
   var container = $("#qc-results");
-  var actions = $("#qc-actions");
-  var records = data.records || [];
-  
-  if (!records.length){
-    container.innerHTML = '<div class="notice info">No records generated. Please try again.</div>';
+  if (!records || records.length === 0) {
+    container.innerHTML = '<p class="muted">No records to display.</p>';
     show(container);
-    hide(actions);
     return;
   }
-  
+
+  function getPurpose(name) {
+    if (name.indexOf('_domainkey') >= 0) {
+      return name.indexOf('s1') === 0 ? 'Email Signature Key 1 (DKIM)' : 'Email Signature Key 2 (DKIM)';
+    }
+    if (name === '_dmarc' || name.indexOf('_dmarc.') === 0) return 'Email Policy (DMARC)';
+    if (name === '@' || name === '') return 'Email Sender Authorization (SPF)';
+    if (name === '_smtp._tls') return 'Transport Security Reporting';
+    if (name === 'mta-sts') return 'Mail Transfer Security';
+    return 'DNS Record';
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function createCard(r) {
+    var typeClass = r.type.toLowerCase() === 'txt' ? 'txt' : 'cname';
+    var purpose = getPurpose(r.name);
+    var displayName = r.name === '@' ? '@ (root domain)' : escapeHtml(r.name);
+    var escapedName = escapeHtml(r.name);
+    var escapedValue = escapeHtml(r.value);
+    
+    return '<div class="qc-card">' +
+      '<div class="qc-card-header">' +
+        '<span class="qc-type ' + typeClass + '">' + escapeHtml(r.type) + '</span>' +
+        '<span class="qc-purpose">' + purpose + '</span>' +
+      '</div>' +
+      '<div class="qc-field">' +
+        '<div class="qc-label">Host / Name</div>' +
+        '<div class="qc-value">' +
+          '<code>' + displayName + '</code>' +
+          '<button class="copy-btn" data-copy="' + escapedName + '">Copy</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="qc-field">' +
+        '<div class="qc-label">Value / Points To</div>' +
+        '<div class="qc-value">' +
+          '<code>' + escapedValue + '</code>' +
+          '<button class="copy-btn" data-copy="' + escapedValue + '">Copy</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
   var html = '<div class="qc-cards">';
-  records.forEach(function(rec, idx){
-    var typeClass = (rec.type || "").toLowerCase();
-    html += '<div class="qc-card" data-idx="'+idx+'">';
-    html += '<div class="qc-card-header">';
-    html += '<span class="qc-type '+typeClass+'">'+(rec.type || "TXT")+'</span>';
-    html += '<span class="qc-purpose">'+(rec.purpose || "Record")+'</span>';
-    html += '</div>';
-    
-    html += '<div class="qc-field">';
-    html += '<div class="qc-label">Host / Name</div>';
-    html += '<div class="qc-value"><code>'+(rec.name || "@")+'</code><button class="copy-btn" data-copy="'+(rec.name || "@")+'">Copy</button></div>';
-    html += '</div>';
-    
-    html += '<div class="qc-field">';
-    html += '<div class="qc-label">Value / Points to</div>';
-    html += '<div class="qc-value"><code>'+(rec.value || "")+'</code><button class="copy-btn" data-copy="'+(rec.value || "")+'">Copy</button></div>';
-    html += '</div>';
-    
-    html += '</div>';
-  });
+  records.forEach(function(r) { html += createCard(r); });
+  if (extras && extras.length > 0) {
+    html += '<div class="mt-md mb-sm"><strong class="tiny muted">ADVANCED SECURITY (OPTIONAL)</strong></div>';
+    extras.forEach(function(r) { html += createCard(r); });
+  }
   html += '</div>';
-  
+
   container.innerHTML = html;
   show(container);
-  show(actions);
+  show($("#qc-actions"));
   
-  // Attach copy handlers
-  container.querySelectorAll('.copy-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var text = btn.getAttribute('data-copy');
-      copy(text).then(function(){
-        btn.textContent = 'Copied!';
-        btn.classList.add('copied');
-        setTimeout(function(){
-          btn.textContent = 'Copy';
-          btn.classList.remove('copied');
-        }, 1500);
+  // Add click handlers for copy buttons
+  container.querySelectorAll('.copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var text = this.getAttribute('data-copy');
+      var button = this;
+      copy(text).then(function() {
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+        setTimeout(function() {
+          button.textContent = 'Copy';
+          button.classList.remove('copied');
+        }, 2000);
       });
     });
   });
 }
+
+$("#btnQCodes").addEventListener("click", async function(){
+  var norm = normalizeForUI($("#qc-domain").value, $("#qc-notice"), null);
+  if (!norm.ok){
+    hide($("#qc-results"));
+    hide($("#qc-actions"));
+    return;
+  }
+  try{
+    var extras = ($("#qc-extras").checked ? "&extras=1" : "");
+    var j = await get(ROBOT_API + "/api/quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value) + extras);
+    renderQuickCodes(j.records || [], j.extras || []);
+    
+    $("#verify-domain").value = norm.apex || norm.value;
+  }catch(e){
+    $("#qc-results").innerHTML = '<p class="danger">Could not generate records: ' + String(e).slice(0,100) + '</p>';
+    show($("#qc-results"));
+  }
+});
 
 $("#btnCopyAll").addEventListener("click", function(){
   var cards = $$("#qc-results .qc-card");
