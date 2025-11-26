@@ -135,6 +135,10 @@ header {
   font-weight: 700;
   font-size: 1.4rem;
   color: var(--fg);
+  text-decoration: none;
+}
+.brand:hover {
+  opacity: 0.9;
 }
 .brand-text {
   font-family: var(--font-brand);
@@ -1070,10 +1074,10 @@ details[open] summary {
 
 <header>
   <div class="header-inner">
-    <div class="brand">
+    <a href="https://www.domainsafepro.com" class="brand">
       <span class="brand-text">DomainSafePro</span>
       <span class="header-tag">Setup and manage your email protection</span>
-    </div>
+    </a>
     <div class="auth-bar" id="auth-bar">
       <span id="auth-status-label">Not signed in</span>
       <span id="auth-plan-label" class="tiny muted"></span>
@@ -1717,6 +1721,7 @@ function startGoogleLogin(){
 function applyPlanGate(user){
   var gate = $("#plan-gate");
   var gateEmail = $("#plan-gate-email");
+  var welcomeBanner = $(".welcome-banner");
   var routeSelection = $("#route-selection");
   var cfSetup = $("#setup-cloudflare");
   var r53Setup = $("#setup-route53");
@@ -1734,7 +1739,7 @@ function applyPlanGate(user){
     gateEmail.textContent = email;
   }
 
-  var sections = [routeSelection, cfSetup, r53Setup, manualSetup, helpSection, adminSection];
+  var sections = [welcomeBanner, routeSelection, cfSetup, r53Setup, manualSetup, helpSection, adminSection];
 
   if (hasActivePlan || isAdminFront) {
     if (gate) gate.classList.add("hidden");
@@ -1781,9 +1786,8 @@ function showAuthedUI(user){
   if (loginBtn) {
     loginBtn.textContent = "Sign out";
     loginBtn.onclick = function() {
-      document.body.classList.remove("authed");
-      document.body.classList.add("logged-out");
-      showLoggedOutUI();
+      // Redirect to landing page on logout
+      window.location.href = "https://www.domainsafepro.com";
     };
   }
   applyPlanGate(user);
