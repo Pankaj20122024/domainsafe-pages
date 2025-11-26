@@ -1786,8 +1786,8 @@ function showAuthedUI(user){
   if (loginBtn) {
     loginBtn.textContent = "Sign out";
     loginBtn.onclick = function() {
-      // Redirect to landing page on logout
-      window.location.href = "https://www.domainsafepro.com";
+      // Redirect to Robot's logout endpoint which clears the session cookie and redirects to landing page
+      window.location.href = "https://domainsafe-robot.pankajonlinerepository.workers.dev/auth/logout";
     };
   }
   applyPlanGate(user);
