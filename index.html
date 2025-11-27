@@ -298,16 +298,15 @@ header {
   margin: 0 auto;
 }
 
-/* ========== PLAN GATE (locked state) ========== */
-#plan-gate {
-  padding: 60px 20px;
-  text-align: center;
-  min-height: 60vh;
-  display: flex;
+/* ========== LOGIN SECTION ========== */
+#login-section {
+  display: none;
   align-items: center;
   justify-content: center;
+  padding: 60px 20px;
+  min-height: 60vh;
 }
-.plan-gate-card {
+.login-card {
   width: 100%;
   max-width: 480px;
   background: var(--glass-bg);
@@ -315,535 +314,288 @@ header {
   -webkit-backdrop-filter: blur(20px);
   border-radius: var(--radius);
   border: 1px solid var(--glass-border);
-  padding: 48px 28px;
+  padding: 32px 28px;
   box-shadow: 0 24px 60px var(--shadow-color);
   text-align: center;
   position: relative;
   z-index: 1;
 }
-.plan-gate-card .gate-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+.login-card .eyebrow {
+  font-size: 12px;
+  color: var(--brand);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  font-weight: 600;
 }
-.plan-gate-card h2 {
-  font-size: 1.5rem;
+.login-card h2 {
+  font-size: 1.75rem;
   margin-bottom: 12px;
 }
-.plan-gate-card p {
+.login-card p {
   font-size: 15px;
   color: var(--fg-muted);
-  max-width: 320px;
-  margin: 0 auto 24px;
+  margin-bottom: 24px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.login-card .btn { width: 100%; max-width: 280px; }
+.login-card .tiny {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--fg-muted);
 }
 
-/* Show/hide based on auth state */
-body.logged-out .show-when-authed { display: none !important; }
-body.authed .show-when-logged-out { display: none !important; }
+body.authed #loading-section { display: none; }
+body.authed #login-section { display: none; }
+body.authed #app-main { display: block; }
+body.logged-out #loading-section { display: none; }
+body.logged-out #login-section { display: flex; }
+body.logged-out #app-main { display: none; }
 
-/* ========== MAIN WRAPPER ========== */
+/* ========== MAIN CONSOLE ========== */
 main {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 40px 20px 80px;
+  padding: 24px 16px 80px;
   position: relative;
   z-index: 1;
 }
+#app-main { display: none; }
 
-/* ========== WELCOME BANNER ========== */
+/* Welcome message */
 .welcome-banner {
   text-align: center;
   padding: 32px 20px;
-  margin-bottom: 36px;
-  background: var(--highlight-bg);
-  border: 1px solid var(--highlight-border);
-  border-radius: var(--radius);
+  margin-bottom: 24px;
 }
 .welcome-banner h1 {
-  font-size: 1.6rem;
-  margin-bottom: 12px;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
 }
 .welcome-banner p {
-  font-size: 15px;
+  font-size: 1.05rem;
+  max-width: 500px;
   margin: 0 auto;
-  max-width: 600px;
 }
 
-/* ========== SECTION LAYOUT ========== */
+/* Section titles */
+.section-title {
+  font-size: 1rem;
+  color: var(--fg-muted);
+  font-weight: 600;
+  margin-bottom: 16px;
+  margin-top: 32px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-sans);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title:first-of-type { margin-top: 0; }
+.section-title .icon {
+  font-size: 1.2rem;
+}
+
+/* ========== GRID ========== */
 .grid {
   display: grid;
-  gap: 24px;
-  margin-bottom: 32px;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+@media (min-width: 900px) {
+  .grid { grid-template-columns: 1fr 1fr; }
 }
 .grid.full { grid-template-columns: 1fr; }
-.grid.two { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-
-/* ========== CARD ========== */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 28px;
-  box-shadow: 0 8px 24px var(--shadow-color);
-  transition: border-color var(--fast-transition);
+.grid.three {
+  grid-template-columns: 1fr;
 }
-.card:hover { border-color: var(--border-glow); }
+@media (min-width: 700px) {
+  .grid.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+/* ========== CARDS ========== */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 8px 32px var(--shadow-color);
+  transition: border-color var(--fast-transition), box-shadow var(--fast-transition);
+}
+.card:hover {
+  border-color: var(--border-glow);
+}
 .card h3 {
-  font-size: 1.1rem;
-  margin-bottom: 8px;
+  font-size: 1.25rem;
+  margin: 0 0 8px 0;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 .card h3 .card-icon {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.card h3 .card-icon svg {
+  width: 28px;
+  height: 28px;
+}
+.card h3 .card-icon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
 .card .desc {
-  font-size: 14px;
   color: var(--fg-muted);
-  margin-bottom: 18px;
-}
-.card.highlight {
-  background: var(--highlight-bg);
-  border-color: var(--highlight-border);
+  font-size: 15px;
+  margin: 0 0 16px 0;
+  line-height: 1.6;
 }
 
-/* ========== ROUTE SELECTION ========== */
-#route-selection {
-  margin-bottom: 40px;
+/* HIGHLIGHTED CARD (for primary actions) */
+.card.highlight {
+  border: 2px solid var(--highlight-border);
+  background: var(--highlight-bg);
+  box-shadow: 0 8px 32px var(--shadow-color), 0 0 0 1px var(--highlight-border);
 }
-.route-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+.card.highlight:hover {
+  border-color: var(--brand);
 }
+.card.highlight h3 {
+  color: var(--brand);
+}
+
+/* ========== ROUTE SELECTION CARDS ========== */
 .route-card {
-  background: var(--bg-card);
-  border: 2px solid var(--border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid var(--glass-border);
   border-radius: var(--radius);
-  padding: 28px 24px;
+  padding: 24px;
+  text-align: center;
   cursor: pointer;
   transition: all var(--fast-transition);
-  text-align: center;
 }
 .route-card:hover {
-  border-color: var(--brand);
+  border-color: var(--border-glow);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--shadow-color);
 }
 .route-card.selected {
   border-color: var(--brand);
   background: var(--highlight-bg);
 }
-.route-card-icon {
+.route-card .route-icon {
   width: 64px;
   height: 64px;
-  margin: 0 auto 16px;
+  margin: 0 auto 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  background: var(--bg-alt);
-  font-size: 32px;
 }
-.route-card-icon img {
+.route-card .route-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.route-card .route-icon img {
   width: 64px;
   height: 64px;
   object-fit: contain;
-  border-radius: 50%;
 }
-.route-card h3 {
+.route-card h4 {
+  font-family: var(--font-sans);
   font-size: 1rem;
+  font-weight: 600;
   margin-bottom: 8px;
-  justify-content: center;
 }
 .route-card p {
-  font-size: 13px;
-  color: var(--fg-muted);
-  margin: 0 auto;
-  max-width: 200px;
+  font-size: 14px;
+  margin: 0;
 }
-
-/* ========== SETUP SECTIONS (conditional visibility) ========== */
-.setup-section {
-  display: none;
-}
-.setup-section.active {
-  display: block;
-}
-
-/* ========== INSIGHTS SECTION ========== */
-.insights-section {
-  margin-top: 40px;
-  border-top: 1px solid var(--border);
-  padding-top: 40px;
-}
-
-/* Insights bar chart */
-.ins-bar {
-  width: 120px;
-  height: 8px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 6px;
-}
-.ins-bar i {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--brand), var(--ok));
-  border-radius: 4px;
-}
-.ins-stats {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ========== SOURCE ANALYSIS SECTION ========== */
-.sources-section {
-  margin-top: 32px;
-  border-top: 1px solid var(--border);
-  padding-top: 32px;
-}
-
-.sources-section h4 {
-  font-size: 1rem;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sources-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.sources-stat {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 12px 18px;
-  min-width: 140px;
-}
-
-.sources-stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--fg);
-  line-height: 1.2;
-}
-
-.sources-stat-label {
-  font-size: 12px;
-  color: var(--fg-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.source-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  margin-bottom: 10px;
-  transition: border-color var(--fast-transition);
-}
-
-.source-row:hover {
-  border-color: var(--border-glow);
-}
-
-.source-row:last-child {
-  margin-bottom: 0;
-}
-
-.source-identity {
-  flex: 1;
-  min-width: 0;
-}
-
-.source-identity-name {
-  font-weight: 600;
-  color: var(--fg);
-  margin-bottom: 2px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.source-identity-ip {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--fg-muted);
-}
-
-.source-identity-org {
-  font-size: 12px;
-  color: var(--fg-muted);
-}
-
-.source-stats {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.source-stat-item {
-  text-align: center;
-  min-width: 60px;
-}
-
-.source-stat-num {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: var(--fg);
-}
-
-.source-stat-lbl {
+.route-card .route-tag {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
   font-size: 11px;
-  color: var(--fg-muted);
+  font-weight: 600;
   text-transform: uppercase;
 }
-
-.source-status {
-  min-width: 100px;
-  text-align: right;
-}
-
-.pill.authorized {
+.route-card .route-tag.auto {
   background: rgba(103,232,163,0.15);
   color: var(--ok);
 }
-
-.pill.partial {
-  background: rgba(255,211,106,0.15);
-  color: var(--warn);
+.route-card .route-tag.manual {
+  background: rgba(90,129,255,0.15);
+  color: var(--brand);
 }
-
-.pill.misconfigured {
-  background: rgba(255,211,106,0.2);
-  color: var(--warn);
-}
-
-.pill.suspicious {
-  background: rgba(255,122,122,0.15);
-  color: var(--danger);
-}
-
-.source-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--bg-alt);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.source-icon.authorized {
-  background: rgba(103,232,163,0.15);
-}
-
-.source-icon.suspicious {
-  background: rgba(255,122,122,0.15);
-}
-
-.source-icon.partial,
-.source-icon.misconfigured {
-  background: rgba(255,211,106,0.15);
-}
-
-.sources-empty {
-  padding: 32px;
-  text-align: center;
-  color: var(--fg-muted);
-  background: var(--bg-input);
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-sm);
-}
-
-.sources-loading {
-  padding: 24px;
-  text-align: center;
-  color: var(--fg-muted);
-}
-
-/* Source details expansion */
-.source-details {
-  margin-top: 10px;
-  padding: 12px 16px;
-  background: var(--bg-alt);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-}
-
-.source-details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 12px;
-}
-
-.source-detail-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.source-detail-label {
-  font-size: 11px;
-  color: var(--fg-muted);
-  text-transform: uppercase;
-  margin-bottom: 2px;
-}
-
-.source-detail-value {
-  color: var(--fg);
-  font-weight: 500;
-}
-
-.source-detail-value.pass {
-  color: var(--ok);
-}
-
-.source-detail-value.fail {
-  color: var(--danger);
-}
-
-/* ========== ADMIN SECTION ========== */
-.admin-section {
-  margin-top: 48px;
-  border-top: 2px solid var(--border);
-  padding-top: 32px;
-}
-.admin-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.admin-header h2 {
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.admin-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--fg-muted);
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  transition: all var(--fast-transition);
-}
-.admin-toggle:hover {
-  border-color: var(--border-glow);
-  color: var(--fg);
-}
-.admin-content {
-  display: none;
-}
-.admin-content.visible {
-  display: block;
-}
-
-.section-title {
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--fg-muted);
-  margin-bottom: 12px;
-  margin-top: 32px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.section-title .icon {
-  font-size: 16px;
-}
-.section-title:first-of-type { margin-top: 0; }
 
 /* ========== FORM ELEMENTS ========== */
 label {
   display: block;
   font-size: 13px;
-  font-weight: 600;
   color: var(--fg-muted);
   margin-bottom: 6px;
+  font-weight: 500;
 }
 input, select, textarea {
   width: 100%;
   padding: 12px 14px;
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
   color: var(--fg);
-  font-size: 15px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
   font-family: var(--font-sans);
-  transition: border-color var(--fast-transition);
+  outline: none;
+  transition: border-color var(--fast-transition), box-shadow var(--fast-transition);
 }
 input:focus, select:focus, textarea:focus {
-  outline: none;
   border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(90,129,255,0.15);
 }
-input[readonly] {
-  opacity: 0.7;
+input.mono, textarea.mono, .mono {
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+textarea { min-height: 100px; resize: vertical; }
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239496a3' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 
+/* Checkbox row */
 .checkbox-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--fg-muted);
 }
 .checkbox-row input[type="checkbox"] {
   width: auto;
-}
-.checkbox-row label {
   margin: 0;
-  font-weight: normal;
-  font-size: 14px;
-  color: var(--fg);
 }
 
-/* Button row */
-.btn-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-}
-
-/* Spacing helpers */
-.mt-sm { margin-top: 8px; }
-.mt-md { margin-top: 16px; }
-.mb-sm { margin-bottom: 8px; }
-.hidden { display: none !important; }
-.muted { color: var(--fg-muted); }
-.tiny { font-size: 12px; }
-
-/* SPF checkbox grid */
+/* SPF Builder checkboxes */
 .spf-checkboxes {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 20px;
-  margin-bottom: 14px;
+  gap: 12px 18px;
+  margin-bottom: 16px;
 }
 .spf-checkboxes label {
   display: inline-flex;
@@ -1049,43 +801,65 @@ td {
   }
   td {
     border: none;
-    padding: 8px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    position: relative;
+    padding-left: 40%;
+    padding-top: 6px;
+    padding-bottom: 6px;
   }
   td::before {
+    position: absolute;
+    top: 6px;
+    left: 12px;
+    width: 35%;
+    padding-right: 10px;
+    white-space: nowrap;
     content: attr(data-label);
     font-weight: 600;
     color: var(--fg-muted);
     font-size: 12px;
-    text-transform: uppercase;
   }
 }
 
-/* ========== QUICK CODES CARDS ========== */
+/* ========== DETAILS/SUMMARY ========== */
+details {
+  margin-top: 16px;
+}
+summary {
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--brand);
+  font-weight: 500;
+  padding: 8px 0;
+}
+summary:hover {
+  text-decoration: underline;
+}
+details[open] summary {
+  margin-bottom: 12px;
+}
+
+/* ========== QUICK CODES DISPLAY ========== */
 .qc-cards {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 16px;
+  margin-top: 16px;
 }
 .qc-card {
-  background: var(--bg-card);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 18px 20px;
+  padding: 16px;
 }
 .qc-card-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 .qc-type {
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 999px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -1096,12 +870,13 @@ td {
   color: var(--brand);
 }
 .qc-type.cname {
-  background: rgba(138,122,255,0.15);
-  color: var(--brand-accent);
+  background: rgba(103,232,163,0.15);
+  color: var(--ok);
 }
 .qc-purpose {
-  font-size: 13px;
-  color: var(--fg-muted);
+  font-size: 14px;
+  color: var(--fg);
+  font-weight: 600;
 }
 .qc-field {
   margin-bottom: 12px;
@@ -1109,7 +884,6 @@ td {
 .qc-field:last-child { margin-bottom: 0; }
 .qc-label {
   font-size: 11px;
-  font-weight: 600;
   color: var(--fg-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1118,127 +892,407 @@ td {
 .qc-value {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: var(--bg-input);
+  gap: 8px;
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 10px 14px;
+  padding: 10px 12px;
 }
 .qc-value code {
   flex: 1;
-  word-break: break-all;
+  font-family: var(--font-mono);
   font-size: 13px;
+  word-break: break-all;
   color: var(--fg);
 }
 .copy-btn {
-  padding: 6px 12px;
-  background: var(--bg-alt);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--fg-muted);
-  cursor: pointer;
-  transition: all var(--fast-transition);
   flex-shrink: 0;
-}
-.copy-btn:hover {
-  border-color: var(--brand);
-  color: var(--brand);
-}
-.copy-btn.copied {
-  background: rgba(103,232,163,0.15);
-  border-color: var(--ok);
-  color: var(--ok);
-}
-
-/* ========== DOCS CONTENT ========== */
-.docs-content {
-  font-size: 14px;
-  color: var(--fg-muted);
-  line-height: 1.7;
-}
-.docs-content strong {
-  display: block;
-  color: var(--fg);
-  margin-top: 16px;
-  margin-bottom: 6px;
-}
-.docs-content strong:first-child {
-  margin-top: 0;
-}
-.docs-content p {
-  margin-bottom: 10px;
-  max-width: none;
-}
-.docs-content code {
-  background: var(--bg-input);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: var(--fg);
-}
-
-/* Details/Summary */
-details {
-  border: 1px solid var(--border);
+  padding: 6px 12px;
+  font-size: 12px;
   border-radius: var(--radius-sm);
-  background: var(--bg-input);
-}
-summary {
-  padding: 12px 16px;
+  background: var(--brand);
+  color: #fff;
+  border: none;
   cursor: pointer;
-  font-size: 14px;
   font-weight: 600;
+  transition: all var(--fast-transition);
+}
+.copy-btn:hover { filter: brightness(1.1); }
+.copy-btn.copied {
+  background: var(--ok);
+}
+
+/* ========== SETUP FLOW SECTIONS ========== */
+.setup-section {
+  display: none;
+}
+.setup-section.active {
+  display: block;
+}
+
+/* Simple back navigation */
+.back-nav {
+  margin-bottom: 16px;
+}
+.btn-back {
+  background: none;
+  border: none;
   color: var(--fg-muted);
-  list-style: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 0;
+  font-family: var(--font-sans);
+  transition: color var(--fast-transition);
 }
-summary::-webkit-details-marker { display: none; }
-summary::before {
-  content: '▸ ';
+.btn-back:hover {
+  color: var(--fg);
 }
-details[open] summary::before {
-  content: '▾ ';
-}
-details > div {
-  padding: 12px 16px;
+
+/* ========== INSIGHTS SECTION ========== */
+.insights-section {
+  margin-top: 32px;
+  padding-top: 24px;
   border-top: 1px solid var(--border);
 }
 
+/* Insights alignment bars */
+.ins-bar {
+  height: 10px;
+  background: var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  min-width: 100px;
+}
+.ins-bar > i {
+  display: block;
+  height: 100%;
+  background: var(--ok);
+  border-radius: 6px;
+}
+.ins-stats {
+  font-size: 12px;
+  color: var(--fg-muted);
+  margin-top: 4px;
+}
+.ins-summary-stat {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  margin-right: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.ins-summary-stat strong {
+  color: var(--ok);
+}
+
+/* ========== ADMIN SECTION ========== */
+.admin-section {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 2px solid var(--border);
+}
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.admin-header h2 {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  background: rgba(255,211,106,0.15);
+  color: var(--warn);
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.admin-toggle {
+  font-size: 13px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.admin-toggle:hover { color: var(--fg); }
+.admin-content {
+  display: none;
+}
+.admin-content.visible {
+  display: block;
+}
+
+/* ========== UTILITIES ========== */
+.tiny { font-size: 12px; }
+.muted { color: var(--fg-muted); }
+.danger { color: var(--danger); }
+.text-center { text-align: center; }
+.mt-sm { margin-top: 8px; }
+.mt-md { margin-top: 16px; }
+.mb-sm { margin-bottom: 8px; }
+.mb-md { margin-bottom: 16px; }
+.hidden { display: none !important; }
+
+/* Gap between button rows */
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+/* ========== DOCS SECTION ========== */
+.docs-content {
+  font-size: 15px;
+  line-height: 1.7;
+}
+.docs-content strong {
+  color: var(--fg);
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+.docs-content strong:first-child { margin-top: 0; }
+.docs-content p {
+  margin-bottom: 12px;
+}
+.docs-content .mono {
+  background: var(--bg-input);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* ========== MOBILE OPTIMIZATIONS ========== */
+@media (max-width: 640px) {
+  header { padding: 12px 16px; }
+  .header-inner { gap: 8px; }
+  .brand { font-size: 1.2rem; gap: 8px; }
+  main { padding: 16px 12px 60px; }
+  .card { padding: 18px 16px; }
+  .card h3 { font-size: 1.1rem; }
+  .btn { padding: 10px 18px; font-size: 14px; }
+  .btn.large { padding: 14px 24px; font-size: 15px; }
+  .row > div { flex: 1 1 100%; }
+  .row > div.narrow { flex: 1 1 100%; }
+  .row > div.action { width: 100%; }
+  .btn-row { flex-direction: column; }
+  .btn-row .btn { width: 100%; }
+  .login-card { padding: 24px 20px; }
+  .login-card h2 { font-size: 1.5rem; }
+  .welcome-banner h1 { font-size: 1.5rem; }
+  .route-card { padding: 18px 16px; }
+  .route-card .route-icon { width: 56px; height: 56px; }
+}
+
+/* Touch-friendly tap targets */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px;
+    min-height: 48px;
+  }
+  .btn { min-height: 48px; }
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card {
+  animation: fadeIn 0.4s ease;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(90,129,255,0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(90,129,255,0); }
+}
+.card.highlight {
+  animation: fadeIn 0.4s ease, pulse 2s ease-in-out 3;
+}
+
 /* ========== FOOTER ========== */
+/* Plan gate card */
+#plan-gate {
+  margin-bottom: 18px;
+}
+#plan-gate .desc {
+  max-width: 540px;
+}
+
 .console-footer {
   text-align: center;
   padding: 24px;
   font-size: 13px;
   color: var(--fg-muted);
   border-top: 1px solid var(--border);
-  margin-top: 48px;
+  margin-top: 40px;
 }
 .console-footer a {
   color: var(--brand);
 }
-
-/* ========== PLAN LABEL ========== */
-#auth-plan-label {
+/* ========== SOURCE ANALYSIS SECTION ========== */
+.sources-section {
+  margin-top: 32px;
+  border-top: 1px solid var(--border);
+  padding-top: 32px;
+}
+.sources-section h4 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sources-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.sources-stat {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 18px;
+  min-width: 140px;
+}
+.sources-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--fg);
+  line-height: 1.2;
+}
+.sources-stat-label {
+  font-size: 12px;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.source-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  transition: border-color var(--fast-transition);
+}
+.source-row:hover {
+  border-color: var(--border-glow);
+}
+.source-row:last-child {
+  margin-bottom: 0;
+}
+.source-identity {
+  flex: 1;
+  min-width: 0;
+}
+.source-identity-name {
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.source-identity-ip {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+.source-identity-org {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+.source-stats {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.source-stat-item {
+  text-align: center;
+  min-width: 60px;
+}
+.source-stat-num {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--fg);
+}
+.source-stat-lbl {
   font-size: 11px;
   color: var(--fg-muted);
-  background: var(--bg-input);
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
+  text-transform: uppercase;
 }
-
-/* ========== RESPONSIVE ========== */
+.source-status {
+  min-width: 100px;
+  text-align: right;
+}
+.pill.authorized {
+  background: rgba(103,232,163,0.15);
+  color: var(--ok);
+}
+.pill.partial {
+  background: rgba(255,211,106,0.15);
+  color: var(--warn);
+}
+.pill.misconfigured {
+  background: rgba(255,211,106,0.2);
+  color: var(--warn);
+}
+.pill.suspicious {
+  background: rgba(255,122,122,0.15);
+  color: var(--danger);
+}
+.source-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.source-icon.authorized {
+  background: rgba(103,232,163,0.15);
+}
+.source-icon.suspicious {
+  background: rgba(255,122,122,0.15);
+}
+.source-icon.partial,
+.source-icon.misconfigured {
+  background: rgba(255,211,106,0.15);
+}
+.sources-empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--fg-muted);
+  background: var(--bg-input);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+}
+.sources-loading {
+  padding: 24px;
+  text-align: center;
+  color: var(--fg-muted);
+}
 @media (max-width: 600px) {
-  main { padding: 24px 16px 60px; }
-  .card { padding: 20px; }
-  .welcome-banner { padding: 24px 16px; }
-  .welcome-banner h1 { font-size: 1.3rem; }
-  .route-cards { grid-template-columns: 1fr; }
-  .btn.large { padding: 14px 24px; font-size: 15px; }
-  .header-inner { gap: 8px; }
-  .brand { font-size: 1.2rem; }
-  
-  /* Source analysis responsive */
   .source-row {
     flex-direction: column;
     align-items: flex-start;
@@ -1253,87 +1307,390 @@ details > div {
     text-align: left;
   }
 }
+/* ========== ENHANCED INSIGHTS STYLES ========== */
+
+/* Hero Metric - The Big Number */
+.hero-metric {
+  text-align: center;
+  padding: 32px 24px;
+  background: linear-gradient(135deg, var(--bg-alt) 0%, var(--bg-card) 100%);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-metric::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(103,232,163,0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-metric-value {
+  font-size: 4rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  line-height: 1;
+  margin-bottom: 8px;
+  position: relative;
+}
+.hero-metric-value.excellent { color: var(--ok); }
+.hero-metric-value.good { color: var(--ok); }
+.hero-metric-value.fair { color: var(--warn); }
+.hero-metric-value.poor { color: var(--danger); }
+.hero-metric-label {
+  font-size: 14px;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+.hero-metric-domain {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: 4px;
+}
+.hero-metric-period {
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+
+/* NLG Summary - Natural Language Insight */
+.nlg-summary {
+  background: var(--highlight-bg);
+  border: 1px solid var(--highlight-border);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.nlg-summary-icon {
+  font-size: 20px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.nlg-summary strong {
+  color: var(--fg);
+}
+.nlg-summary.excellent {
+  background: rgba(103,232,163,0.08);
+  border-color: rgba(103,232,163,0.25);
+}
+.nlg-summary.good {
+  background: rgba(103,232,163,0.06);
+  border-color: rgba(103,232,163,0.2);
+}
+.nlg-summary.fair {
+  background: rgba(255,211,106,0.08);
+  border-color: rgba(255,211,106,0.25);
+}
+.nlg-summary.poor {
+  background: rgba(255,122,122,0.08);
+  border-color: rgba(255,122,122,0.25);
+}
+
+/* History Strip - 30-day visual bar */
+.history-strip {
+  margin-bottom: 20px;
+}
+.history-strip-label {
+  font-size: 12px;
+  color: var(--fg-muted);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.history-strip-bars {
+  display: flex;
+  gap: 3px;
+  height: 32px;
+  align-items: flex-end;
+}
+.history-bar {
+  flex: 1;
+  min-width: 6px;
+  border-radius: 3px 3px 0 0;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  cursor: pointer;
+  position: relative;
+}
+.history-bar:hover {
+  transform: scaleY(1.15);
+  opacity: 0.85;
+}
+.history-bar.excellent { background: var(--ok); }
+.history-bar.good { background: rgba(103,232,163,0.7); }
+.history-bar.fair { background: var(--warn); }
+.history-bar.poor { background: var(--danger); }
+.history-bar.empty { background: var(--border); height: 4px !important; }
+.history-bar-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+.history-bar:hover .history-bar-tooltip {
+  opacity: 1;
+}
+
+/* Skeleton Loading Screens */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-alt) 50%, var(--bg-input) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton-hero {
+  height: 180px;
+  margin-bottom: 24px;
+}
+.skeleton-nlg {
+  height: 60px;
+  margin-bottom: 20px;
+}
+.skeleton-strip {
+  height: 50px;
+  margin-bottom: 20px;
+}
+.skeleton-table {
+  height: 200px;
+}
+.skeleton-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.skeleton-row > div {
+  height: 20px;
+  background: linear-gradient(90deg, var(--bg-input) 25%, var(--bg-alt) 50%, var(--bg-input) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+.skeleton-row > div:nth-child(1) { flex: 2; }
+.skeleton-row > div:nth-child(2) { flex: 1; }
+.skeleton-row > div:nth-child(3) { flex: 1; }
+
+/* Improved Empty States */
+.empty-state {
+  padding: 48px 32px;
+  text-align: center;
+  background: var(--bg-input);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+.empty-state-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: 8px;
+}
+.empty-state-desc {
+  font-size: 14px;
+  color: var(--fg-muted);
+  max-width: 400px;
+  margin: 0 auto 20px;
+  line-height: 1.6;
+}
+.empty-state-hint {
+  font-size: 13px;
+  color: var(--fg-muted);
+  opacity: 0.8;
+}
+.empty-state-hint strong {
+  color: var(--brand);
+}
+
+/* Stats Row - for quick metrics */
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  flex: 1;
+  min-width: 120px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  text-align: center;
+}
+.stat-card-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.stat-card-label {
+  font-size: 11px;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Responsive adjustments for new components */
+@media (max-width: 600px) {
+  .hero-metric {
+    padding: 24px 16px;
+  }
+  .hero-metric-value {
+    font-size: 3rem;
+  }
+  .history-strip-bars {
+    height: 24px;
+    gap: 2px;
+  }
+  .history-bar {
+    min-width: 4px;
+  }
+  .stats-row {
+    gap: 10px;
+  }
+  .stat-card {
+    min-width: 100px;
+    padding: 12px;
+  }
+  .stat-card-value {
+    font-size: 1.4rem;
+  }
+}
+
+
   </style>
 </head>
-<body class="logged-out">
+<body>
 
 <header>
   <div class="header-inner">
-    <a href="https://domainsafepro.com" class="brand">
-      <img src="https://res.cloudinary.com/dcvlblp1b/image/upload/v1748456920/dsp-logo-final2_yiqujd.svg" alt="DomainSafePro" style="height:32px;width:auto"/>
+    <a href="https://www.domainsafepro.com" class="brand">
       <span class="brand-text">DomainSafePro</span>
+      <span class="header-tag">Setup and manage your email protection</span>
     </a>
-    <div class="header-tag">Email Authentication on Autopilot</div>
-    <div class="auth-bar">
-      <span id="auth-status-label">Loading...</span>
-      <span id="auth-plan-label" class="hidden"></span>
-      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-        <svg class="sun-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-        <svg class="moon-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <div class="auth-bar" id="auth-bar">
+      <span id="auth-status-label">Not signed in</span>
+      <span id="auth-plan-label" class="tiny muted"></span>
+      <button class="btn secondary btn-sm btn-auth" id="auth-login-btn" type="button">Sign in with Google</button>
+      <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
-      <button id="auth-login-btn" class="btn-auth btn-sm">Sign in with Google</button>
     </div>
   </div>
 </header>
 
-<main>
-  <!-- LOADING STATE -->
-  <section id="loading-section">
-    <div class="loading-card">
-      <div class="loading-spinner"></div>
-      <h2>Loading your console</h2>
-      <p>Checking your authentication status...</p>
-    </div>
-  </section>
+<!-- Loading state (shown initially while checking auth) -->
+<section id="loading-section">
+  <div class="loading-card">
+    <div class="loading-spinner"></div>
+    <h2>Loading...</h2>
+    <p>Checking your authentication status</p>
+  </div>
+</section>
 
-  <!-- PLAN GATE (shown when no active plan) -->
-  <section id="plan-gate" class="hidden show-when-authed">
-    <div class="plan-gate-card">
-      <div class="gate-icon">🔒</div>
-      <h2>Subscription Required</h2>
-      <p>You're signed in as <strong id="plan-gate-email"></strong>, but you don't have an active plan yet.</p>
-      <a href="https://domainsafepro.com#pricing" class="btn large">View Pricing Plans</a>
-      <p class="tiny muted mt-md">Already purchased? Refresh the page after your subscription is confirmed.</p>
-    </div>
-  </section>
+<!-- Login hero (shown when not signed in) -->
+<section id="login-section">
+  <div class="login-card">
+    <div class="eyebrow">DomainSafePro</div>
+    <h2>Welcome Back</h2>
+    <p>Sign in with your Google account to set up protection for your domain and manage your email security.</p>
+    <button class="btn" type="button" id="login-hero-btn">Sign in with Google</button>
+    <div class="tiny">You will be redirected back here after signing in.</div>
+  </div>
+</section>
 
-  <!-- WELCOME BANNER (visible only with active plan) -->
-  <div class="welcome-banner hidden show-when-authed" id="welcome-banner">
-    <h1>Welcome to Your Setup Console</h1>
-    <p>Choose how you would like to protect your domain. We recommend Cloudflare or Route 53 for instant setup, or use manual DNS if you manage records elsewhere.</p>
+<!-- Main app (hidden until authed) -->
+<main id="app-main">
+
+  <div id="plan-gate" class="card highlight hidden">
+    <h3><span class="card-icon">🔒</span> Activate Your DomainSafePro Plan</h3>
+    <p class="desc">You are signed in as <span id="plan-gate-email" class="mono"></span>, but do not yet have an active DomainSafePro subscription connected to this account.</p>
+    <p class="tiny muted mt-sm">Choose a plan to unlock automatic setup (Cloudflare, Route 53) and domain monitoring. Once your purchase is complete, return here with the same Google account to connect your domain.</p>
+    <div class="row mt-sm">
+      <div class="action">
+        <a class="btn" href="https://www.domainsafepro.com/#pricing">View plans on main site</a>
+      </div>
+    </div>
   </div>
 
-  <!-- ========== ROUTE SELECTION ========== -->
-  <section id="route-selection" class="hidden show-when-authed">
-    <div class="route-cards">
-      <div class="route-card" data-route="cloudflare" onclick="selectRoute('cloudflare')">
-        <div class="route-card-icon">
-          <img src="https://res.cloudinary.com/dcvlblp1b/image/upload/v1748461426/cloudflare-icon_p0cfsr.svg" alt="Cloudflare"/>
-        </div>
-        <h3>Cloudflare DNS</h3>
-        <p>Connect your Cloudflare account and we will set up everything automatically.</p>
+
+  <!-- Welcome banner -->
+  <div class="welcome-banner">
+    <h1>Where Is Your DNS Hosted?</h1>
+    <p>Your domain's DNS is managed by one provider. Select yours below to get started.</p>
+  </div>
+
+  <!-- ROUTE SELECTION -->
+  <section class="grid three" id="route-selection">
+    <div class="route-card" data-route="cloudflare" onclick="selectRoute('cloudflare')">
+      <div class="route-icon">
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174230/cloudflare_transparent_cci2hq.png" alt=""/>
       </div>
-      <div class="route-card" data-route="route53" onclick="selectRoute('route53')">
-        <div class="route-card-icon">
-          <img src="https://res.cloudinary.com/dcvlblp1b/image/upload/v1748461425/route53-icon_qbimwi.svg" alt="AWS Route 53"/>
-        </div>
-        <h3>AWS Route 53</h3>
-        <p>Enter your AWS credentials and we will configure your hosted zone instantly.</p>
+      <h4>Cloudflare</h4>
+      <p>I manage my DNS through Cloudflare.</p>
+      <span class="route-tag auto">Automatic Setup</span>
+    </div>
+    <div class="route-card" data-route="route53" onclick="selectRoute('route53')">
+      <div class="route-icon">
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174236/ChatGPT_Image_Nov_26_2025_09_03_47_PM_yjbzqf.png" alt=""/>
       </div>
-      <div class="route-card" data-route="manual" onclick="selectRoute('manual')">
-        <div class="route-card-icon">📝</div>
-        <h3>Manual DNS</h3>
-        <p>Get the DNS records and add them yourself through any domain registrar.</p>
+      <h4>AWS Route 53</h4>
+      <p>I manage my DNS through AWS.</p>
+      <span class="route-tag auto">Automatic Setup</span>
+    </div>
+    <div class="route-card" data-route="manual" onclick="selectRoute('manual')">
+      <div class="route-icon">
+        <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764176078/ChatGPT_Image_Nov_26_2025_10_24_10_PM_xcgbrm.png" alt=""/>
       </div>
+      <h4>Other Provider</h4>
+      <p>GoDaddy, Namecheap, Google Domains, or another registrar.</p>
+      <span class="route-tag manual">Copy-Paste Setup</span>
     </div>
   </section>
 
-  <!-- ========== CLOUDFLARE SETUP ========== -->
+  <!-- ========== CLOUDFLARE SETUP FLOW ========== -->
   <div id="setup-cloudflare" class="setup-section">
+    <div class="back-nav">
+      <button class="btn-back" onclick="selectRoute(null)">← Back</button>
+    </div>
+
     <section class="grid full">
       <div class="card highlight">
-        <h3><span class="card-icon"><img src="https://res.cloudinary.com/dcvlblp1b/image/upload/v1748461426/cloudflare-icon_p0cfsr.svg" alt="" style="height:24px;vertical-align:middle"/></span> Cloudflare Protection</h3>
-        <p class="desc">Connect your Cloudflare account to automatically configure SPF, DKIM, and DMARC records. You will need an API token with "Zone: DNS: Edit" permissions.</p>
+        <h3>
+          <span class="card-icon">
+            <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174230/cloudflare_transparent_cci2hq.png" alt="" style="width:28px;height:28px;object-fit:contain;"/>
+          </span>
+          Connect Your Cloudflare Account
+        </h3>
+        <p class="desc">Paste your Cloudflare API token below and we will automatically configure all your email security records. You need a token with "Zone Read" and "DNS Edit" permissions.</p>
         
         <div class="row">
           <div>
@@ -1341,50 +1698,58 @@ details > div {
             <input id="cf-token" class="mono" type="password" placeholder="Paste your API token here" autocomplete="off"/>
           </div>
           <div class="action">
-            <button class="btn secondary btn-sm" id="btnCfList">Load My Zones</button>
+            <button class="btn secondary" id="btnCfList">Load My Domains</button>
           </div>
         </div>
         
         <div class="row">
           <div>
-            <label for="cf-zones">Select Zone (Domain)</label>
-            <select id="cf-zones">
-              <option value="">Load zones first</option>
-            </select>
+            <label for="cf-zones">Select your domain</label>
+            <select id="cf-zones"><option value="">First, load your domains above</option></select>
           </div>
           <div class="action">
             <button class="btn large" id="btnCfProtect">Protect This Domain</button>
           </div>
         </div>
         
-        <pre class="log mt-md" id="cf-log">Paste your Cloudflare API token, then click "Load My Zones".</pre>
-        
+        <pre class="log mt-md" id="cf-log">Paste your API token and click "Load My Domains" to get started.</pre>
+
         <details class="mt-md">
-          <summary>How to create a Cloudflare API token</summary>
+          <summary>How do I get a Cloudflare API token?</summary>
           <div class="docs-content">
             <p>1. Log in to your Cloudflare dashboard</p>
-            <p>2. Go to <strong>My Profile → API Tokens</strong></p>
-            <p>3. Click <strong>Create Token</strong></p>
+            <p>2. Go to "My Profile" (top right) then "API Tokens"</p>
+            <p>3. Click "Create Token"</p>
             <p>4. Use the "Edit zone DNS" template</p>
-            <p>5. Select your specific zone (domain) for security</p>
-            <p>6. Create the token and copy it here</p>
+            <p>5. Under "Zone Resources", select the zones you want to protect</p>
+            <p>6. Click "Continue to summary" then "Create Token"</p>
+            <p>7. Copy the token and paste it above</p>
           </div>
         </details>
       </div>
     </section>
   </div>
 
-  <!-- ========== ROUTE 53 SETUP ========== -->
+  <!-- ========== ROUTE 53 SETUP FLOW ========== -->
   <div id="setup-route53" class="setup-section">
+    <div class="back-nav">
+      <button class="btn-back" onclick="selectRoute(null)">← Back</button>
+    </div>
+
     <section class="grid full">
       <div class="card highlight">
-        <h3><span class="card-icon"><img src="https://res.cloudinary.com/dcvlblp1b/image/upload/v1748461425/route53-icon_qbimwi.svg" alt="" style="height:24px;vertical-align:middle"/></span> AWS Route 53 Protection</h3>
-        <p class="desc">Connect your AWS account to configure email protection on your Route 53 hosted zones. You will need an IAM user with Route 53 permissions.</p>
+        <h3>
+          <span class="card-icon">
+            <img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764174236/ChatGPT_Image_Nov_26_2025_09_03_47_PM_yjbzqf.png" alt="" style="width:28px;height:28px;object-fit:contain;"/>
+          </span>
+          Connect Your AWS Account
+        </h3>
+        <p class="desc">Enter your AWS IAM credentials below and we will automatically configure all your email security records. You need an IAM user with Route 53 access.</p>
         
         <div class="row">
           <div>
             <label for="r53-ak">Access Key ID</label>
-            <input id="r53-ak" class="mono" type="password" placeholder="AKIA..." autocomplete="off"/>
+            <input id="r53-ak" class="mono" placeholder="AKIA..." autocomplete="off"/>
           </div>
           <div>
             <label for="r53-sk">Secret Access Key</label>
@@ -1394,34 +1759,37 @@ details > div {
         
         <div class="row">
           <div>
-            <label for="r53-zones">Select Hosted Zone</label>
-            <select id="r53-zones">
-              <option value="">Enter credentials to load zones</option>
-            </select>
+            <label for="r53-zones">Select your hosted zone</label>
+            <select id="r53-zones"><option value="">Enter credentials to load zones</option></select>
           </div>
           <div class="action">
             <button class="btn large" id="btnR53Protect">Protect This Domain</button>
           </div>
         </div>
         
-        <pre class="log mt-md" id="r53-log">Enter your AWS credentials above. Zones will load automatically.</pre>
-        
+        <pre class="log mt-md" id="r53-log">Enter your AWS credentials. Zones will load automatically.</pre>
+
         <details class="mt-md">
-          <summary>How to create AWS credentials</summary>
+          <summary>How do I get AWS IAM credentials?</summary>
           <div class="docs-content">
-            <p>1. Log in to AWS Console → IAM</p>
-            <p>2. Create a new IAM user (or use existing)</p>
-            <p>3. Attach the <strong>AmazonRoute53FullAccess</strong> policy (or a custom policy with Route 53 write permissions)</p>
-            <p>4. Generate access keys and paste them here</p>
-            <p><strong>Security tip:</strong> Use a dedicated IAM user with minimal permissions for this integration.</p>
+            <p>1. Log in to your AWS Console</p>
+            <p>2. Go to IAM (Identity and Access Management)</p>
+            <p>3. Create a new user or use an existing one</p>
+            <p>4. Attach the "AmazonRoute53FullAccess" policy</p>
+            <p>5. Go to "Security credentials" and create an access key</p>
+            <p>6. Copy both the Access Key ID and Secret Access Key</p>
           </div>
         </details>
       </div>
     </section>
   </div>
 
-  <!-- ========== MANUAL DNS SETUP ========== -->
+  <!-- ========== MANUAL DNS SETUP FLOW ========== -->
   <div id="setup-manual" class="setup-section">
+    <div class="back-nav">
+      <button class="btn-back" onclick="selectRoute(null)">← Back</button>
+    </div>
+
     <!-- STEP 1: GET YOUR CODES -->
     <section class="grid full">
       <div class="card highlight">
@@ -1479,7 +1847,7 @@ details > div {
   <div id="verify-section" class="setup-section">
     <section class="grid full">
       <div class="card highlight">
-        <h3><span class="card-icon">✅</span> Verify Your Setup</h3>
+        <h3><span class="card-icon"><img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764246818/ChatGPT_Image_Nov_27_2025_06_03_10_PM_bny5wa.png" alt="Verify" style="width:28px;height:28px;object-fit:contain;vertical-align:middle;"/></span> Verify Your Setup</h3>
         <p class="desc">Check if your domain's email protection is configured correctly. We will test each record and tell you if anything needs attention.</p>
         
         <div class="row">
@@ -1508,7 +1876,7 @@ details > div {
   <!-- HELP SECTION (Always visible) -->
   <section class="grid full" id="help-section">
     <div class="card">
-      <h3><span class="card-icon">💡</span> Need Help?</h3>
+      <h3><span class="card-icon"><img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764246383/ChatGPT_Image_Nov_27_2025_05_55_21_PM_pypkve.png" alt="Help" style="width:28px;height:28px;object-fit:contain;vertical-align:middle;"/></span> Need Help?</h3>
       <div class="docs-content">
         <strong>Not sure which DNS provider you use?</strong>
         <p>Your DNS is typically managed by whoever you registered your domain with (like GoDaddy, Namecheap), or by a service you pointed your nameservers to (like Cloudflare or AWS). Check your domain registrar's settings if unsure.</p>
@@ -1519,11 +1887,11 @@ details > div {
     </div>
   </section>
 
-  <!-- ========== DMARC INSIGHTS (User-visible for active plans) ========== -->
+    <!-- ========== DMARC INSIGHTS (User-visible for active plans) ========== -->
   <div class="insights-section" id="insights-section">
     <section class="grid full">
       <div class="card">
-        <h3><span class="card-icon">📊</span> Email Authentication Insights</h3>
+        <h3><span class="card-icon"><img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764245049/ChatGPT_Image_Nov_27_2025_03_14_25_PM_dk1wwb.png" alt="Insights" style="width:28px;height:28px;object-fit:contain;vertical-align:middle;"/></span> Email Authentication Insights</h3>
         <p class="desc">See how well your outgoing emails are authenticating. Higher alignment means better protection against impersonation.</p>
         
         <div class="row">
@@ -1539,8 +1907,73 @@ details > div {
           </div>
         </div>
         
-        <div id="ins-summary" class="mt-md"><span class="muted">Enter your domain and select a time range to view authentication insights.</span></div>
+        <!-- Skeleton loading state (hidden by default) -->
+        <div id="ins-skeleton" class="mt-md hidden">
+          <div class="skeleton skeleton-hero"></div>
+          <div class="skeleton skeleton-nlg"></div>
+          <div class="skeleton skeleton-strip"></div>
+          <div class="skeleton-row"><div></div><div></div><div></div></div>
+          <div class="skeleton-row"><div></div><div></div><div></div></div>
+          <div class="skeleton-row"><div></div><div></div><div></div></div>
+        </div>
         
+        <!-- Initial empty state -->
+        <div id="ins-empty" class="mt-md">
+          <div class="empty-state">
+            <div class="empty-state-icon"><img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764246399/ChatGPT_Image_Nov_27_2025_02_56_26_PM_d3n4dr.png" alt="Analyze" style="width:48px;height:48px;object-fit:contain;"/></div>
+            <div class="empty-state-title">Ready to analyze your domain</div>
+            <div class="empty-state-desc">
+              Enter your domain name above and select a time range to see how well your emails are authenticating.
+            </div>
+            <div class="empty-state-hint">
+              <strong>Tip:</strong> Start with "Last 30 Days" for a comprehensive view
+            </div>
+          </div>
+        </div>
+        
+        <!-- Results container (hidden until data loads) -->
+        <div id="ins-results" class="mt-md hidden">
+          <!-- Hero metric - The big percentage -->
+          <div id="ins-hero" class="hero-metric">
+            <div class="hero-metric-domain" id="ins-hero-domain">—</div>
+            <div class="hero-metric-value" id="ins-hero-value">—</div>
+            <div class="hero-metric-label">Authentication Rate</div>
+            <div class="hero-metric-period" id="ins-hero-period">—</div>
+          </div>
+          
+          <!-- NLG Summary - Natural language interpretation -->
+          <div id="ins-nlg" class="nlg-summary">
+            <span class="nlg-summary-icon">💡</span>
+            <span id="ins-nlg-text">Loading insights...</span>
+          </div>
+          
+          <!-- History strip - 30 colored bars -->
+          <div id="ins-history" class="history-strip">
+            <div class="history-strip-label">
+              <span>Daily Authentication History</span>
+              <span id="ins-history-range">—</span>
+            </div>
+            <div class="history-strip-bars" id="ins-history-bars"></div>
+          </div>
+          
+          <!-- Quick stats row -->
+          <div class="stats-row" id="ins-stats-row">
+            <div class="stat-card">
+              <div class="stat-card-value" id="ins-stat-total">—</div>
+              <div class="stat-card-label">Total Emails</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-value" style="color:var(--ok)" id="ins-stat-auth">—</div>
+              <div class="stat-card-label">Authenticated</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-value" style="color:var(--danger)" id="ins-stat-fail">—</div>
+              <div class="stat-card-label">Failed</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Traditional table (still available) -->
         <div class="table-wrap">
           <table id="ins-table" style="display:none">
             <thead>
@@ -1571,7 +2004,7 @@ details > div {
 
         <!-- ========== WHO'S SENDING AS YOUR DOMAIN (Source Analysis) ========== -->
         <div class="sources-section" id="sources-section">
-          <h4><span>🔍</span> Who's Sending As Your Domain</h4>
+          <h4><span><img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764246390/ChatGPT_Image_Nov_27_2025_03_01_18_PM_q6r0lx.png" alt="" style="width:24px;height:24px;object-fit:contain;vertical-align:middle;margin-right:6px;"/></span> Who's Sending As Your Domain</h4>
           <p class="desc" style="margin-bottom:16px">See every server that has sent email claiming to be from your domain. Identify legitimate senders vs potential impersonators.</p>
           
           <div class="btn-row" style="margin-bottom:16px">
@@ -1582,9 +2015,15 @@ details > div {
           <div id="sources-summary" class="sources-summary hidden"></div>
           
           <div id="sources-list">
-            <div class="sources-empty">
-              <p>📭 No source data loaded yet</p>
-              <p class="tiny muted">Select a time range above to see which servers are sending email as your domain.</p>
+            <div class="empty-state">
+              <div class="empty-state-icon"><img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764246390/ChatGPT_Image_Nov_27_2025_03_01_18_PM_q6r0lx.png" alt="Source" style="width:48px;height:48px;object-fit:contain;"/></div>
+              <div class="empty-state-title">Source analysis ready</div>
+              <div class="empty-state-desc">
+                Click a button above to see which servers have been sending email as your domain.
+              </div>
+              <div class="empty-state-hint">
+                We'll show you authorized senders, partial matches, and any suspicious activity.
+              </div>
             </div>
           </div>
           
@@ -1603,9 +2042,11 @@ details > div {
             </div>
           </details>
         </div>
+
       </div>
     </section>
   </div>
+
 
   <!-- ============================================================ -->
   <!-- ADMIN / OWNER SECTION (Collapsible) -->
@@ -2618,6 +3059,216 @@ $("#btnR53Protect").addEventListener("click", async function(){
   }
 });
 
+/* ====== ENHANCED INSIGHTS COMPONENTS ====== */
+
+/* Generate Natural Language Summary based on rate and context */
+function generateNLGSummary(rate, total, aligned, failed, days, domain) {
+  var text = '';
+  var levelClass = '';
+  var icon = '';
+  
+  if (rate >= 97) {
+    levelClass = 'excellent';
+    icon = '🛡️';
+    if (failed === 0) {
+      text = 'Excellent protection — <strong>100%</strong> of your emails are fully authenticated. Your domain is well-defended against impersonation.';
+    } else {
+      text = 'Excellent protection — <strong>' + rate + '%</strong> of your emails are verified. Only <strong>' + fmt(failed) + '</strong> emails failed authentication, which is within normal variance.';
+    }
+  } else if (rate >= 90) {
+    levelClass = 'good';
+    icon = '✅';
+    text = 'Good protection — <strong>' + rate + '%</strong> of your emails authenticated successfully. ' + fmt(failed) + ' emails failed checks. Consider reviewing your authorized senders to close the gap.';
+  } else if (rate >= 75) {
+    levelClass = 'fair';
+    icon = '⚠️';
+    text = 'Fair protection — <strong>' + rate + '%</strong> of your emails passed authentication. <strong>' + fmt(failed) + '</strong> emails failed, which may indicate misconfigured services or potential spoofing. Review the sources below.';
+  } else if (rate >= 50) {
+    levelClass = 'poor';
+    icon = '🚨';
+    text = 'Needs attention — Only <strong>' + rate + '%</strong> of your emails are authenticating. <strong>' + fmt(failed) + '</strong> emails failed checks. This suggests significant misconfiguration or active spoofing attempts. Investigate immediately.';
+  } else {
+    levelClass = 'poor';
+    icon = '🚨';
+    text = 'Critical — Only <strong>' + rate + '%</strong> of your emails are verified. Your domain may be actively targeted for spoofing. Review unauthorized senders and strengthen your policy urgently.';
+  }
+  
+  return { text: text, levelClass: levelClass, icon: icon };
+}
+
+/* Render Hero Metric Card */
+function renderHeroMetric(domain, rate, days, total) {
+  var heroEl = $('#ins-hero');
+  var valueEl = $('#ins-hero-value');
+  var domainEl = $('#ins-hero-domain');
+  var periodEl = $('#ins-hero-period');
+  
+  // Determine class based on rate
+  var rateClass = 'excellent';
+  if (rate < 97) rateClass = 'good';
+  if (rate < 90) rateClass = 'fair';
+  if (rate < 75) rateClass = 'poor';
+  
+  // Update elements
+  domainEl.textContent = domain;
+  valueEl.textContent = rate + '%';
+  valueEl.className = 'hero-metric-value ' + rateClass;
+  periodEl.textContent = fmt(total) + ' emails over ' + days + ' days';
+}
+
+/* Render History Strip - Visual 30-day bars */
+function renderHistoryStrip(rows, days) {
+  var barsEl = $('#ins-history-bars');
+  var rangeEl = $('#ins-history-range');
+  
+  if (!rows || !rows.length) {
+    barsEl.innerHTML = '';
+    rangeEl.textContent = 'No data';
+    return;
+  }
+  
+  // Calculate date range
+  var firstDate = rows[0].date;
+  var lastDate = rows[rows.length - 1].date;
+  rangeEl.textContent = firstDate + ' → ' + lastDate;
+  
+  // Find max total for scaling
+  var maxTotal = Math.max.apply(null, rows.map(function(r) { return r.total || 0; }));
+  if (maxTotal === 0) maxTotal = 1;
+  
+  // Generate bars
+  var barsHtml = rows.map(function(r) {
+    var p = pct(r.aligned || 0, r.total || 0);
+    var height = Math.max(10, Math.round(((r.total || 0) / maxTotal) * 100));
+    
+    var barClass = 'excellent';
+    if (p < 97) barClass = 'good';
+    if (p < 90) barClass = 'fair';
+    if (p < 75) barClass = 'poor';
+    if ((r.total || 0) === 0) barClass = 'empty';
+    
+    return '<div class="history-bar ' + barClass + '" style="height:' + height + '%">' +
+      '<div class="history-bar-tooltip">' +
+        '<strong>' + r.date + '</strong><br>' +
+        fmt(r.total || 0) + ' emails · ' + p + '% auth' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  
+  barsEl.innerHTML = barsHtml;
+}
+
+/* Show skeleton loading state */
+function showInsightsSkeleton() {
+  hide($('#ins-empty'));
+  hide($('#ins-results'));
+  show($('#ins-skeleton'));
+  $('#ins-table').style.display = 'none';
+  hide($('#ins-explainer'));
+}
+
+/* Hide skeleton and show results */
+function showInsightsResults() {
+  hide($('#ins-skeleton'));
+  hide($('#ins-empty'));
+  show($('#ins-results'));
+}
+
+/* Show empty state */
+function showInsightsEmpty(message, hint) {
+  hide($('#ins-skeleton'));
+  hide($('#ins-results'));
+  $('#ins-table').style.display = 'none';
+  hide($('#ins-explainer'));
+  
+  var emptyEl = $('#ins-empty');
+  if (message) {
+    emptyEl.innerHTML = '<div class="empty-state">' +
+      '<div class="empty-state-icon"><img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764246399/ChatGPT_Image_Nov_27_2025_02_56_26_PM_d3n4dr.png" alt="" style="width:48px;height:48px;object-fit:contain;"/></div>' +
+      '<div class="empty-state-title">' + message + '</div>' +
+      (hint ? '<div class="empty-state-desc">' + hint + '</div>' : '') +
+    '</div>';
+  }
+  show(emptyEl);
+}
+
+/* Enhanced renderRollup with new components */
+function renderRollupEnhanced(j) {
+  var rows = asArray(j.series);
+  var table = $('#ins-table');
+  var body = $('#ins-rows');
+  var explainer = $('#ins-explainer');
+  
+  if (!rows.length) {
+    showInsightsEmpty('No data found', 'No DMARC reports available for ' + j.domain + ' in the selected period. Reports typically arrive 24-48 hours after email activity.');
+    return;
+  }
+  
+  // Calculate totals
+  var T = rows.reduce(function(acc, r) {
+    acc.total += r.total || 0;
+    acc.aligned += r.aligned || 0;
+    return acc;
+  }, {total: 0, aligned: 0});
+  
+  var rate = pct(T.aligned, T.total);
+  var failed = T.total - T.aligned;
+  
+  // Show results container
+  showInsightsResults();
+  
+  // 1. Render Hero Metric
+  renderHeroMetric(j.domain, rate, j.days, T.total);
+  
+  // 2. Render NLG Summary
+  var nlg = generateNLGSummary(rate, T.total, T.aligned, failed, j.days, j.domain);
+  var nlgEl = $('#ins-nlg');
+  nlgEl.className = 'nlg-summary ' + nlg.levelClass;
+  nlgEl.innerHTML = '<span class="nlg-summary-icon">' + nlg.icon + '</span><span>' + nlg.text + '</span>';
+  
+  // 3. Render History Strip
+  renderHistoryStrip(rows, j.days);
+  
+  // 4. Update stats row
+  $('#ins-stat-total').textContent = fmt(T.total);
+  $('#ins-stat-auth').textContent = fmt(T.aligned);
+  $('#ins-stat-fail').textContent = fmt(failed);
+  
+  // 5. Render table (still available)
+  if (explainer) explainer.classList.remove('hidden');
+  
+  body.innerHTML = '';
+  rows.forEach(function(r) {
+    var p = pct(r.aligned || 0, r.total || 0);
+    var statusClass = p >= 97 ? 'ok' : (p >= 90 ? 'ok' : (p >= 75 ? 'warn' : 'danger'));
+    var statusText = p >= 97 ? 'Protected' : (p >= 90 ? 'Good' : (p >= 75 ? 'Fair' : 'At Risk'));
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td data-label="Date" class="mono">' + r.date + '</td>' +
+      '<td data-label="Emails Sent">' + fmt(r.total || 0) + '</td>' +
+      '<td data-label="Authenticated">' + fmt(r.aligned || 0) + '</td>' +
+      '<td data-label="Protection">' + p + '%</td>' +
+      '<td data-label="Status">' +
+        '<div class="ins-bar"><i style="width:' + Math.min(100, p) + '%"></i></div>' +
+        '<div class="ins-stats"><span class="pill ' + statusClass + '">' + statusText + '</span></div>' +
+      '</td>';
+    body.appendChild(tr);
+  });
+  table.style.display = '';
+}
+
+/* Enhanced sources empty state */
+function showSourcesEmpty(title, desc, hint) {
+  var listEl = $('#sources-list');
+  listEl.innerHTML = '<div class="empty-state">' +
+    '<div class="empty-state-icon"><img src="https://res.cloudinary.com/dxwuwbmjd/image/upload/v1764246390/ChatGPT_Image_Nov_27_2025_03_01_18_PM_q6r0lx.png" alt="Source" style="width:48px;height:48px;object-fit:contain;"/></div>' +
+    '<div class="empty-state-title">' + (title || 'No source data available') + '</div>' +
+    '<div class="empty-state-desc">' + (desc || 'No servers have been recorded sending email as this domain.') + '</div>' +
+    (hint ? '<div class="empty-state-hint">' + hint + '</div>' : '') +
+  '</div>';
+}
+
+
 /* ====== DMARC INSIGHTS (Rollup) ====== */
 function fmt(n){ return (n||0).toLocaleString(); }
 function pct(a,b){ var r = (b>0) ? (a/b) : 0; return Math.round(r*1000)/10; }
@@ -2705,11 +3356,13 @@ function renderRollup(j){
 async function loadRoll(days){
   var norm = normalizeForUI($('#ins-domain').value, null, null);
   if(!norm.ok){ 
-    $('#ins-summary').textContent = 'Please enter a valid domain name first.'; 
+    showInsightsEmpty('Please enter a valid domain', 'Enter your domain name in the field above to analyze your email authentication.');
     return; 
   }
-  $('#ins-summary').textContent = 'Loading ' + days + '-day insights...';
-  $('#ins-table').style.display = 'none';
+  
+  // Show skeleton loading state
+  showInsightsSkeleton();
+  
   try{
     var url = ROBOT_API + '/api/rollup?domain=' + encodeURIComponent(norm.apex || norm.value) + '&days=' + days;
     var j = await get(url);
@@ -2718,190 +3371,28 @@ async function loadRoll(days){
     // Check if we got data
     var series = asArray(j.series);
     if (series.length === 0) {
-      var msg = 'No DMARC data found for ' + (norm.apex || norm.value) + ' in the last ' + days + ' days.\n\n';
-      msg += 'Possible reasons:\n';
-      msg += '• DMARC reports typically arrive 24-48 hours after email activity\n';
-      msg += '• No emails were sent from this domain during this period\n';
+      var hint = 'Possible reasons: DMARC reports typically arrive 24-48 hours after email activity, or no emails were sent from this domain during this period.';
       if (days === 7) {
-        msg += '• Try "Last 30 Days" to see if older data is available';
+        hint += ' Try "Last 30 Days" to see if older data is available.';
       }
-      $('#ins-summary').innerHTML = '<span style="white-space:pre-wrap">' + msg + '</span>';
+      showInsightsEmpty('No data found for ' + (norm.apex || norm.value), hint);
       return;
     }
     
-    renderRollup({domain: j.domain || (norm.apex || norm.value), days: days, series: j.series || []});
+    // Use enhanced rendering
+    renderRollupEnhanced({domain: j.domain || (norm.apex || norm.value), days: days, series: j.series || []});
   }catch(e){ 
     var errMsg = String(e);
     if (errMsg.indexOf('Failed to fetch') >= 0) {
       errMsg = 'Network error: Could not reach the API. Check console for details.';
     }
-    $('#ins-summary').textContent = 'Error loading ' + days + '-day data: ' + errMsg;
+    showInsightsEmpty('Error loading data', errMsg);
     $('#ins-wrap').textContent = String(e); 
   }
 }
 
 $('#btnLoad7').addEventListener('click', function(){ loadRoll(7); });
 $('#btnLoad30').addEventListener('click', function(){ loadRoll(30); });
-
-/* ====== SOURCE ANALYSIS (Who's Sending As Your Domain) ====== */
-function getSourceIcon(status) {
-  switch(status) {
-    case 'authorized': return '✅';
-    case 'partial': return '⚠️';
-    case 'misconfigured': return '🔧';
-    case 'suspicious': return '🚨';
-    default: return '❓';
-  }
-}
-
-function getStatusLabel(status) {
-  switch(status) {
-    case 'authorized': return 'Authorized';
-    case 'partial': return 'Partial';
-    case 'misconfigured': return 'Misconfigured';
-    case 'suspicious': return 'Suspicious';
-    default: return 'Unknown';
-  }
-}
-
-function renderSources(data) {
-  var summaryEl = $('#sources-summary');
-  var listEl = $('#sources-list');
-  var explainerEl = $('#sources-explainer');
-  var wrapEl = $('#sources-wrap');
-  
-  // Log raw response
-  if (wrapEl) {
-    wrapEl.textContent = JSON.stringify(data, null, 2);
-  }
-  
-  var sources = data.sources || [];
-  var summary = data.summary || {};
-  
-  if (!sources.length) {
-    hide(summaryEl);
-    hide(explainerEl);
-    listEl.innerHTML = '<div class="sources-empty">' +
-      '<p>📭 No source data available</p>' +
-      '<p class="tiny muted">No servers have been recorded sending email as ' + (data.domain || 'this domain') + ' in the last ' + (data.days || 7) + ' days.</p>' +
-      '<p class="tiny muted">This could mean no emails were sent, or DMARC reports haven\'t been processed yet.</p>' +
-    '</div>';
-    return;
-  }
-  
-  // Render summary stats
-  var summaryHtml = '<div class="sources-stat">' +
-      '<div class="sources-stat-value">' + fmt(summary.total_sources || sources.length) + '</div>' +
-      '<div class="sources-stat-label">Sending Sources</div>' +
-    '</div>' +
-    '<div class="sources-stat">' +
-      '<div class="sources-stat-value">' + fmt(summary.total_emails || 0) + '</div>' +
-      '<div class="sources-stat-label">Total Emails</div>' +
-    '</div>' +
-    '<div class="sources-stat">' +
-      '<div class="sources-stat-value" style="color:var(--ok)">' + fmt(summary.authorized_sources || 0) + '</div>' +
-      '<div class="sources-stat-label">Authorized</div>' +
-    '</div>' +
-    '<div class="sources-stat">' +
-      '<div class="sources-stat-value" style="color:var(--danger)">' + fmt(summary.suspicious_sources || 0) + '</div>' +
-      '<div class="sources-stat-label">Suspicious</div>' +
-    '</div>';
-  
-  summaryEl.innerHTML = summaryHtml;
-  show(summaryEl);
-  
-  // Render source rows
-  var rowsHtml = sources.map(function(src) {
-    var status = src.status || 'unknown';
-    var identity = src.identity || 'Unknown';
-    var ip = src.source_ip || '';
-    var org = src.org || '';
-    var reverse = src.reverse || '';
-    var total = src.total || 0;
-    var aligned = src.aligned || 0;
-    var alignedRate = src.aligned_rate !== undefined ? src.aligned_rate : (total > 0 ? Math.round((aligned / total) * 100) : 0);
-    var spfPass = (src.spf && src.spf.pass) || 0;
-    var spfFail = (src.spf && src.spf.fail) || 0;
-    var dkimPass = (src.dkim && src.dkim.pass) || 0;
-    var dkimFail = (src.dkim && src.dkim.fail) || 0;
-    var firstSeen = src.first_seen || '';
-    var lastSeen = src.last_seen || '';
-    
-    var subInfo = '';
-    if (reverse) {
-      subInfo = reverse;
-    } else if (org) {
-      subInfo = org;
-    } else {
-      subInfo = 'No reverse DNS';
-    }
-    
-    return '<div class="source-row">' +
-      '<div class="source-icon ' + status + '">' + getSourceIcon(status) + '</div>' +
-      '<div class="source-identity">' +
-        '<div class="source-identity-name">' + identity + '</div>' +
-        '<div class="source-identity-ip">' + ip + '</div>' +
-        '<div class="source-identity-org">' + subInfo + '</div>' +
-      '</div>' +
-      '<div class="source-stats">' +
-        '<div class="source-stat-item">' +
-          '<div class="source-stat-num">' + fmt(total) + '</div>' +
-          '<div class="source-stat-lbl">Emails</div>' +
-        '</div>' +
-        '<div class="source-stat-item">' +
-          '<div class="source-stat-num">' + alignedRate + '%</div>' +
-          '<div class="source-stat-lbl">Aligned</div>' +
-        '</div>' +
-        '<div class="source-stat-item">' +
-          '<div class="source-stat-num" style="color:' + (spfPass > 0 ? 'var(--ok)' : 'var(--danger)') + '">' + fmt(spfPass) + '</div>' +
-          '<div class="source-stat-lbl">SPF ✓</div>' +
-        '</div>' +
-        '<div class="source-stat-item">' +
-          '<div class="source-stat-num" style="color:' + (dkimPass > 0 ? 'var(--ok)' : 'var(--danger)') + '">' + fmt(dkimPass) + '</div>' +
-          '<div class="source-stat-lbl">DKIM ✓</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="source-status">' +
-        '<span class="pill ' + status + '">' + getStatusLabel(status) + '</span>' +
-        (lastSeen ? '<div class="tiny muted mt-sm">Last: ' + lastSeen + '</div>' : '') +
-      '</div>' +
-    '</div>';
-  }).join('');
-  
-  listEl.innerHTML = rowsHtml;
-  show(explainerEl);
-}
-
-async function loadSources(days) {
-  var norm = normalizeForUI($('#ins-domain').value, null, null);
-  if (!norm.ok) {
-    $('#sources-list').innerHTML = '<div class="sources-empty"><p>Please enter a valid domain name first.</p></div>';
-    return;
-  }
-  
-  $('#sources-list').innerHTML = '<div class="sources-loading">Loading source data for ' + (norm.apex || norm.value) + '...</div>';
-  hide($('#sources-summary'));
-  hide($('#sources-explainer'));
-  
-  try {
-    var url = ROBOT_API + '/api/sources?domain=' + encodeURIComponent(norm.apex || norm.value) + '&days=' + days;
-    var j = await get(url);
-    renderSources(j);
-  } catch(e) {
-    var errMsg = String(e);
-    if (errMsg.indexOf('Failed to fetch') >= 0) {
-      errMsg = 'Network error: Could not reach the API.';
-    }
-    if (errMsg.indexOf('404') >= 0 || errMsg.indexOf('not found') >= 0) {
-      errMsg = 'The /api/sources endpoint is not yet deployed. Deploy Robot v0.5.2 to enable this feature.';
-    }
-    $('#sources-list').innerHTML = '<div class="sources-empty"><p>⚠️ ' + errMsg + '</p></div>';
-    $('#sources-wrap').textContent = String(e);
-  }
-}
-
-$('#btnSources7').addEventListener('click', function() { loadSources(7); });
-$('#btnSources30').addEventListener('click', function() { loadSources(30); });
 
 /* ====== DMARC POLICY STEP-UP ====== */
 $('#btnPolPreview').addEventListener('click', async function(){
@@ -3090,16 +3581,13 @@ $('#btnTestAll').addEventListener('click', async function(){
   results.push(await testEndpoint('/api/domains', ROBOT_API + '/api/domains', 'GET'));
   results.push(await testEndpoint('/api/rollup (7d)', ROBOT_API + '/api/rollup?domain=domainsafepro.com&days=7', 'GET'));
   results.push(await testEndpoint('/api/rollup (30d)', ROBOT_API + '/api/rollup?domain=domainsafepro.com&days=30', 'GET'));
-  results.push(await testEndpoint('/api/sources (7d)', ROBOT_API + '/api/sources?domain=domainsafepro.com&days=7', 'GET'));
   results.push(await testEndpoint('/policy/preview', ROBOT_API + '/policy/preview?domain=domainsafepro.com', 'GET'));
   results.push(await testEndpoint('/policy/evaluate-now', ROBOT_API + '/policy/evaluate-now', 'GET'));
   results.push(await testEndpoint('/alerts/test', ROBOT_API + '/alerts/test', 'POST'));
   
   results.push('');
-  results.push('--- Ingest Endpoints ---');
+  results.push('--- Ingest Endpoint ---');
   results.push(await testEndpoint('/ingest/daily (auth required)', ROBOT_API + '/ingest/daily', 'POST'));
-  results.push(await testEndpoint('/ingest/source (auth required)', ROBOT_API + '/ingest/source', 'POST'));
-  results.push(await testEndpoint('/ingest/sources (auth required)', ROBOT_API + '/ingest/sources', 'POST'));
   
   results.push('');
   results.push('=== Done ===');
@@ -3113,6 +3601,167 @@ $('#btnTestAll').addEventListener('click', async function(){
   
   log.textContent = results.join('\n');
 });
+
+
+/* ====== SOURCE ANALYSIS (Who's Sending As Your Domain) ====== */
+function getSourceIcon(status) {
+  switch(status) {
+    case 'authorized': return '✅';
+    case 'partial': return '⚠️';
+    case 'misconfigured': return '🔧';
+    case 'suspicious': return '🚨';
+    default: return '❓';
+  }
+}
+
+function getStatusLabel(status) {
+  switch(status) {
+    case 'authorized': return 'Authorized';
+    case 'partial': return 'Partial';
+    case 'misconfigured': return 'Misconfigured';
+    case 'suspicious': return 'Suspicious';
+    default: return 'Unknown';
+  }
+}
+
+function renderSources(data) {
+  var summaryEl = $('#sources-summary');
+  var listEl = $('#sources-list');
+  var explainerEl = $('#sources-explainer');
+  var wrapEl = $('#sources-wrap');
+  
+  // Log raw response
+  if (wrapEl) {
+    wrapEl.textContent = JSON.stringify(data, null, 2);
+  }
+  
+  var sources = data.sources || [];
+  var summary = data.summary || {};
+  
+  if (!sources.length) {
+    hide(summaryEl);
+    hide(explainerEl);
+    showSourcesEmpty(
+      'No source data for ' + (data.domain || 'this domain'),
+      'No servers have been recorded sending email as this domain in the last ' + (data.days || 7) + ' days.',
+      'This could mean no emails were sent, or DMARC reports haven\'t been processed yet.'
+    );
+    return;
+  }
+  
+  // Render summary stats
+  var summaryHtml = '<div class="sources-stat">' +
+      '<div class="sources-stat-value">' + fmt(summary.total_sources || sources.length) + '</div>' +
+      '<div class="sources-stat-label">Sending Sources</div>' +
+    '</div>' +
+    '<div class="sources-stat">' +
+      '<div class="sources-stat-value">' + fmt(summary.total_emails || 0) + '</div>' +
+      '<div class="sources-stat-label">Total Emails</div>' +
+    '</div>' +
+    '<div class="sources-stat">' +
+      '<div class="sources-stat-value" style="color:var(--ok)">' + fmt(summary.authorized_sources || 0) + '</div>' +
+      '<div class="sources-stat-label">Authorized</div>' +
+    '</div>' +
+    '<div class="sources-stat">' +
+      '<div class="sources-stat-value" style="color:var(--danger)">' + fmt(summary.suspicious_sources || 0) + '</div>' +
+      '<div class="sources-stat-label">Suspicious</div>' +
+    '</div>';
+  
+  summaryEl.innerHTML = summaryHtml;
+  show(summaryEl);
+  
+  // Render source rows
+  var rowsHtml = sources.map(function(src) {
+    var status = src.status || 'unknown';
+    var identity = src.identity || 'Unknown';
+    var ip = src.source_ip || '';
+    var org = src.org || '';
+    var reverse = src.reverse || '';
+    var total = src.total || 0;
+    var aligned = src.aligned || 0;
+    var alignedRate = src.aligned_rate !== undefined ? src.aligned_rate : (total > 0 ? Math.round((aligned / total) * 100) : 0);
+    var spfPass = (src.spf && src.spf.pass) || 0;
+    var spfFail = (src.spf && src.spf.fail) || 0;
+    var dkimPass = (src.dkim && src.dkim.pass) || 0;
+    var dkimFail = (src.dkim && src.dkim.fail) || 0;
+    var firstSeen = src.first_seen || '';
+    var lastSeen = src.last_seen || '';
+    
+    var subInfo = '';
+    if (reverse) {
+      subInfo = reverse;
+    } else if (org) {
+      subInfo = org;
+    } else {
+      subInfo = 'No reverse DNS';
+    }
+    
+    return '<div class="source-row">' +
+      '<div class="source-icon ' + status + '">' + getSourceIcon(status) + '</div>' +
+      '<div class="source-identity">' +
+        '<div class="source-identity-name">' + identity + '</div>' +
+        '<div class="source-identity-ip">' + ip + '</div>' +
+        '<div class="source-identity-org">' + subInfo + '</div>' +
+      '</div>' +
+      '<div class="source-stats">' +
+        '<div class="source-stat-item">' +
+          '<div class="source-stat-num">' + fmt(total) + '</div>' +
+          '<div class="source-stat-lbl">Emails</div>' +
+        '</div>' +
+        '<div class="source-stat-item">' +
+          '<div class="source-stat-num">' + alignedRate + '%</div>' +
+          '<div class="source-stat-lbl">Aligned</div>' +
+        '</div>' +
+        '<div class="source-stat-item">' +
+          '<div class="source-stat-num" style="color:' + (spfPass > 0 ? 'var(--ok)' : 'var(--danger)') + '">' + fmt(spfPass) + '</div>' +
+          '<div class="source-stat-lbl">SPF ✓</div>' +
+        '</div>' +
+        '<div class="source-stat-item">' +
+          '<div class="source-stat-num" style="color:' + (dkimPass > 0 ? 'var(--ok)' : 'var(--danger)') + '">' + fmt(dkimPass) + '</div>' +
+          '<div class="source-stat-lbl">DKIM ✓</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="source-status">' +
+        '<span class="pill ' + status + '">' + getStatusLabel(status) + '</span>' +
+        (lastSeen ? '<div class="tiny muted mt-sm">Last: ' + lastSeen + '</div>' : '') +
+      '</div>' +
+    '</div>';
+  }).join('');
+  
+  listEl.innerHTML = rowsHtml;
+  show(explainerEl);
+}
+
+async function loadSources(days) {
+  var norm = normalizeForUI($('#ins-domain').value, null, null);
+  if (!norm.ok) {
+    showSourcesEmpty('Enter a domain first', 'Please enter a valid domain name in the insights section above.');
+    return;
+  }
+  
+  $('#sources-list').innerHTML = '<div class="sources-loading">Loading source data for ' + (norm.apex || norm.value) + '...</div>';
+  hide($('#sources-summary'));
+  hide($('#sources-explainer'));
+  
+  try {
+    var url = ROBOT_API + '/api/sources?domain=' + encodeURIComponent(norm.apex || norm.value) + '&days=' + days;
+    var j = await get(url);
+    renderSources(j);
+  } catch(e) {
+    var errMsg = String(e);
+    if (errMsg.indexOf('Failed to fetch') >= 0) {
+      errMsg = 'Network error: Could not reach the API.';
+    }
+    if (errMsg.indexOf('404') >= 0 || errMsg.indexOf('Not Found') >= 0) {
+      errMsg = 'The /api/sources endpoint is not yet deployed. Deploy Robot v0.5.2 to enable this feature.';
+    }
+    showSourcesEmpty('Error loading sources', errMsg, 'Please check your connection and try again.');
+    $('#sources-wrap').textContent = String(e);
+  }
+}
+
+$('#btnSources7').addEventListener('click', function() { loadSources(7); });
+$('#btnSources30').addEventListener('click', function() { loadSources(30); });
 
 /* ====== Bootstrap ====== */
 initAuth();
