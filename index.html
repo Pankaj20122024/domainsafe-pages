@@ -1678,14 +1678,29 @@ details[open] summary {
       <div class="section-title"><span class="icon">📥</span> Report Ingestion</div>
       <section class="grid full">
         <div class="card">
-          <h3>Ingest DMARC Reports</h3>
-          <p class="desc">Pull the latest aggregate DMARC XML reports from the mailbox and process them into the insights database.</p>
+          <h3>DMARC Report Pipeline</h3>
+          <p class="desc">DMARC aggregate reports are processed automatically. The Robot's <code>/ingest/daily</code> endpoint receives parsed data from the ingestion pipeline.</p>
           
-          <div class="btn-row">
-            <button class="btn btn-sm" id="btnIngest">Ingest Latest 25 Reports</button>
+          <div class="docs-content">
+            <strong>How it works</strong>
+            <p>Email providers (Google, Microsoft, etc.) send DMARC aggregate reports to the <code>rua</code> address. A background job parses these XMLs and pushes daily summaries to the Robot, which stores them in the <code>dmarc_daily</code> table.</p>
+            
+            <strong>Manual ingestion</strong>
+            <p>To manually push data, send a POST to <code>/ingest/daily</code> with the <code>x-ingest-key</code> header:</p>
           </div>
           
-          <pre class="log mt-md" id="ingest-log">Click to fetch and process recent DMARC reports.</pre>
+          <pre class="log mt-md" id="ingest-log">{
+  "domain": "example.com",
+  "date": "2025-01-15",
+  "total": 1234,
+  "aligned": 1200,
+  "spf_aligned": 1180,
+  "dkim_aligned": 1195
+}</pre>
+          
+          <div class="btn-row">
+            <button class="btn btn-sm secondary" id="btnIngestTest">Test /ingest/daily Endpoint</button>
+          </div>
         </div>
       </section>
 
@@ -1702,6 +1717,21 @@ details[open] summary {
           </div>
           
           <pre class="log mt-md" id="alerts-out">—</pre>
+        </div>
+      </section>
+
+      <!-- API DEBUG -->
+      <div class="section-title"><span class="icon">🔍</span> API Diagnostics</div>
+      <section class="grid full">
+        <div class="card">
+          <h3>Test API Endpoints</h3>
+          <p class="desc">Check which endpoints are reachable. This helps diagnose "Failed to fetch" errors.</p>
+          
+          <div class="btn-row">
+            <button class="btn btn-sm secondary" id="btnTestAll">Test All Endpoints</button>
+          </div>
+          
+          <pre class="log mt-md" id="debug-log">Click "Test All Endpoints" to check API connectivity.</pre>
         </div>
       </section>
 
@@ -2529,13 +2559,35 @@ async function loadRoll(days){
     $('#ins-summary').textContent = 'Please enter a valid domain name first.'; 
     return; 
   }
-  $('#ins-summary').textContent = 'Loading insights...';
+  $('#ins-summary').textContent = 'Loading ' + days + '-day insights...';
+  $('#ins-table').style.display = 'none';
   try{
-    var j = await get(ROBOT_API + '/api/rollup?domain=' + encodeURIComponent(norm.apex || norm.value) + '&days=' + days);
+    var url = ROBOT_API + '/api/rollup?domain=' + encodeURIComponent(norm.apex || norm.value) + '&days=' + days;
+    var j = await get(url);
     $('#ins-wrap').textContent = JSON.stringify(j, null, 2);
+    
+    // Check if we got data
+    var series = asArray(j.series);
+    if (series.length === 0) {
+      var msg = 'No DMARC data found for ' + (norm.apex || norm.value) + ' in the last ' + days + ' days.\n\n';
+      msg += 'Possible reasons:\n';
+      msg += '• DMARC reports may take 24-48 hours to arrive after setup\n';
+      msg += '• No emails were sent from this domain in this period\n';
+      msg += '• Reports haven\'t been ingested yet (Admin: try "Ingest Latest 25 Reports")\n';
+      if (days === 7) {
+        msg += '• Try "Last 30 Days" - you may have older data available';
+      }
+      $('#ins-summary').innerHTML = '<span style="white-space:pre-wrap">' + msg + '</span>';
+      return;
+    }
+    
     renderRollup({domain: j.domain || (norm.apex || norm.value), days: days, series: j.series || []});
   }catch(e){ 
-    $('#ins-summary').textContent = 'Error: ' + String(e).slice(0,100);
+    var errMsg = String(e);
+    if (errMsg.indexOf('Failed to fetch') >= 0) {
+      errMsg = 'Network error: Could not reach the API. Check console for details.';
+    }
+    $('#ins-summary').textContent = 'Error loading ' + days + '-day data: ' + errMsg;
     $('#ins-wrap').textContent = String(e); 
   }
 }
@@ -2648,12 +2700,30 @@ $('#btnSpfUpdate2').addEventListener('click', async function(){
 });
 
 /* ====== INGEST REPORTS ====== */
-$('#btnIngest').addEventListener('click', async function(){
-  logEl('#ingest-log', 'Fetching and processing reports...');
+$('#btnIngestTest').addEventListener('click', async function(){
+  logEl('#ingest-log', 'Testing /ingest/daily endpoint (auth required)...');
   try{
-    var j = await post(DMARC_API + '/api/dmarc/ingest-latest', {limit:25});
-    logEl('#ingest-log', j);
-  }catch(e){ logEl('#ingest-log', String(e)); }
+    // This will return 401 without the key, but proves the endpoint exists
+    var r = await fetch(ROBOT_API + '/ingest/daily', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json', 'accept': 'application/json' },
+      body: JSON.stringify({ domain: 'test.com', date: '2025-01-01', total: 0, aligned: 0 })
+    });
+    var t = await r.text();
+    var j = null;
+    try { j = JSON.parse(t); } catch(e) {}
+    
+    if (r.status === 401) {
+      logEl('#ingest-log', '✅ Endpoint exists and is protected (401 Unauthorized - correct behavior without x-ingest-key)\n\nTo use this endpoint, send POST with:\n- Header: x-ingest-key: <your-key>\n- Body: { domain, date, total, aligned, spf_aligned, dkim_aligned }');
+    } else if (r.ok) {
+      logEl('#ingest-log', '✅ Endpoint working:\n' + JSON.stringify(j, null, 2));
+    } else {
+      logEl('#ingest-log', '⚠️ Endpoint returned ' + r.status + ':\n' + (j ? JSON.stringify(j, null, 2) : t));
+    }
+  } catch(e) {
+    logEl('#ingest-log', '❌ Failed to reach endpoint: ' + String(e) + '\n\nThis may be a CORS or network issue.');
+  }
 });
 
 /* ====== ALERTS ====== */
@@ -2669,6 +2739,68 @@ $('#btnAlertFlush').addEventListener('click', async function(){
     var j = await post(ROBOT_API + '/alerts/flush', {});
     logEl('#alerts-out', j);
   }catch(e){ logEl('#alerts-out', String(e)); }
+});
+
+/* ====== API DIAGNOSTICS ====== */
+$('#btnTestAll').addEventListener('click', async function(){
+  var log = $('#debug-log');
+  var results = [];
+  
+  results.push('=== API Endpoint Diagnostics ===');
+  results.push('ROBOT_API: ' + ROBOT_API);
+  results.push('DMARC_API: ' + DMARC_API);
+  results.push('');
+  
+  async function testEndpoint(name, url, method){
+    var start = Date.now();
+    try{
+      var opts = { method: method || 'GET', credentials: 'include', headers: { 'accept': 'application/json' } };
+      if (method === 'POST') {
+        opts.headers['content-type'] = 'application/json';
+        opts.body = '{}';
+      }
+      var r = await fetch(url, opts);
+      var elapsed = Date.now() - start;
+      var status = r.status + ' ' + r.statusText;
+      if (r.ok) {
+        return '✅ ' + name + ': ' + status + ' (' + elapsed + 'ms)';
+      } else {
+        var body = '';
+        try { body = await r.text(); body = body.slice(0,100); } catch(e){}
+        return '⚠️ ' + name + ': ' + status + ' (' + elapsed + 'ms) - ' + body;
+      }
+    } catch(e) {
+      return '❌ ' + name + ': ' + String(e).slice(0,80);
+    }
+  }
+  
+  log.textContent = 'Testing endpoints...\n';
+  
+  // Test core ROBOT_API endpoints
+  results.push(await testEndpoint('/api/me', ROBOT_API + '/api/me', 'GET'));
+  results.push(await testEndpoint('/api/status', ROBOT_API + '/api/status', 'GET'));
+  results.push(await testEndpoint('/api/domains', ROBOT_API + '/api/domains', 'GET'));
+  results.push(await testEndpoint('/api/rollup (7d)', ROBOT_API + '/api/rollup?domain=domainsafepro.com&days=7', 'GET'));
+  results.push(await testEndpoint('/api/rollup (30d)', ROBOT_API + '/api/rollup?domain=domainsafepro.com&days=30', 'GET'));
+  results.push(await testEndpoint('/policy/preview', ROBOT_API + '/policy/preview?domain=domainsafepro.com', 'GET'));
+  results.push(await testEndpoint('/policy/evaluate-now', ROBOT_API + '/policy/evaluate-now', 'GET'));
+  results.push(await testEndpoint('/alerts/test', ROBOT_API + '/alerts/test', 'POST'));
+  
+  results.push('');
+  results.push('--- Ingest Endpoint ---');
+  results.push(await testEndpoint('/ingest/daily (auth required)', ROBOT_API + '/ingest/daily', 'POST'));
+  
+  results.push('');
+  results.push('=== Done ===');
+  results.push('');
+  results.push('Legend:');
+  results.push('✅ = Working');
+  results.push('⚠️ = Reachable but returned error (401 = auth required, which is correct)');
+  results.push('❌ = Failed to fetch (CORS/network/not deployed)');
+  results.push('');
+  results.push('Note: DMARC_API (api.domainsafepro.com) is reserved for future use.');
+  
+  log.textContent = results.join('\n');
 });
 
 /* ====== Bootstrap ====== */
