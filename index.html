@@ -416,6 +416,94 @@ header {
   color: var(--ok);
 }
 
+/* Existing Records Warning Card */
+.existing-records-warning {
+  background: rgba(255, 180, 50, 0.1);
+  border: 2px solid var(--warn);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.existing-records-warning h4 {
+  color: var(--warn);
+  font-family: var(--font-sans);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.existing-records-warning p {
+  margin-bottom: 16px;
+  color: var(--fg);
+}
+.existing-records-warning .record-found {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.existing-records-warning .record-found-label {
+  font-weight: 600;
+  color: var(--danger);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.existing-records-warning .record-found-value {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  word-break: break-all;
+  background: var(--bg);
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.existing-records-warning .warning-instructions {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin: 16px 0;
+}
+.existing-records-warning .warning-instructions p {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+.existing-records-warning .warning-instructions p:last-child {
+  margin-bottom: 0;
+}
+.existing-records-warning .acknowledge-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  margin-top: 16px;
+  cursor: pointer;
+}
+.existing-records-warning .acknowledge-checkbox input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.existing-records-warning .acknowledge-checkbox span {
+  font-weight: 500;
+  color: var(--fg);
+}
+.existing-records-warning .warning-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
 body.authed #loading-section { display: none; }
 body.authed #login-section { display: none; }
 body.authed #app-main { display: block; }
@@ -2177,6 +2265,40 @@ details[open] summary {
           <label for="qc-extras" style="margin:0">Include advanced security records (MTA-STS and TLS reporting)</label>
         </div>
 
+        <!-- Existing Records Warning (shown when duplicates detected) -->
+        <div id="existing-records-warning" class="existing-records-warning hidden">
+          <h4>🚨 Existing Records Detected</h4>
+          <p>Your domain already has email authentication records. You <strong>must delete these first</strong> before adding our records, otherwise your email will break.</p>
+          
+          <div id="existing-spf-record" class="record-found hidden">
+            <div class="record-found-label">❌ SPF Record Found (at @ or root)</div>
+            <div class="record-found-value" id="existing-spf-value"></div>
+          </div>
+          
+          <div id="existing-dmarc-record" class="record-found hidden">
+            <div class="record-found-label">❌ DMARC Record Found (at _dmarc)</div>
+            <div class="record-found-value" id="existing-dmarc-value"></div>
+          </div>
+          
+          <div class="warning-instructions">
+            <p><strong>How to delete these records:</strong></p>
+            <p>1. Log in to your domain registrar (GoDaddy, Namecheap, etc.)</p>
+            <p>2. Go to DNS Management or DNS Records</p>
+            <p>3. Find the TXT records shown above and delete them</p>
+            <p>4. Wait 5-10 minutes, then come back and try again</p>
+          </div>
+          
+          <label class="acknowledge-checkbox">
+            <input type="checkbox" id="existing-records-acknowledge"/>
+            <span>I have deleted the existing records shown above and understand that duplicate records will break my email</span>
+          </label>
+          
+          <div class="warning-actions">
+            <button class="btn" id="btnProceedAfterWarning" disabled>Continue — Generate My Records</button>
+            <button class="btn secondary" id="btnRecheckRecords">Re-check DNS</button>
+          </div>
+        </div>
+
         <div id="qc-results" class="hidden"></div>
         
         <div id="qc-actions" class="btn-row hidden">
@@ -3343,31 +3465,175 @@ function renderQuickCodes(records, extras) {
   });
 }
 
+/* ====== EXISTING RECORDS CHECK & GENERATE ====== */
+var pendingDomainForRecords = null;
+
+async function checkForExistingRecords(domain) {
+  try {
+    var j = await get(ROBOT_API + "/api/check-score?domain=" + encodeURIComponent(domain));
+    var existingSpf = null;
+    var existingDmarc = null;
+    
+    if (j && j.checks) {
+      if (j.checks.spf && j.checks.spf.record && j.checks.spf.record !== "—") {
+        existingSpf = j.checks.spf.record;
+      }
+      if (j.checks.dmarc && j.checks.dmarc.record && j.checks.dmarc.record !== "—") {
+        existingDmarc = j.checks.dmarc.record;
+      }
+    }
+    
+    return { spf: existingSpf, dmarc: existingDmarc };
+  } catch(e) {
+    // If check fails, proceed without warning (better UX than blocking)
+    return { spf: null, dmarc: null };
+  }
+}
+
+function showExistingRecordsWarning(spf, dmarc, domain) {
+  var warningEl = $("#existing-records-warning");
+  var spfEl = $("#existing-spf-record");
+  var spfValueEl = $("#existing-spf-value");
+  var dmarcEl = $("#existing-dmarc-record");
+  var dmarcValueEl = $("#existing-dmarc-value");
+  var acknowledgeCheckbox = $("#existing-records-acknowledge");
+  var proceedBtn = $("#btnProceedAfterWarning");
+  
+  // Store domain for later
+  pendingDomainForRecords = domain;
+  
+  // Reset state
+  acknowledgeCheckbox.checked = false;
+  proceedBtn.disabled = true;
+  
+  // Show/hide SPF
+  if (spf) {
+    spfValueEl.textContent = spf;
+    spfEl.classList.remove("hidden");
+  } else {
+    spfEl.classList.add("hidden");
+  }
+  
+  // Show/hide DMARC
+  if (dmarc) {
+    dmarcValueEl.textContent = dmarc;
+    dmarcEl.classList.remove("hidden");
+  } else {
+    dmarcEl.classList.add("hidden");
+  }
+  
+  // Show warning card, hide results
+  warningEl.classList.remove("hidden");
+  hide($("#qc-results"));
+  hide($("#qc-actions"));
+  hide($("#manual-step3-section"));
+}
+
+function hideExistingRecordsWarning() {
+  var warningEl = $("#existing-records-warning");
+  warningEl.classList.add("hidden");
+}
+
+async function generateRecordsForDomain(domain) {
+  try {
+    var extras = ($("#qc-extras").checked ? "&extras=1" : "");
+    var j = await get(ROBOT_API + "/api/quick-codes?domain=" + encodeURIComponent(domain) + extras);
+    renderQuickCodes(j.records || [], j.extras || []);
+    
+    $("#verify-domain").value = domain;
+    
+    // Show Step 3 with the domain name
+    $("#manual-protected-domain").textContent = "Domain: " + domain;
+    $("#manual-step3-section").style.display = "";
+    $("#manual-protect-status").classList.add("hidden");
+    $("#manual-step3-section").dataset.domain = domain;
+    
+    // Hide warning if shown
+    hideExistingRecordsWarning();
+  } catch(e) {
+    $("#qc-results").innerHTML = '<p class="danger">Could not generate records: ' + String(e).slice(0,100) + '</p>';
+    show($("#qc-results"));
+    hide($("#manual-step3-section"));
+  }
+}
+
 $("#btnQCodes").addEventListener("click", async function(){
+  var btn = this;
   var norm = normalizeForUI($("#qc-domain").value, $("#qc-notice"), null);
   if (!norm.ok){
     hide($("#qc-results"));
     hide($("#qc-actions"));
     hide($("#manual-step3-section"));
+    hideExistingRecordsWarning();
     return;
   }
-  try{
-    var extras = ($("#qc-extras").checked ? "&extras=1" : "");
-    var j = await get(ROBOT_API + "/api/quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value) + extras);
-    renderQuickCodes(j.records || [], j.extras || []);
+  
+  var domain = norm.apex || norm.value;
+  
+  // Show loading state
+  btn.disabled = true;
+  btn.textContent = "Checking...";
+  
+  try {
+    // First check for existing records
+    var existing = await checkForExistingRecords(domain);
     
-    var domainToProtect = norm.apex || norm.value;
-    $("#verify-domain").value = domainToProtect;
-    
-    // Show Step 3 with the domain name
-    $("#manual-protected-domain").textContent = "Domain: " + domainToProtect;
-    $("#manual-step3-section").style.display = "";
-    $("#manual-protect-status").classList.add("hidden");
-    $("#manual-step3-section").dataset.domain = domainToProtect;
-  }catch(e){
-    $("#qc-results").innerHTML = '<p class="danger">Could not generate records: ' + String(e).slice(0,100) + '</p>';
+    if (existing.spf || existing.dmarc) {
+      // Show warning with actual records
+      showExistingRecordsWarning(existing.spf, existing.dmarc, domain);
+    } else {
+      // No existing records, proceed directly
+      await generateRecordsForDomain(domain);
+    }
+  } catch(e) {
+    $("#qc-results").innerHTML = '<p class="danger">Could not check domain: ' + String(e).slice(0,100) + '</p>';
     show($("#qc-results"));
-    hide($("#manual-step3-section"));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Generate My Records";
+  }
+});
+
+// Acknowledge checkbox enables proceed button
+$("#existing-records-acknowledge").addEventListener("change", function() {
+  var proceedBtn = $("#btnProceedAfterWarning");
+  proceedBtn.disabled = !this.checked;
+});
+
+// Proceed after acknowledging warning
+$("#btnProceedAfterWarning").addEventListener("click", async function() {
+  if (!pendingDomainForRecords) return;
+  
+  var btn = this;
+  btn.disabled = true;
+  btn.textContent = "Generating...";
+  
+  await generateRecordsForDomain(pendingDomainForRecords);
+  
+  btn.disabled = false;
+  btn.textContent = "Continue — Generate My Records";
+});
+
+// Re-check DNS button
+$("#btnRecheckRecords").addEventListener("click", async function() {
+  if (!pendingDomainForRecords) return;
+  
+  var btn = this;
+  btn.disabled = true;
+  btn.textContent = "Checking...";
+  
+  var existing = await checkForExistingRecords(pendingDomainForRecords);
+  
+  if (existing.spf || existing.dmarc) {
+    // Still have existing records
+    showExistingRecordsWarning(existing.spf, existing.dmarc, pendingDomainForRecords);
+    btn.disabled = false;
+    btn.textContent = "Re-check DNS";
+  } else {
+    // Records deleted, proceed
+    await generateRecordsForDomain(pendingDomainForRecords);
+    btn.disabled = false;
+    btn.textContent = "Re-check DNS";
   }
 });
 
