@@ -347,6 +347,75 @@ header {
   color: var(--fg-muted);
 }
 
+/* Checkout success variations */
+.login-card .checkout-success-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+.login-card.checkout-success h2 {
+  color: var(--ok);
+}
+.login-card .checkout-success-msg {
+  display: none;
+}
+.login-card.checkout-success .checkout-success-msg {
+  display: block;
+}
+.login-card.checkout-success .normal-msg {
+  display: none;
+}
+
+/* Claim subscription form in plan-gate */
+.claim-subscription-form {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.claim-subscription-form h4 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  color: var(--fg);
+}
+.claim-subscription-form p {
+  font-size: 14px;
+  color: var(--fg-muted);
+  margin-bottom: 16px;
+}
+.claim-subscription-form .input-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.claim-subscription-form input[type="email"] {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--fg);
+  font-size: 15px;
+}
+.claim-subscription-form input[type="email"]:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+.claim-subscription-form .btn-claim {
+  padding: 10px 20px;
+  white-space: nowrap;
+}
+.claim-subscription-form .claim-status {
+  margin-top: 12px;
+  font-size: 14px;
+  min-height: 20px;
+}
+.claim-subscription-form .claim-status.error {
+  color: var(--danger);
+}
+.claim-subscription-form .claim-status.success {
+  color: var(--ok);
+}
+
 body.authed #loading-section { display: none; }
 body.authed #login-section { display: none; }
 body.authed #app-main { display: block; }
@@ -1122,6 +1191,238 @@ details[open] summary {
   animation: fadeIn 0.4s ease, pulse 2s ease-in-out 3;
 }
 
+/* ========== PROTECTION SUCCESS ANIMATION ========== */
+.protection-success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  animation: fadeInOverlay 0.3s ease forwards;
+}
+@keyframes fadeInOverlay {
+  to { opacity: 1; }
+}
+.protection-success-card {
+  background: var(--bg-card);
+  border: 2px solid var(--ok);
+  border-radius: var(--radius);
+  padding: 48px 56px;
+  text-align: center;
+  max-width: 480px;
+  box-shadow: 0 0 60px rgba(103,232,163,0.3), 0 24px 48px rgba(0,0,0,0.4);
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  transform: scale(0.8);
+}
+@keyframes popIn {
+  to { transform: scale(1); }
+}
+.protection-shield {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 24px;
+  position: relative;
+}
+.protection-shield svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 20px rgba(103,232,163,0.5));
+}
+.protection-shield .shield-fill {
+  fill: var(--ok);
+  opacity: 0;
+  animation: shieldFill 0.6s ease 0.3s forwards;
+}
+.protection-shield .shield-stroke {
+  stroke: var(--ok);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: shieldDraw 0.6s ease forwards;
+}
+.protection-shield .checkmark {
+  stroke: #fff;
+  stroke-width: 3;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: checkDraw 0.4s ease 0.7s forwards;
+}
+@keyframes shieldDraw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes shieldFill {
+  to { opacity: 1; }
+}
+@keyframes checkDraw {
+  to { stroke-dashoffset: 0; }
+}
+.protection-success-card h2 {
+  color: var(--ok);
+  font-size: 1.75rem;
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeUp 0.4s ease 0.5s forwards;
+}
+.protection-success-card .protected-domain {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  color: var(--fg);
+  background: var(--bg-input);
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  margin: 16px 0;
+  opacity: 0;
+  animation: fadeUp 0.4s ease 0.6s forwards;
+}
+.protection-success-card p {
+  color: var(--fg-muted);
+  font-size: 15px;
+  opacity: 0;
+  animation: fadeUp 0.4s ease 0.7s forwards;
+  max-width: none;
+}
+.protection-success-card .btn {
+  margin-top: 24px;
+  opacity: 0;
+  animation: fadeUp 0.4s ease 0.8s forwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Confetti particles */
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  margin-left: -150px;
+  pointer-events: none;
+  overflow: visible;
+}
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+}
+.confetti:nth-child(odd) { border-radius: 50%; }
+.confetti:nth-child(even) { border-radius: 2px; }
+
+/* ========== PROTECTED DOMAINS LIST ========== */
+.protected-domains-section {
+  margin-bottom: 24px;
+}
+.protected-domains-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.protected-domains-header h3 {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.protected-domains-count {
+  font-size: 14px;
+  color: var(--fg-muted);
+  background: var(--bg-input);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+.protected-domain-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  transition: all var(--fast-transition);
+}
+.protected-domain-item:hover {
+  border-color: var(--border-glow);
+}
+.protected-domain-item.new-item {
+  animation: slideInRight 0.4s ease;
+  border-color: var(--ok);
+  box-shadow: 0 0 0 1px var(--ok);
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.protected-domain-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(103,232,163,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ok);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.protected-domain-info {
+  flex: 1;
+  min-width: 0;
+}
+.protected-domain-name {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--fg);
+  font-weight: 600;
+}
+.protected-domain-meta {
+  font-size: 12px;
+  color: var(--fg-muted);
+  margin-top: 2px;
+}
+.protected-domain-status {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.protected-domain-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.protected-domain-badge.ok {
+  background: rgba(103,232,163,0.15);
+  color: var(--ok);
+}
+.protected-domain-badge.pending {
+  background: rgba(255,211,106,0.15);
+  color: var(--warn);
+}
+.protected-domains-empty {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--fg-muted);
+  font-size: 14px;
+  background: var(--bg-input);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+}
+
 /* ========== FOOTER ========== */
 /* Plan gate card */
 #plan-gate {
@@ -1618,11 +1919,18 @@ details[open] summary {
 
 <!-- Login hero (shown when not signed in) -->
 <section id="login-section">
-  <div class="login-card">
+  <div class="login-card" id="login-card">
     <div class="eyebrow">DomainSafePro</div>
-    <h2>Welcome Back</h2>
-    <p>Sign in with your Google account to set up protection for your domain and manage your email security.</p>
-    <button class="btn" type="button" id="login-hero-btn">Sign in with Google</button>
+    <div class="checkout-success-msg">
+      <div class="checkout-success-icon">🎉</div>
+      <h2>Payment Successful!</h2>
+      <p>Log in with Google to activate your subscription and protect your first domain.</p>
+    </div>
+    <div class="normal-msg">
+      <h2>Welcome Back</h2>
+      <p>Sign in with your Google account to set up protection for your domain and manage your email security.</p>
+    </div>
+    <button class="btn" type="button" id="login-hero-btn">Continue with Google</button>
     <div class="tiny">You will be redirected back here after signing in.</div>
   </div>
 </section>
@@ -1638,6 +1946,46 @@ details[open] summary {
       <div class="action">
         <a class="btn" href="https://www.domainsafepro.com/#pricing">View plans on main site</a>
       </div>
+    </div>
+    <div class="claim-subscription-form" id="claim-subscription-form">
+      <h4>Already purchased? Link your subscription</h4>
+      <p>If you used a different email at checkout, enter it below to link your subscription to this Google account.</p>
+      <div class="input-row">
+        <input type="email" id="claim-email" placeholder="Email used at checkout" autocomplete="email" />
+        <button class="btn secondary btn-claim" id="btn-claim-subscription" type="button">Link Subscription</button>
+      </div>
+      <div class="claim-status" id="claim-status"></div>
+    </div>
+  </div>
+
+  <!-- Protected Domains List -->
+  <div id="protected-domains-section" class="protected-domains-section hidden">
+    <div class="protected-domains-header">
+      <h3>🛡️ Protected Domains</h3>
+      <span class="protected-domains-count" id="protected-count">0 domains</span>
+    </div>
+    <div id="protected-domains-list">
+      <div class="protected-domains-empty">
+        No domains protected yet. Choose your DNS provider below to get started.
+      </div>
+    </div>
+  </div>
+
+  <!-- Protection Success Overlay (hidden by default) -->
+  <div id="protection-success-overlay" class="protection-success-overlay" style="display:none;">
+    <div class="protection-success-card">
+      <div class="confetti-container" id="confetti-container"></div>
+      <div class="protection-shield">
+        <svg viewBox="0 0 64 64">
+          <path class="shield-stroke" d="M32 4 L56 14 L56 30 C56 46 32 60 32 60 C32 60 8 46 8 30 L8 14 L32 4 Z"/>
+          <path class="shield-fill" d="M32 4 L56 14 L56 30 C56 46 32 60 32 60 C32 60 8 46 8 30 L8 14 L32 4 Z"/>
+          <polyline class="checkmark" points="20,32 28,40 44,24"/>
+        </svg>
+      </div>
+      <h2>Domain Protected!</h2>
+      <div class="protected-domain" id="success-domain-name">yourdomain.com</div>
+      <p>Your email authentication records have been configured. Your domain is now protected against spoofing and impersonation.</p>
+      <button class="btn" onclick="closeProtectionSuccess()">Continue Setup</button>
     </div>
   </div>
 
@@ -1836,9 +2184,37 @@ details[open] summary {
           <strong>Adding CNAME records</strong>
           <p>For CNAME records, the "Points to" or "Value" field should be the target address we provide. Some registrars add your domain automatically, so just enter the prefix.</p>
           
+          <strong style="color:var(--warn)">⚠️ Important: Check for existing records first!</strong>
+          <p>Before adding new records, check if your domain already has SPF or DMARC records. Having duplicate records causes problems:</p>
+          <p style="margin-left:16px">• If you see an existing <code>TXT</code> record at <code>@</code> starting with <code>v=spf1</code>, <strong>delete it first</strong> or edit it to match our new value.</p>
+          <p style="margin-left:16px">• If you see an existing <code>TXT</code> record at <code>_dmarc</code> starting with <code>v=DMARC1</code>, <strong>delete it first</strong>. You can only have one DMARC record.</p>
+          <p style="margin-left:16px">• GoDaddy, Namecheap, and other registrars sometimes add default records — remove those before adding ours.</p>
+          
           <strong>When will it work?</strong>
-          <p>DNS changes can take a few minutes to a few hours to spread across the internet. If verification fails at first, wait 15 minutes and try again.</p>
+          <p>DNS changes can take 15-60 minutes to spread across the internet. If verification fails at first, wait and try again.</p>
         </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: Mark as Protected -->
+    <section class="grid full" id="manual-step3-section" style="display:none;">
+      <div class="card highlight">
+        <h3><span class="card-icon">✅</span> Step 3: Confirm Your Protection</h3>
+        <p class="desc">Once you have added all the DNS records from Step 1, click the button below to register your domain and verify the setup.</p>
+        
+        <div class="verify-summary has-issues" style="background:rgba(90,129,255,0.1);border-color:rgba(90,129,255,0.3);margin-bottom:16px;">
+          <span class="verify-summary-icon">⏱️</span>
+          <div class="verify-summary-text">
+            <h4 style="font-family:var(--font-sans);">Wait 15-30 minutes after adding records</h4>
+            <p>DNS changes take time to propagate across the internet. If verification fails, wait a bit and try again.</p>
+          </div>
+        </div>
+        
+        <div id="manual-protected-domain" class="mono" style="font-size:1.1rem;color:var(--fg);margin-bottom:16px;"></div>
+        
+        <button class="btn large" id="btnManualProtect">🛡️ I've Added My Records — Protect My Domain</button>
+        
+        <div id="manual-protect-status" class="mt-md hidden"></div>
       </div>
     </section>
   </div>
@@ -2339,6 +2715,7 @@ function toggleAdmin() {
 
 /* ====== Route Selection ====== */
 var currentRoute = null;
+var protectedDomains = []; // Track all protected domains across routes
 
 function selectRoute(route) {
   currentRoute = route;
@@ -2360,6 +2737,7 @@ function selectRoute(route) {
   var verifySection = document.getElementById('verify-section');
   var routeSelection = document.getElementById('route-selection');
   var helpSection = document.getElementById('help-section');
+  var insightsSection = document.getElementById('insights-section');
   
   // Reset all
   cfSection.classList.remove('active');
@@ -2368,14 +2746,19 @@ function selectRoute(route) {
   verifySection.classList.remove('active');
   
   if (route === null) {
-    // Show route selection, hide everything else
+    // Show route selection, show insights on main page
     routeSelection.style.display = '';
     helpSection.style.display = '';
+    if (insightsSection) insightsSection.classList.remove('hidden');
     return;
   }
   
   // Hide route selection once a route is chosen
   routeSelection.style.display = 'none';
+  
+  // IMPORTANT: Hide insights during setup - user should focus on protection task only
+  // Insights belong on the dashboard AFTER protection, not during setup
+  if (insightsSection) insightsSection.classList.add('hidden');
   
   if (route === 'cloudflare') {
     cfSection.classList.add('active');
@@ -2386,6 +2769,154 @@ function selectRoute(route) {
   } else if (route === 'manual') {
     manualSection.classList.add('active');
     verifySection.classList.add('active');
+  }
+}
+
+/* ====== Protection Success Animation ====== */
+function createConfetti() {
+  var container = document.getElementById('confetti-container');
+  if (!container) return;
+  container.innerHTML = '';
+  var colors = ['#67e8a3', '#5a81ff', '#ffd36a', '#ff7a7a', '#8a7aff', '#21E6C1'];
+  
+  for (var i = 0; i < 50; i++) {
+    var confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    var x = Math.random() * 300;
+    var delay = Math.random() * 0.5;
+    var duration = 1 + Math.random();
+    var endX = (Math.random() - 0.5) * 200;
+    var rotation = Math.random() * 720;
+    
+    confetti.style.cssText = 'left:' + x + 'px;top:50%;background:' + colors[Math.floor(Math.random() * colors.length)] + ';' +
+      'animation:confetti' + i + ' ' + duration + 's ease-out ' + delay + 's forwards;';
+    
+    // Create unique keyframe for each confetti
+    var style = document.createElement('style');
+    style.textContent = '@keyframes confetti' + i + ' { 0% { opacity: 1; transform: translateY(0) rotate(0deg); } 100% { opacity: 0; transform: translateY(-150px) translateX(' + endX + 'px) rotate(' + rotation + 'deg); } }';
+    document.head.appendChild(style);
+    
+    container.appendChild(confetti);
+  }
+}
+
+function showProtectionSuccess(domain, route) {
+  var overlay = document.getElementById('protection-success-overlay');
+  var domainEl = document.getElementById('success-domain-name');
+  if (domainEl) domainEl.textContent = domain;
+  if (overlay) {
+    overlay.style.display = 'flex';
+    createConfetti();
+  }
+  // Add to protected domains list
+  addProtectedDomain(domain, route);
+}
+
+function closeProtectionSuccess() {
+  var overlay = document.getElementById('protection-success-overlay');
+  if (overlay) {
+    overlay.style.opacity = '0';
+    setTimeout(function() {
+      overlay.style.display = 'none';
+      overlay.style.opacity = '';
+    }, 300);
+  }
+}
+
+function addProtectedDomain(domain, route) {
+  // Check if already protected
+  var exists = protectedDomains.some(function(d) { return d.domain === domain; });
+  if (exists) return;
+  
+  protectedDomains.push({
+    domain: domain,
+    route: route,
+    timestamp: new Date().toISOString(),
+    isNew: true
+  });
+  
+  updateProtectedDomainsList();
+  updateDomainCounter();
+  
+  // Remove "new" flag after animation
+  setTimeout(function() {
+    protectedDomains.forEach(function(d) { d.isNew = false; });
+    updateProtectedDomainsList();
+  }, 3000);
+}
+
+function isDomainAlreadyProtected(domain) {
+  return protectedDomains.some(function(d) { return d.domain === domain; });
+}
+
+function updateProtectedDomainsList() {
+  var section = document.getElementById('protected-domains-section');
+  var list = document.getElementById('protected-domains-list');
+  var countEl = document.getElementById('protected-count');
+  
+  if (!protectedDomains.length) {
+    if (section) section.classList.add('hidden');
+    return;
+  }
+  
+  if (section) section.classList.remove('hidden');
+  if (countEl) countEl.textContent = protectedDomains.length + ' domain' + (protectedDomains.length === 1 ? '' : 's');
+  
+  var routeIcons = {
+    cloudflare: '☁️',
+    route53: '🔶',
+    manual: '📝'
+  };
+  var routeNames = {
+    cloudflare: 'Cloudflare',
+    route53: 'AWS Route 53',
+    manual: 'Manual DNS'
+  };
+  
+  var html = protectedDomains.map(function(d) {
+    var date = new Date(d.timestamp);
+    var dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    return '<div class="protected-domain-item' + (d.isNew ? ' new-item' : '') + '">' +
+      '<div class="protected-domain-icon">🛡️</div>' +
+      '<div class="protected-domain-info">' +
+        '<div class="protected-domain-name">' + d.domain + '</div>' +
+        '<div class="protected-domain-meta">' + routeIcons[d.route] + ' ' + routeNames[d.route] + ' · Protected ' + dateStr + '</div>' +
+      '</div>' +
+      '<div class="protected-domain-status">' +
+        '<span class="protected-domain-badge ok">Protected</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  
+  if (list) list.innerHTML = html;
+}
+
+function updateDomainCounter() {
+  var planLabel = document.getElementById('auth-plan-label');
+  if (!planLabel) return;
+  
+  var text = planLabel.textContent || '';
+  var count = protectedDomains.length;
+  
+  // Update domains count in the label
+  if (text.indexOf('Domains:') > -1) {
+    // Extract max if present (e.g., "Domains: 0/5")
+    var maxMatch = text.match(/Domains:\s*\d+\/(\d+)/);
+    var max = maxMatch ? maxMatch[1] : null;
+    
+    if (max) {
+      var newText = text.replace(/Domains:\s*\d+\/\d+/, 'Domains: ' + count + '/' + max);
+      planLabel.textContent = newText;
+    } else {
+      var newText = text.replace(/Domains:\s*\d+\+?/, 'Domains: ' + count + '+');
+      planLabel.textContent = newText;
+    }
+  }
+  
+  // Also update the protected domains count badge
+  var countEl = document.getElementById('protected-count');
+  if (countEl) {
+    countEl.textContent = count + ' domain' + (count === 1 ? '' : 's');
   }
 }
 
@@ -2528,6 +3059,7 @@ function applyPlanGate(user){
   var manualSetup = $("#setup-manual");
   var helpSection = $("#help-section");
   var insightsSection = $("#insights-section");
+  var protectedSection = $("#protected-domains-section");
   var adminSection = document.getElementById("admin-section");
 
   var email = user && user.email ? String(user.email) : "";
@@ -2541,7 +3073,7 @@ function applyPlanGate(user){
   }
 
   // Sections visible to users with active plans (or admins)
-  var userSections = [welcomeBanner, routeSelection, cfSetup, r53Setup, manualSetup, helpSection, insightsSection];
+  var userSections = [welcomeBanner, routeSelection, cfSetup, r53Setup, manualSetup, helpSection, insightsSection, protectedSection];
 
   if (hasActivePlan || isAdminFront) {
     if (gate) gate.classList.add("hidden");
@@ -2783,6 +3315,7 @@ $("#btnQCodes").addEventListener("click", async function(){
   if (!norm.ok){
     hide($("#qc-results"));
     hide($("#qc-actions"));
+    hide($("#manual-step3-section"));
     return;
   }
   try{
@@ -2790,10 +3323,18 @@ $("#btnQCodes").addEventListener("click", async function(){
     var j = await get(ROBOT_API + "/api/quick-codes?domain=" + encodeURIComponent(norm.apex || norm.value) + extras);
     renderQuickCodes(j.records || [], j.extras || []);
     
-    $("#verify-domain").value = norm.apex || norm.value;
+    var domainToProtect = norm.apex || norm.value;
+    $("#verify-domain").value = domainToProtect;
+    
+    // Show Step 3 with the domain name
+    $("#manual-protected-domain").textContent = "Domain: " + domainToProtect;
+    $("#manual-step3-section").style.display = "";
+    $("#manual-protect-status").classList.add("hidden");
+    $("#manual-step3-section").dataset.domain = domainToProtect;
   }catch(e){
     $("#qc-results").innerHTML = '<p class="danger">Could not generate records: ' + String(e).slice(0,100) + '</p>';
     show($("#qc-results"));
+    hide($("#manual-step3-section"));
   }
 });
 
@@ -2817,6 +3358,77 @@ $("#btnCopyAll").addEventListener("click", function(){
     btn.textContent = "Copied to clipboard!";
     setTimeout(function() { btn.textContent = oldText; }, 2000);
   });
+});
+
+/* ====== MANUAL DNS: Register domain after user adds records ====== */
+$("#btnManualProtect").addEventListener("click", async function(){
+  var btn = this;
+  var statusEl = $("#manual-protect-status");
+  var domain = $("#manual-step3-section").dataset.domain || $("#qc-domain").value.trim().toLowerCase();
+  
+  if (!domain) {
+    statusEl.innerHTML = '<p class="danger">No domain specified. Please generate records first.</p>';
+    statusEl.classList.remove("hidden");
+    return;
+  }
+  
+  // Check if already protected
+  if (isDomainAlreadyProtected(domain)) {
+    statusEl.innerHTML = '<p class="success">✓ ' + domain + ' is already in your protected domains list!</p>';
+    statusEl.classList.remove("hidden");
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = "Verifying & Registering...";
+  statusEl.classList.add("hidden");
+  
+  try {
+    // First verify the DNS records are actually in place
+    var checkResult = await get(ROBOT_API + "/api/check-quick-codes?domain=" + encodeURIComponent(domain));
+    
+    var spfOk = checkResult.checks && checkResult.checks.spf && checkResult.checks.spf.present && checkResult.checks.spf.includesControl;
+    var dmarcOk = checkResult.checks && checkResult.checks.dmarc && checkResult.checks.dmarc.present;
+    var dkimOk = checkResult.checks && checkResult.checks.dkim && (checkResult.checks.dkim.s1.ok || checkResult.checks.dkim.s2.ok);
+    
+    if (!spfOk && !dmarcOk && !dkimOk) {
+      statusEl.innerHTML = '<div class="verify-summary has-issues"><span class="verify-summary-icon">⏳</span><div class="verify-summary-text"><h4>Records not detected yet</h4><p>DNS changes can take 15-60 minutes to propagate. Please wait and try again. Make sure you deleted any duplicate SPF or DMARC records.</p></div></div>';
+      statusEl.classList.remove("hidden");
+      btn.disabled = false;
+      btn.textContent = "🛡️ I've Added My Records — Protect My Domain";
+      return;
+    }
+    
+    // Register the domain with the API
+    var regResult = await post(ROBOT_API + "/api/domains", { domain: domain, provider: "manual" });
+    
+    if (!regResult.ok) {
+      throw new Error(regResult.error || "Failed to register domain");
+    }
+    
+    // Show success animation
+    showProtectionSuccess(domain, "manual");
+    
+    // Refresh user data and domains list to update counter
+    await fetchCurrentUser();
+    await refreshRecent();
+    
+    // Clear fields
+    $("#qc-domain").value = "";
+    hide($("#manual-step3-section"));
+    hide($("#qc-results"));
+    hide($("#qc-actions"));
+    
+    statusEl.innerHTML = '<p class="success">✓ ' + domain + ' has been registered and is now protected!</p>';
+    statusEl.classList.remove("hidden");
+    
+  } catch(e) {
+    statusEl.innerHTML = '<p class="danger">Error: ' + String(e.message || e).slice(0,150) + '</p>';
+    statusEl.classList.remove("hidden");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🛡️ I've Added My Records — Protect My Domain";
+  }
 });
 
 /* ====== VERIFY (Human-readable output) - FIXED to match API response ====== */
@@ -2930,10 +3542,24 @@ $("#btnVerify").addEventListener("click", async function(){
 /* ====== ADD DOMAIN + RECENT ====== */
 async function refreshRecent(){
   var wrap = $("#recentWrap");
-  if (!wrap) return;
   try{
     var j = await get(ROBOT_API + "/api/domains");
     var rows = (j && (j.domains || j.rows)) ? (j.domains || j.rows) : [];
+    
+    // Populate protected domains from API
+    protectedDomains = rows.map(function(r) {
+      return {
+        domain: r.domain_name || '',
+        route: r.provider || r.source || 'manual',
+        timestamp: r.created_at || new Date().toISOString(),
+        isNew: false
+      };
+    }).filter(function(d) { return d.domain; });
+    
+    updateProtectedDomainsList();
+    updateDomainCounter();
+    
+    if (!wrap) return;
     if (!rows.length){
       wrap.textContent = "No domains registered yet.";
       return;
@@ -2942,7 +3568,7 @@ async function refreshRecent(){
       return '<div class="mono" style="margin-bottom:6px">'+(r.domain_name || "")+' <span class="muted">| '+(r.status || "")+(r.created_at ? " | "+r.created_at : "")+'</span></div>';
     }).join("");
   }catch(e){
-    wrap.textContent = "Could not load domains.";
+    if (wrap) wrap.textContent = "Could not load domains.";
   }
 }
 
@@ -2996,22 +3622,59 @@ $("#btnCfList").addEventListener("click", async function(){
 });
 
 $("#btnCfProtect").addEventListener("click", async function(){
+  var btn = this;
   var token = ($("#cf-token").value || "").trim();
   var zone_id = $("#cf-zones").value;
+  var zoneSelect = $("#cf-zones");
+  var selectedOption = zoneSelect.options[zoneSelect.selectedIndex];
+  var domainName = selectedOption ? selectedOption.textContent.split(' (')[0] : '';
+  
   if (!token || !zone_id){
     logEl("#cf-log","Please load zones and select a domain first.");
     return;
   }
+  
+  // Check if already protected
+  if (domainName && isDomainAlreadyProtected(domainName)) {
+    logEl("#cf-log", "✓ " + domainName + " is already protected! Select a different domain or verify your setup below.");
+    return;
+  }
+  
+  // Disable button and show loading
+  btn.disabled = true;
+  btn.textContent = "Protecting...";
+  logEl("#cf-log", "Setting up email protection for " + domainName + "...");
+  
   try{
     var j = await post(ROBOT_API + "/api/cf/protect", { token: token, zone_id: zone_id });
-    logEl("#cf-log", j);
-    if (j.apex) {
-      $("#verify-domain").value = j.apex;
-      $("#pol-domain").value = j.apex;
-      $("#ins-domain").value = j.apex;
+    
+    var apex = j.apex || j.domain || domainName;
+    
+    // Show success animation
+    showProtectionSuccess(apex, 'cloudflare');
+    
+    // Refresh user data and domains list to update counter
+    await fetchCurrentUser();
+    await refreshRecent();
+    
+    // Clear sensitive fields
+    $("#cf-token").value = "";
+    zoneSelect.innerHTML = '<option value="">Domain protected! Select another or go back</option>';
+    
+    // Update other fields
+    if (apex) {
+      $("#verify-domain").value = apex;
+      if ($("#pol-domain")) $("#pol-domain").value = apex;
+      if ($("#ins-domain")) $("#ins-domain").value = apex;
     }
+    
+    logEl("#cf-log", "✅ Success! " + apex + " is now protected.\n\nDNS records created:\n• SPF record configured\n• DKIM selectors (s1, s2) added\n• DMARC policy activated\n\nUse 'Verify My Setup' below to confirm everything is working.");
+    
   }catch(e){
-    logEl("#cf-log", String(e));
+    logEl("#cf-log", "❌ Error: " + String(e));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Protect This Domain";
   }
 });
 
@@ -3039,23 +3702,61 @@ $("#r53-ak").addEventListener("change", r53ListZonesIfReady);
 $("#r53-sk").addEventListener("change", r53ListZonesIfReady);
 
 $("#btnR53Protect").addEventListener("click", async function(){
+  var btn = this;
   var access_key_id = ($("#r53-ak").value || "").trim();
   var secret_access_key = ($("#r53-sk").value || "").trim();
   var hosted_zone_id = $("#r53-zones").value;
+  var zoneSelect = $("#r53-zones");
+  var selectedOption = zoneSelect.options[zoneSelect.selectedIndex];
+  var domainName = selectedOption ? selectedOption.textContent.split(' (')[0].replace(/\.$/, '') : '';
+  
   if (!access_key_id || !secret_access_key || !hosted_zone_id){
     logEl("#r53-log","Please enter credentials and select a hosted zone.");
     return;
   }
+  
+  // Check if already protected
+  if (domainName && isDomainAlreadyProtected(domainName)) {
+    logEl("#r53-log", "✓ " + domainName + " is already protected! Select a different zone or verify your setup below.");
+    return;
+  }
+  
+  // Disable button and show loading
+  btn.disabled = true;
+  btn.textContent = "Protecting...";
+  logEl("#r53-log", "Setting up email protection for " + domainName + "...");
+  
   try{
     var j = await post(ROBOT_API + "/api/r53/protect", { access_key_id: access_key_id, secret_access_key: secret_access_key, hosted_zone_id: hosted_zone_id });
-    logEl("#r53-log", j);
-    if (j.apex) {
-      $("#verify-domain").value = j.apex;
-      $("#pol-domain").value = j.apex;
-      $("#ins-domain").value = j.apex;
+    
+    var apex = j.apex || j.domain || domainName;
+    
+    // Show success animation
+    showProtectionSuccess(apex, 'route53');
+    
+    // Refresh user data and domains list to update counter
+    await fetchCurrentUser();
+    await refreshRecent();
+    
+    // Clear sensitive fields
+    $("#r53-ak").value = "";
+    $("#r53-sk").value = "";
+    zoneSelect.innerHTML = '<option value="">Domain protected! Enter new credentials for another</option>';
+    
+    // Update other fields
+    if (apex) {
+      $("#verify-domain").value = apex;
+      if ($("#pol-domain")) $("#pol-domain").value = apex;
+      if ($("#ins-domain")) $("#ins-domain").value = apex;
     }
+    
+    logEl("#r53-log", "✅ Success! " + apex + " is now protected.\n\nDNS records created:\n• SPF record configured\n• DKIM selectors (s1, s2) added\n• DMARC policy activated\n\nUse 'Verify My Setup' below to confirm everything is working.");
+    
   }catch(e){
-    logEl("#r53-log", String(e));
+    logEl("#r53-log", "❌ Error: " + String(e));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Protect This Domain";
   }
 });
 
@@ -3762,6 +4463,115 @@ async function loadSources(days) {
 
 $('#btnSources7').addEventListener('click', function() { loadSources(7); });
 $('#btnSources30').addEventListener('click', function() { loadSources(30); });
+
+/* ====== CHECKOUT SUCCESS DETECTION ====== */
+function isCheckoutSuccess() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('checkout') === 'success';
+}
+
+function applyCheckoutSuccessUI() {
+  if (isCheckoutSuccess()) {
+    var loginCard = document.getElementById('login-card');
+    if (loginCard) {
+      loginCard.classList.add('checkout-success');
+    }
+    // Clean URL without reloading (remove ?checkout=success)
+    if (window.history && window.history.replaceState) {
+      var cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  }
+}
+
+// Apply checkout success UI immediately
+applyCheckoutSuccessUI();
+
+/* ====== CLAIM SUBSCRIPTION ====== */
+async function claimSubscription() {
+  var emailInput = document.getElementById('claim-email');
+  var statusEl = document.getElementById('claim-status');
+  var btn = document.getElementById('btn-claim-subscription');
+  
+  if (!emailInput || !statusEl) return;
+  
+  var checkoutEmail = (emailInput.value || '').trim().toLowerCase();
+  
+  if (!checkoutEmail || checkoutEmail.indexOf('@') === -1) {
+    statusEl.textContent = 'Please enter a valid email address.';
+    statusEl.className = 'claim-status error';
+    return;
+  }
+  
+  // Disable button and show loading
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Linking...';
+  }
+  statusEl.textContent = '';
+  statusEl.className = 'claim-status';
+  
+  try {
+    var response = await fetch(ROBOT_API + '/api/claim-subscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ checkout_email: checkoutEmail })
+    });
+    
+    var data = await response.json();
+    
+    if (data.ok) {
+      if (data.already_active) {
+        statusEl.textContent = 'You already have an active subscription!';
+        statusEl.className = 'claim-status success';
+      } else if (data.claimed) {
+        statusEl.textContent = 'Subscription linked successfully! Refreshing...';
+        statusEl.className = 'claim-status success';
+        // Refresh the page to show the unlocked UI
+        setTimeout(function() {
+          window.location.reload();
+        }, 1500);
+        return; // Don't re-enable button since we're reloading
+      } else {
+        statusEl.textContent = data.message || 'Subscription linked!';
+        statusEl.className = 'claim-status success';
+      }
+    } else {
+      statusEl.textContent = data.error || 'Could not link subscription. Please try again.';
+      statusEl.className = 'claim-status error';
+    }
+  } catch (e) {
+    statusEl.textContent = 'Network error. Please check your connection and try again.';
+    statusEl.className = 'claim-status error';
+  }
+  
+  // Re-enable button
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Link Subscription';
+  }
+}
+
+// Wire up claim subscription button
+(function() {
+  var claimBtn = document.getElementById('btn-claim-subscription');
+  var claimEmail = document.getElementById('claim-email');
+  
+  if (claimBtn) {
+    claimBtn.addEventListener('click', claimSubscription);
+  }
+  
+  // Allow Enter key to submit
+  if (claimEmail) {
+    claimEmail.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        claimSubscription();
+      }
+    });
+  }
+})();
 
 /* ====== Bootstrap ====== */
 initAuth();
