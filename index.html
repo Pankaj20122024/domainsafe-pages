@@ -1958,6 +1958,23 @@ details[open] summary {
     </div>
   </div>
 
+  <!-- Post-Checkout Claim Section (shown after purchase when user already has a plan) -->
+  <div id="post-checkout-claim" class="card highlight hidden">
+    <h3><span class="card-icon">🎉</span> Link Your New Purchase</h3>
+    <p class="desc">Welcome back! It looks like you just made a purchase. Link it to your account below.</p>
+    <div class="claim-subscription-form">
+      <p>Enter the email address you used at checkout to link your new subscription.</p>
+      <div class="input-row">
+        <input type="email" id="post-checkout-email" placeholder="Email used at checkout" autocomplete="email" />
+        <button class="btn secondary btn-claim" id="btn-post-checkout-claim" type="button">Link Subscription</button>
+      </div>
+      <div class="claim-status" id="post-checkout-status"></div>
+      <div class="mt-sm">
+        <button class="btn btn-sm secondary" id="btn-skip-claim" type="button">Skip — I'll do this later</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Protected Domains List -->
   <div id="protected-domains-section" class="protected-domains-section hidden">
     <div class="protected-domains-header">
@@ -3052,6 +3069,7 @@ function startGoogleLogin(){
 function applyPlanGate(user){
   var gate = $("#plan-gate");
   var gateEmail = $("#plan-gate-email");
+  var postCheckoutClaim = $("#post-checkout-claim");
   var welcomeBanner = $(".welcome-banner");
   var routeSelection = $("#route-selection");
   var cfSetup = $("#setup-cloudflare");
@@ -3067,6 +3085,7 @@ function applyPlanGate(user){
   var lower = email.toLowerCase();
   var isAdminFront = (lower === "pankajonlinerepository@gmail.com" || lower === "ops@domainsafepro.com");
   var hasActivePlan = !!(plan && plan.status === "active");
+  var postCheckout = isPostCheckout();
 
   if (gateEmail && email){
     gateEmail.textContent = email;
@@ -3075,11 +3094,25 @@ function applyPlanGate(user){
   // Sections visible to users with active plans (or admins)
   var userSections = [welcomeBanner, routeSelection, cfSetup, r53Setup, manualSetup, helpSection, insightsSection, protectedSection];
 
-  if (hasActivePlan || isAdminFront) {
+  // Post-checkout flow: show claim section regardless of plan status
+  if (postCheckout) {
+    // Show post-checkout claim section
+    if (postCheckoutClaim) postCheckoutClaim.classList.remove("hidden");
+    // Hide the regular plan-gate
     if (gate) gate.classList.add("hidden");
+    // Show user sections if they have a plan (they can use while also linking new)
+    if (hasActivePlan || isAdminFront) {
+      userSections.forEach(function(el){ if (el) el.classList.remove("hidden"); });
+    } else {
+      userSections.forEach(function(el){ if (el) el.classList.add("hidden"); });
+    }
+  } else if (hasActivePlan || isAdminFront) {
+    if (gate) gate.classList.add("hidden");
+    if (postCheckoutClaim) postCheckoutClaim.classList.add("hidden");
     userSections.forEach(function(el){ if (el) el.classList.remove("hidden"); });
   } else {
     if (gate) gate.classList.remove("hidden");
+    if (postCheckoutClaim) postCheckoutClaim.classList.add("hidden");
     userSections.forEach(function(el){ if (el) el.classList.add("hidden"); });
   }
 
@@ -4475,6 +4508,24 @@ function isCheckoutFresh() {
   return params.get('fresh') === '1';
 }
 
+function isPostCheckout() {
+  try {
+    return localStorage.getItem('dsp_post_checkout') === 'true';
+  } catch(e) {
+    return false;
+  }
+}
+
+function setPostCheckout(value) {
+  try {
+    if (value) {
+      localStorage.setItem('dsp_post_checkout', 'true');
+    } else {
+      localStorage.removeItem('dsp_post_checkout');
+    }
+  } catch(e) {}
+}
+
 function applyCheckoutSuccessUI() {
   if (isCheckoutSuccess()) {
     // If checkout=success but no fresh=1, we need to clear the session first
@@ -4486,7 +4537,11 @@ function applyCheckoutSuccessUI() {
       return;
     }
     
-    // Session is cleared (fresh=1), show checkout success UI
+    // Session is cleared (fresh=1), save post-checkout state to localStorage
+    // This persists through the Google OAuth flow
+    setPostCheckout(true);
+    
+    // Show checkout success UI on login card
     var loginCard = document.getElementById('login-card');
     if (loginCard) {
       loginCard.classList.add('checkout-success');
@@ -4537,9 +4592,13 @@ async function claimSubscription() {
     var data = await response.json();
     
     if (data.ok) {
-      if (data.already_active) {
-        statusEl.textContent = 'You already have an active subscription!';
+      if (data.already_linked) {
+        statusEl.textContent = 'This subscription is already linked to your account!';
         statusEl.className = 'claim-status success';
+        // Refresh after a moment
+        setTimeout(function() {
+          window.location.reload();
+        }, 1500);
       } else if (data.claimed) {
         statusEl.textContent = 'Subscription linked successfully! Refreshing...';
         statusEl.className = 'claim-status success';
@@ -4585,6 +4644,113 @@ async function claimSubscription() {
         claimSubscription();
       }
     });
+  }
+})();
+
+/* ====== POST-CHECKOUT CLAIM ====== */
+async function postCheckoutClaimSubscription() {
+  var emailInput = document.getElementById('post-checkout-email');
+  var statusEl = document.getElementById('post-checkout-status');
+  var btn = document.getElementById('btn-post-checkout-claim');
+  
+  if (!emailInput || !statusEl) return;
+  
+  var checkoutEmail = (emailInput.value || '').trim().toLowerCase();
+  
+  if (!checkoutEmail || checkoutEmail.indexOf('@') === -1) {
+    statusEl.textContent = 'Please enter a valid email address.';
+    statusEl.className = 'claim-status error';
+    return;
+  }
+  
+  // Disable button and show loading
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Linking...';
+  }
+  statusEl.textContent = '';
+  statusEl.className = 'claim-status';
+  
+  try {
+    var response = await fetch(ROBOT_API + '/api/claim-subscription', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ checkout_email: checkoutEmail })
+    });
+    
+    var data = await response.json();
+    
+    if (data.ok) {
+      if (data.already_linked) {
+        statusEl.textContent = 'This subscription is already linked to your account!';
+        statusEl.className = 'claim-status success';
+        // Clear post-checkout state and hide the section after a moment
+        setTimeout(function() {
+          setPostCheckout(false);
+          window.location.reload();
+        }, 1500);
+      } else if (data.claimed) {
+        statusEl.textContent = 'Subscription linked successfully! Refreshing...';
+        statusEl.className = 'claim-status success';
+        // Clear post-checkout state and refresh
+        setPostCheckout(false);
+        setTimeout(function() {
+          window.location.reload();
+        }, 1500);
+        return;
+      } else {
+        statusEl.textContent = data.message || 'Subscription linked!';
+        statusEl.className = 'claim-status success';
+        setPostCheckout(false);
+      }
+    } else {
+      statusEl.textContent = data.error || 'Could not link subscription. Please try again.';
+      statusEl.className = 'claim-status error';
+    }
+  } catch (e) {
+    statusEl.textContent = 'Network error. Please check your connection and try again.';
+    statusEl.className = 'claim-status error';
+  }
+  
+  // Re-enable button
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Link Subscription';
+  }
+}
+
+function skipPostCheckoutClaim() {
+  // Clear post-checkout state and hide the section
+  setPostCheckout(false);
+  var postCheckoutSection = document.getElementById('post-checkout-claim');
+  if (postCheckoutSection) {
+    postCheckoutSection.classList.add('hidden');
+  }
+}
+
+// Wire up post-checkout claim buttons
+(function() {
+  var postCheckoutBtn = document.getElementById('btn-post-checkout-claim');
+  var postCheckoutEmail = document.getElementById('post-checkout-email');
+  var skipBtn = document.getElementById('btn-skip-claim');
+  
+  if (postCheckoutBtn) {
+    postCheckoutBtn.addEventListener('click', postCheckoutClaimSubscription);
+  }
+  
+  // Allow Enter key to submit
+  if (postCheckoutEmail) {
+    postCheckoutEmail.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        postCheckoutClaimSubscription();
+      }
+    });
+  }
+  
+  if (skipBtn) {
+    skipBtn.addEventListener('click', skipPostCheckoutClaim);
   }
 })();
 
