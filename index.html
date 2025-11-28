@@ -4470,13 +4470,28 @@ function isCheckoutSuccess() {
   return params.get('checkout') === 'success';
 }
 
+function isCheckoutFresh() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('fresh') === '1';
+}
+
 function applyCheckoutSuccessUI() {
   if (isCheckoutSuccess()) {
+    // If checkout=success but no fresh=1, we need to clear the session first
+    // Redirect to logout endpoint which will clear cookie and redirect back with fresh=1
+    if (!isCheckoutFresh()) {
+      // Redirect to logout with return=checkout param
+      // Worker will clear session and redirect back to app.domainsafepro.com?checkout=success&fresh=1
+      window.location.href = "https://domainsafe-robot.pankajonlinerepository.workers.dev/auth/logout?return=checkout";
+      return;
+    }
+    
+    // Session is cleared (fresh=1), show checkout success UI
     var loginCard = document.getElementById('login-card');
     if (loginCard) {
       loginCard.classList.add('checkout-success');
     }
-    // Clean URL without reloading (remove ?checkout=success)
+    // Clean URL without reloading (remove query params)
     if (window.history && window.history.replaceState) {
       var cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
